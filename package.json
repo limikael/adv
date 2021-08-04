@@ -1,0 +1,18 @@
+{
+  "name": "adv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/advgame.jsx --minify --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017",
+    "dev": "esbuild src/advgame.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017 --servedir=res"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "esbuild": "^0.12.17"
+  },
+  "dependencies": {
+    "preact": "^10.5.14"
+  }
+}
