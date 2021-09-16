@@ -16,18 +16,41 @@ export default function AdvGame(props) {
 
 	let story={
 		bedroom: {
+			name: "the bedroom",
 			description: "You are in the bedroom. It is a pretty normal bedroom, with a bed in it.",
 			destinations: ["bathroom"]
 		},
 
 		bathroom: {
+			name: "the bathroom",
 			description: "It is a quite normal bathroom.",
-			destinations: ["bedroom"],
-			things: ["toothbrush"]
+			destinations: ["bedroom"]
 		},
 
 		toothbrush: {
+			name: "toothbrush",
+			indefinite: "a toothbrush",
 			description: "It is an Oral-B Pro-Health All-In-One Soft Bristle Toothbrush. One of the top 10 market leading toothbrushes for 2020.",
+			location: "bedroom"
+		},
+
+		slippers: {
+			name: "slippers",
+			indefinite: "a pair of slippers",
+			description: "A pair of slippers with rabbit ears.",
+			location: "bedroom"
+		},
+
+		lamp: {
+			name: "lamp",
+			indefinite: "a lamp",
+			description: "Lamps are different, but the light is the same",
+			location: "bedroom"
+		},
+
+		shower: {
+			description: "A quite ordinary shower.",
+			location: "bathroom"
 		}
 	};
 
