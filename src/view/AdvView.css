@@ -26,9 +26,15 @@ body {
 	filter: brightness(70%);
 }
 
-.location-description p {
+.location-description p,
+.location-description a {
 	margin-top: 0;
 	margin-bottom: 1em;
 	position: static;
 	line-height: 1.5em;
+}
+
+.verb-selected .location-description a {
+	text-decoration: underline;
+	cursor: pointer;
 }
