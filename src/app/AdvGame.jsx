@@ -31,7 +31,7 @@ export default function AdvGame(props) {
 			name: "toothbrush",
 			indefinite: "a toothbrush",
 			description: "It is an Oral-B Pro-Health All-In-One Soft Bristle Toothbrush. One of the top 10 market leading toothbrushes for 2020.",
-			location: "bedroom"
+			location: "bathroom"
 		},
 
 		slippers: {
