@@ -62,6 +62,8 @@ export default function AdvGame(props) {
 		...props
 	};
 
+	initialState=AdvReducers.initStory(initialState);
+
 	let state=useReducibleState({
 		reducers: AdvReducers,
 		computers: AdvComputers,

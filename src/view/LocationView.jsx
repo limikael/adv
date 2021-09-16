@@ -32,7 +32,9 @@ export default function LocationView(props) {
 	if (things.length) {
 		function linkThing(thing) {
 			return (
-				<a>{thing.indefinite}</a>
+				<a onclick={props.state.objectClick.bindArgs(thing.id)}>
+					{thing.indefinite}
+				</a>
 			);
 		}
 
@@ -43,7 +45,9 @@ export default function LocationView(props) {
 	if (destinations.length) {
 		function linkDest(dest) {
 			return (
-				<a>{dest.name}</a>
+				<a onclick={props.state.objectClick.bindArgs(dest.id)}>
+					{dest.name}
+				</a>
 			);
 		}
 
