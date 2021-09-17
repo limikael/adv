@@ -1,20 +1,24 @@
-import {useState, useEffect, useRef, useCallback, forwardRef} from "react";
+import {useRef, useReducer} from "react";
+
+export function useForceUpdate() {
+	const [_, forceUpdate] = useReducer((x) => x + 1, 0);
+
+	return forceUpdate;
+}
 
 export function useReducibleState(options) {
 	if (!options.reducers) options.reducers={};
 	if (!options.computers) options.computers={};
 	if (!options.workers) options.workers={};
 
-	let ref=useRef({});
-	let [state,setState]=useState(options.initial);
-
-	ref.current.state=state;
-	ref.current.setState=setState;
+	let forceUpdate=useForceUpdate();
+	let ref=useRef(options.initial);
+	let state=ref.current;
 
 	for (let reducerName in options.reducers) {
 		let f=(...args)=>{
-			let newState=options.reducers[reducerName](state,...args);
-			setState(JSON.parse(JSON.stringify(newState)));
+			ref.current=options.reducers[reducerName](state,...args);
+			forceUpdate();
 		};
 
 		f.bindArgs=(...args)=>{
@@ -30,7 +34,7 @@ export function useReducibleState(options) {
 		};
 	}
 
-	for (let workerName in options.workers) {
+	/*for (let workerName in options.workers) {
 		state[workerName]=function(...args) {
 			function update(newState) {
 				if (!newState)
@@ -41,7 +45,7 @@ export function useReducibleState(options) {
 
 			options.workers[workerName](update,...args);
 		};
-	}
+	}*/
 
 	return state;
 }

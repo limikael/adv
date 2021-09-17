@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": "esbuild src/advgame.jsx --minify --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017",
-    "dev": "esbuild src/advgame.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017 --servedir=res"
+    "dev": "esbuild src/advgame.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017 --servedir=res",
+    "test": "jasmine"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "esbuild": "^0.12.17"
+    "esbuild": "^0.12.17",
+    "jasmine": "^3.9.0"
   },
   "dependencies": {
     "preact": "^10.5.14"

@@ -26,9 +26,9 @@ function enumerate(strings) {
 export default function LocationView(props) {
 	let text=[];
 
-	text.push(<p>{props.state.getCurrentLocation().description}</p>);
+	text.push(<p>{props.state.story.getCurrentLocation().description}</p>);
 
-	let things=props.state.getThingsByLocation(props.state.location);
+	let things=props.state.story.getThingsByCurrentLocation();
 	if (things.length) {
 		function linkThing(thing) {
 			return (
@@ -41,7 +41,7 @@ export default function LocationView(props) {
 		text.push(<p>There is {enumerate(things.map(linkThing))} here.</p>);
 	}
 
-	let destinations=props.state.getDestinationsByLocation(props.state.location);
+	let destinations=props.state.story.getDestinationsByCurrentLocation();
 	if (destinations.length) {
 		function linkDest(dest) {
 			return (

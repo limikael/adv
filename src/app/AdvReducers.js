@@ -8,16 +8,8 @@ export function toggleCurrentVerb(state, verb) {
 	return state;
 }
 
-export function initStory(state) {
-	for (let id in state.story) {
-		state.story[id].id=id;
-	}
-
-	return state;
-}
-
 export function objectClick(state, id) {
-	console.log("click: "+id);
+	state.story.execute(state.currentVerb,id);
 
 	state.currentVerb=null;
 
