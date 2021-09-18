@@ -16,9 +16,15 @@ body {
 	background-color: var(--color-background);
 }
 
-.btn:hover {
-	filter: brightness(80%);
-	cursor: pointer;
+.btn {
+	-webkit-tap-highlight-color: transparent;	
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.btn:hover {
+		filter: brightness(80%);
+		cursor: pointer;
+	}
 }
 
 .btn:active,
