@@ -4,7 +4,17 @@ export default [{
 	name: "the bedroom",
 	description: "You are in your bedroom. It is the favourite part of your house because you can do what you like in there, and yet not get disturbed. There is a bed right in the middle of the squarish room, which takes up quite a bit of space, but you like it that way.",
 	destinations: ["bathroom","kitchen"],
-	goto: (story)=>{
+	goto: [{
+		"object": "lamp",
+		"clause": "not_in_use",
+		"then": "succedd",
+		"fail": "The dark room is like a place out of time, a place to rest without consequence. Yet the darkness makes you fumble and lose your sense of direction."
+	},{
+		"not_using": "slippers",
+		"fail": "The cold from the floor moves in only to meet the warmth of your blood. You feel it wash over your skin, again and again, only to be met by the beat of your heart, again and again. You quickly pull your feet back in under the cover, the floor is way too cold."
+	}]
+
+	(story)=>{
 		if (!story.using("lamp"))
 			return story.cant("The dark room is like a place out of time, a place to rest without consequence. Yet the darkness makes you fumble and lose your sense of direction.");
 
