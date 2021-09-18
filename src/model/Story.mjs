@@ -46,6 +46,10 @@ export default class Story {
 				this.lookat(o);
 				break;
 
+			case "drop":
+				this.drop(o);
+				break;
+
 			default:
 				throw new Error("Unknown verb");
 				break;
@@ -76,7 +80,7 @@ export default class Story {
 
 	lookat(object) {
 		if (object.type!="thing" || !object.description) {
-			this.message("Can't see that");
+			this.message("Nothing interesting about it.");
 			return;
 		}
 
@@ -111,6 +115,23 @@ export default class Story {
 
 		if (effect[0])
 			object.location="inventory";
+	}
+
+	drop(object) {
+		if (object.type!="thing") {
+			this.message("Can't drop that.");
+			return;
+		}
+
+		let effect=object.evalVerb("drop",this.can("Dropped."));
+
+		if (effect[1])
+			this.currentMessage=effect[1];
+
+		if (effect[0]) {
+			object.using=false;
+			object.location=this.currentLocationId;
+		}
 	}
 
 	message(message) {

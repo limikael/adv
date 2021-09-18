@@ -13,7 +13,8 @@ export default function AdvGame(props) {
 		"goto": "GO TO",
 		"pickup": "PICK UP",
 		"lookat": "LOOK AT",
-		"use": "USE"
+		"use": "USE",
+		"drop": "DROP"
 	};
 
 	let initialState={
@@ -31,7 +32,7 @@ export default function AdvGame(props) {
 	state.story=story;
 
 	return (
-		<ContentScaler width="300" height="400">
+		<ContentScaler width="200" height="300">
 			<AdvView state={state}/>
 		</ContentScaler>
 	);

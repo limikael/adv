@@ -62,8 +62,8 @@ export default function LocationView(props) {
 		cls="verb-selected";
 
 	return (
-		<Box pos={[0,0]} size={[29,29]} border="white" bg="light" class={cls}>
-			<Box pos={[0,0]} size={[28,28]} border="none" icls="location-description">
+		<Box pos={[0,0]} size={[19,18]} border="white" bg="light" class={cls}>
+			<Box pos={[0,0]} size={[18,17]} border="none" icls="location-description">
 				{text}
 			</Box>
 		</Box>

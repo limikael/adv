@@ -7,7 +7,7 @@ import InventoryView from "./InventoryView.jsx";
 
 export default function AdvView(props) {
 	return (
-		<Box pos={[0,0]} size={[30,40]} bg="dark" border="white">
+		<Box pos={[0,0]} size={[20,30]} bg="dark" border="white">
 			<LocationView state={props.state} />
 			<InventoryView state={props.state} />
 			<VerbListView state={props.state} />

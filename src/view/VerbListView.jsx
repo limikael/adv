@@ -12,7 +12,7 @@ export default function VerbListView(props) {
 			ocls+=" active";
 
 		verbButtons.push(
-			<Box pos={[(i%2)*7,Math.floor(i/2)*2]}
+			<Box pos={[0,i*2]}
 					size={[7,2]}
 					ocls={ocls} border="white" icls="text-center" text="white" bg="info"
 					onclick={props.state.toggleCurrentVerb.bindArgs(verb)}>
@@ -23,19 +23,9 @@ export default function VerbListView(props) {
 		i++;
 	}
 
-	let actionText=null;
-	if (props.state.currentVerb)
-		actionText=verbs[props.state.currentVerb];
-
 	return (
 		<Fragment>
-			<Box pos={[0,29]} size={[29,3]} bg="background" border="white" text="white">
-				<Box border="none" pos={[0,0]} size={[28,2]}>
-					{actionText}
-				</Box>
-			</Box>
-
-			<Box pos={[0,32]} size={[15,7]} bg="background" border="white">
+			<Box pos={[0,18]} size={[8,11]} bg="background" border="white">
 				{verbButtons}
 			</Box>
 		</Fragment>

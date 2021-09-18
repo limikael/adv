@@ -17,7 +17,7 @@ export default function InventoryView(props) {
 		cls="verb-selected";
 
 	return (
-		<Box pos={[15,32]} size={[14,7]} border="white" bg="background" 
+		<Box pos={[8,18]} size={[11,11]} border="white" bg="background" 
 				icls="inventory" class={cls}>
 			{thingList}
 		</Box>
