@@ -12,7 +12,7 @@ describe("story",()=>{
 
 		story.execute("goto","bathroom");
 		expect(story.getCurrentLocation().id).toEqual("bedroom");
-		expect(story.getMessage()).toContain("can't see");
+		expect(story.getMessage()).toContain("The dark room");
 		story.dismissMessage();
 		expect(story.getMessage()).toEqual(null);
 
@@ -30,11 +30,11 @@ describe("story",()=>{
 		story.dismissMessage();
 
 		story.execute("pickup","slippers");
-/*		story.execute("use","slippers");
+		story.execute("use","slippers");
 		story.execute("goto","bathroom");
 		expect(story.getCurrentLocation().id).toEqual("bathroom");
 
 		story.execute("lookat","lamp");
-		expect(story.getMessage()).toEqual("Lamps are different, but the light is the same");*/
+		expect(story.getMessage()).toContain("lamp is simple and elegant");
 	});
 })
