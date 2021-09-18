@@ -14,9 +14,6 @@
 
 body {
 	background-color: var(--color-background);
-}
-
-.btn {
 	-webkit-tap-highlight-color: transparent;	
 }
 
