@@ -16,7 +16,11 @@ export default [{
 	type: "location",
 	name: "the bathroom",
 	description: "It is a quite normal bathroom.",
-	destinations: ["bedroom"]
+	destinations: ["bedroom"],
+	goto: (story)=>{
+		if (!story.using("slippers"))
+			return story.cant("The floor is too cold.");
+	}
 },{
 	id: "toothbrush",
 	type: "thing",
@@ -37,6 +41,7 @@ export default [{
 	indefinite: "a pair of slippers",
 	description: "A pair of slippers with rabbit ears.",
 	location: "bedroom",
+	inuse: "on your feet",
 	use: (story)=>{
 		if (!story.has("slippers"))
 			return story.cant("In order to wear your slippers, you first need to pick them up.");
@@ -63,7 +68,10 @@ export default [{
 	location: "bathroom",
 	indefinite: "a shower",
 	use: (story)=>{
-		return story.can("Aaahhh... Nice!!!")
+		if (story.has("slippers"))
+			return story.cant("Your slippers would get all wet and soggy if you shower with them on.");
+
+		return story.can("Aaahhh... Nice!!!");
 	},
 	pickup: (story)=>{
 		return story.cant("It is too heavy to carry around.");

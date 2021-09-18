@@ -13,6 +13,11 @@ export default class StoryObject {
 			case "state":
 				this.state=false;
 				break;
+
+			case "thing":
+				if (!this.inuse)
+					this.inuse="in use";
+				break;
 		}
 	}
 
@@ -21,6 +26,9 @@ export default class StoryObject {
 	}
 
 	getInventoryName() {
+		if (this.using)
+			return this.id+" ("+this.inuse+")";
+
 		return this.id;
 	}
 
