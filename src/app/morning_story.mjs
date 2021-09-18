@@ -3,29 +3,20 @@ export default [{
 	type: "location",
 	name: "the bedroom",
 	description: "You are in the bedroom. It is a pretty normal bedroom, with a bed in it.",
-	destinations: {
-		"bathroom": (story)=>{
-			if (!story.using("lamp")) {
-				story.message("It is dark, you can't see where you are going");
-				return false;
-			}
+	destinations: ["bathroom"],
+	goto: (story)=>{
+		if (!story.using("lamp"))
+			return story.cant("It is dark, you can't see where you are going.");
 
-			if (!story.using("slippers")) {
-				story.message("The floor is too cold");
-				return false;
-			}
-
-			return true;
-		}
+		if (!story.using("slippers"))
+			return story.cant("The floor is too cold.");
 	}
 },{
 	id: "bathroom",
 	type: "location",
 	name: "the bathroom",
 	description: "It is a quite normal bathroom.",
-	destinations: {
-		"bedroom": true
-	}
+	destinations: ["bedroom"]
 },{
 	id: "toothbrush",
 	type: "thing",
@@ -33,6 +24,12 @@ export default [{
 	indefinite: "a toothbrush",
 	location: "bathroom",
 	description: "It is an Oral-B Pro-Health All-In-One Soft Bristle Toothbrush. One of the top 10 market leading toothbrushes for 2020.",
+	use: (story)=>{
+		if (!story.has("toothbrush"))
+			return story.cant("Doesn't really work, are you going to move your teeth to the toothbrush?");
+
+		return story.can("Swrrr... swwwrr.... Brushing sound... Your teeth are now clean...")
+	},
 },{
 	id: "slippers",
 	type: "thing",
@@ -41,13 +38,10 @@ export default [{
 	description: "A pair of slippers with rabbit ears.",
 	location: "bedroom",
 	use: (story)=>{
-		if (!story.has("slippers")) {
-			story.message("In order to wear your slippers, you first need to pick them up.");
-			return false;
-		}
+		if (!story.has("slippers"))
+			return story.cant("In order to wear your slippers, you first need to pick them up.");
 
-		story.message("You put the slippers on your feet. They are very comfortable.");
-		return true;
+		return story.can("You put the slippers on your feet. They are very comfortable.");
 	}
 },{
 	id: "lamp",
@@ -57,22 +51,21 @@ export default [{
 	description: "Lamps are different, but the light is the same",
 	location: "bedroom",
 	use: (story)=>{
-		story.message("Let there be light! Suddenly you can see what is around you.");
-		return true;
+		return story.can("Let there be light! Suddenly you can see what is around you.");
 	},
 	pickup: (story)=>{
-		story.message("It is too heavy to carry around.");
-		return false;
+		return story.cant("It is too heavy to carry around.");
 	}
 },{
 	id: "shower",
 	type: "thing",
 	description: "A quite ordinary shower.",
-	location: "bathroom"
-},{
-	id: "lightTurnedOn",
-	type: "state"
-},{
-	id: "wearingSlippers",
-	type: "state"
+	location: "bathroom",
+	indefinite: "a shower",
+	use: (story)=>{
+		return story.can("Aaahhh... Nice!!!")
+	},
+	pickup: (story)=>{
+		return story.cant("It is too heavy to carry around.");
+	}
 }]

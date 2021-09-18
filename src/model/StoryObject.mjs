@@ -23,4 +23,14 @@ export default class StoryObject {
 	getInventoryName() {
 		return this.id;
 	}
+
+	evalVerb(verb, defaultEffect) {
+		if (typeof this[verb]=="function") {
+			let res=this[verb](this.story);
+			if (res instanceof Array)
+				return res;
+		}
+
+		return defaultEffect;
+	}
 }

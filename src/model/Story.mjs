@@ -60,22 +60,18 @@ export default class Story {
 
 		let current=this.getCurrentLocation();
 
-		if (!current.destinations[object.id]) {
+		if (!current.destinations.includes(object.id)) {
 			this.message("Can't go there");
 			return;
 		}
 
-		let v=current.destinations[object.id];
+		let effect=current.evalVerb("goto",[true]);
 
-		if (v===true) {
-			this.currentLocationId=object.id;
-			return;
-		}
+		if (effect[1])
+			this.currentMessage=effect[1];
 
-		if (v(this)) {
+		if (effect[0])
 			this.currentLocationId=object.id;
-			return;
-		}
 	}
 
 	lookat(object) {
@@ -93,7 +89,12 @@ export default class Story {
 			return;
 		}
 
-		if (object.use(this))
+		let effect=object.evalVerb("use",this.cant("It is not useful."));
+
+		if (effect[1])
+			this.currentMessage=effect[1];
+
+		if (effect[0])
 			object.using=true;
 	}
 
@@ -103,16 +104,13 @@ export default class Story {
 			return;
 		}
 
-		let v=true;
-		if (object.pickup)
-			v=object.pickup(this);
+		let effect=object.evalVerb("pickup",this.can("Taken."));
 
-		if (v) {
-			if (!this.currentMessage)
-				this.currentMessage="Taken.";
+		if (effect[1])
+			this.currentMessage=effect[1];
 
+		if (effect[0])
 			object.location="inventory";
-		}
 	}
 
 	message(message) {
@@ -143,14 +141,6 @@ export default class Story {
 		return o.location=="inventory";
 	}
 
-	set(id) {
-		let o=this.getObjectById(id);
-		if (!o || o.type!="state")
-			throw new Error("Not a state: "+id);
-
-		o.state=true;
-	}
-
 	using(id) {
 		let o=this.getObjectById(id);
 		if (!o || o.type!="thing")
@@ -175,7 +165,7 @@ export default class Story {
 		let current=this.getCurrentLocation();
 		let res=[];
 
-		for (let id in current.destinations)
+		for (let id of current.destinations)
 			res.push(this.getObjectById(id));
 
 		return res;
@@ -190,5 +180,13 @@ export default class Story {
 		}
 
 		return res;
+	}
+
+	can(message) {
+		return [true,message];
+	}
+
+	cant(message) {
+		return [false,message];
 	}
 }

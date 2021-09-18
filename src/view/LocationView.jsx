@@ -29,6 +29,7 @@ export default function LocationView(props) {
 	text.push(<p>{props.state.story.getCurrentLocation().description}</p>);
 
 	let things=props.state.story.getThingsByCurrentLocation();
+
 	if (things.length) {
 		function linkThing(thing) {
 			return (
