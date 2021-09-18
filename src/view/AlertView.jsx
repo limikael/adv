@@ -8,7 +8,7 @@ export default function AlertView(props) {
 		<Fragment>
 			<div class="modal-cover"/>
 			<Box pos={[2,2]} size={[15,20]} border="dark" bg="light">
-				<Box pos={[0,0]} size={[14,19]} border="none" icls="location-description">
+				<Box pos={[0,0]} size={[14,16]} border="none" icls="location-description">
 					<p>{props.state.story.getMessage()}</p>
 				</Box>
 

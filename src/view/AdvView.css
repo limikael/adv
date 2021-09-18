@@ -29,6 +29,10 @@ body {
 	filter: brightness(70%);
 }
 
+.location-description {
+	overflow-y: scroll;
+}
+
 .location-description p,
 .location-description a {
 	margin-top: 0;

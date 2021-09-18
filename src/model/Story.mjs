@@ -74,8 +74,16 @@ export default class Story {
 		if (effect[1])
 			this.currentMessage=effect[1];
 
-		if (effect[0])
-			this.currentLocationId=object.id;
+		if (effect[0]) {
+			let dest=this.getObjectById(object.id);
+			let destEffect=dest.evalVerb("enter",[true]);
+
+			if (destEffect[1])
+				this.currentMessage=destEffect[1];
+
+			if (destEffect[0])
+				this.currentLocationId=object.id;
+		}
 	}
 
 	lookat(object) {
@@ -160,6 +168,14 @@ export default class Story {
 			throw new Error("Not a thing: "+id);
 
 		return o.location=="inventory";
+	}
+
+	set(id) {
+		let o=this.getObjectById(id);
+		if (!o || o.type!="state")
+			throw new Error("Not a state: "+id);
+
+		o.state=true;
 	}
 
 	using(id) {
