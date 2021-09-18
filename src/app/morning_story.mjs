@@ -42,10 +42,11 @@ export default [{
 	location: "bedroom",
 	use: (story)=>{
 		if (!story.has("slippers")) {
-			story.message("Need to pick them up");
+			story.message("In order to wear your slippers, you first need to pick them up.");
 			return false;
 		}
 
+		story.message("You put the slippers on your feet. They are very comfortable.");
 		return true;
 	}
 },{
@@ -56,8 +57,12 @@ export default [{
 	description: "Lamps are different, but the light is the same",
 	location: "bedroom",
 	use: (story)=>{
-//		story.set("lightTurnedOn")
+		story.message("Let there be light! Suddenly you can see what is around you.");
 		return true;
+	},
+	pickup: (story)=>{
+		story.message("It is too heavy to carry around.");
+		return false;
 	}
 },{
 	id: "shower",

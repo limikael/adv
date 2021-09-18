@@ -35,7 +35,7 @@ export default function VerbListView(props) {
 				</Box>
 			</Box>
 
-			<Box pos={[0,32]} size={[15,7]} bg="danger" border="white">
+			<Box pos={[0,32]} size={[15,7]} bg="background" border="white">
 				{verbButtons}
 			</Box>
 		</Fragment>

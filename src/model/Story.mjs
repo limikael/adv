@@ -108,8 +108,10 @@ export default class Story {
 			v=object.pickup(this);
 
 		if (v) {
-			object.location=null;
-			object.carrying=true;
+			if (!this.currentMessage)
+				this.currentMessage="Taken.";
+
+			object.location="inventory";
 		}
 	}
 
@@ -138,7 +140,7 @@ export default class Story {
 		if (!o || o.type!="thing")
 			throw new Error("Not a thing: "+id);
 
-		return o.carrying;
+		return o.location=="inventory";
 	}
 
 	set(id) {
@@ -175,6 +177,17 @@ export default class Story {
 
 		for (let id in current.destinations)
 			res.push(this.getObjectById(id));
+
+		return res;
+	}
+
+	getInventoryThings() {
+		let res=[];
+
+		for (let object of this.objects) {
+			if (object.location=="inventory")
+				res.push(object);
+		}
 
 		return res;
 	}

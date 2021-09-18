@@ -15,3 +15,9 @@ export function objectClick(state, id) {
 
 	return state;
 }
+
+export function dismissMessage(state) {
+	state.story.dismissMessage();
+
+	return state;
+}

@@ -19,4 +19,8 @@ export default class StoryObject {
 	setStory(story) {
 		this.story=story;
 	}
+
+	getInventoryName() {
+		return this.id;
+	}
 }

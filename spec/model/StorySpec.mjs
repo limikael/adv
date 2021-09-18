@@ -28,7 +28,7 @@ describe("story",()=>{
 		story.dismissMessage();
 
 		story.execute("use","slippers");
-		expect(story.getMessage()).toEqual("Need to pick them up");
+		expect(story.getMessage()).toEqual("In order to wear your slippers, you first need to pick them up.");
 		story.dismissMessage();
 
 		story.execute("pickup","slippers");

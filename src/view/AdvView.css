@@ -34,7 +34,26 @@ body {
 	line-height: 1.5em;
 }
 
-.verb-selected .location-description a {
+.inventory a {
+	position: static;
+	line-height: 1em;
+	margin-left: 0.5em;
+	margin-top: 0.5em;
+	display: block;
+	color: var(--color-primary);
+}
+
+.verb-selected .location-description a,
+.verb-selected .inventory a {
 	text-decoration: underline;
 	cursor: pointer;
+}
+
+.modal-cover {
+	left: -0.5em;
+	top: -0.5em;
+	width: calc(100% + 1em);
+	height: calc(100% + 1em);
+	background: #000;
+	opacity: 0.5;
 }
