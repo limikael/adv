@@ -1,4 +1,5 @@
 import "./Box.css";
+import {forwardRef} from "react";
 
 function computeBsStyles(props) {
 	let style={};
@@ -20,7 +21,7 @@ function computeBsStyles(props) {
 	return style;
 }
 
-export default function Box(props) {
+export default Box=forwardRef((props,ref)=>{
 	let bsStyles=computeBsStyles(props);
 
 	let outerStyle={
@@ -48,10 +49,10 @@ export default function Box(props) {
 	return (
 		<Fragment>
 			<div class={"box-outer "+cls+" "+ocls} style={outerStyle} onclick={props.onclick}>
-				<div class={"box-inner "+cls+" "+icls} style={innerStyle}>
+				<div class={"box-inner "+cls+" "+icls} style={innerStyle} ref={ref}>
 					{props.children}
 				</div>
 			</div>
 		</Fragment>
 	)
-}
+});

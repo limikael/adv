@@ -1,7 +1,14 @@
 import Box from "../utils/Box.jsx";
+import {useRef, useLayoutEffect} from "react";
 
 export default function AlertView(props) {
+	let ref=useRef();
 	let message,fn,text;
+
+	useLayoutEffect(()=>{
+		if (ref.current)
+			ref.current.scrollTop=0;
+	});
 
 	if (props.state.story.getMessage()) {
 		message=props.state.story.getMessage();
@@ -22,7 +29,7 @@ export default function AlertView(props) {
 		<Fragment>
 			<div class="modal-cover"/>
 			<Box pos={[2,2]} size={[15,20]} border="dark" bg="light">
-				<Box pos={[0,0]} size={[14,16]} border="none" icls="location-description">
+				<Box pos={[0,0]} size={[14,16]} border="none" icls="location-description" ref={ref}>
 					<p>{message}</p>
 				</Box>
 

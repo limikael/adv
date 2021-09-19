@@ -1,4 +1,6 @@
 import Box from "../utils/Box.jsx";
+import {useRef, useLayoutEffect} from "react";
+import {useIsValueChanged} from "../utils/ReactUtil.jsx";
 
 function enumerate(strings) {
 	let text=[];
@@ -24,7 +26,14 @@ function enumerate(strings) {
 }
 
 export default function LocationView(props) {
+	let ref=useRef();
+	let changed=useIsValueChanged(props.state.story.currentLocationId);
 	let text=[];
+
+	useLayoutEffect(()=>{
+		if (changed)
+			ref.current.scrollTop=0;
+	});
 
 	text.push(<p>{props.state.story.getCurrentLocation().description}</p>);
 
@@ -63,7 +72,7 @@ export default function LocationView(props) {
 
 	return (
 		<Box pos={[0,0]} size={[19,18]} border="white" bg="light" class={cls}>
-			<Box pos={[0,0]} size={[18,17]} border="none" icls="location-description">
+			<Box pos={[0,0]} size={[18,17]} border="none" icls="location-description" ref={ref}>
 				{text}
 			</Box>
 		</Box>

@@ -49,3 +49,15 @@ export function useReducibleState(options) {
 
 	return state;
 }
+
+export function useIsValueChanged(value) {
+	let ref=useRef();
+	let change=false;
+
+	if (value!=ref.current)
+		change=true;
+
+	ref.current=value;
+
+	return change;
+}
