@@ -101,4 +101,11 @@ export default [{
 	pickup: {
 		fail: "It is too heavy to carry around."
 	}
+},{
+	id: "complete",
+	type: "state",
+	state: {
+		have_looked_at: "gnome",
+		succeed: "Thanks for playing!"
+	}
 }]

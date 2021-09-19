@@ -10,10 +10,6 @@ export default class StoryObject {
 			throw new Error("Object needs a type");
 
 		switch (this.type) {
-			case "state":
-				this.state=false;
-				break;
-
 			case "thing":
 				if (!this.inuse)
 					this.inuse="in use";
@@ -30,15 +26,5 @@ export default class StoryObject {
 			return this.id+" ("+this.inuse+")";
 
 		return this.id;
-	}
-
-	evalVerb(verb, defaultEffect) {
-		if (typeof this[verb]=="function") {
-			let res=this[verb](this.story);
-			if (res instanceof Array)
-				return res;
-		}
-
-		return defaultEffect;
 	}
 }

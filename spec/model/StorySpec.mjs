@@ -29,7 +29,7 @@ describe("story",()=>{
 		story.execute("use","slippers");
 		expect(story.getMessage()).toContain("need to pick them up");
 		story.dismissMessage();
-		console.log(story.getCurrentLocation().id);
+		//console.log(story.getCurrentLocation().id);
 
 		story.execute("pickup","slippers");
 		story.execute("use","slippers");

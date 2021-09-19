@@ -3,8 +3,15 @@ import StoryPredicate from "./StoryPredicate.mjs";
 
 export default class Story {
 	constructor(spec) {
-		this.objects=[];
+		this.spec=spec;
 
+		this.restart();
+	}
+
+	restart=()=>{
+		let spec=JSON.parse(JSON.stringify(this.spec));
+
+		this.objects=[];
 		for (let objectSpec of spec) {
 			let o=new StoryObject(objectSpec);
 			o.setStory(this);
@@ -92,6 +99,8 @@ export default class Story {
 			this.message("Nothing interesting about it.");
 			return;
 		}
+
+		object.have_looked_at=true;
 
 		this.message(object.description);
 	}
@@ -197,7 +206,8 @@ export default class Story {
 		let args=[
 			"fail","succeed",
 			"have","dont_have","using","not_using",
-			"have_used","have_not_used","is_in"
+			"have_used","have_not_used","is_in",
+			"have_looked_at","have_not_looked_at"
 		];
 
 		for (let k in clauseObject)
@@ -210,7 +220,9 @@ export default class Story {
 				!clauseObject.not_using &&
 				!clauseObject.have_used &&
 				!clauseObject.have_not_used &&
-				!clauseObject.is_in)
+				!clauseObject.is_in &&
+				!clauseObject.have_looked_at &&
+				!clauseObject.have_not_looked_at)
 			return true;
 
 		if (clauseObject.have &&
@@ -239,6 +251,14 @@ export default class Story {
 
 		if (clauseObject.is_in &&
 				this.currentLocationId==clauseObject.is_in)
+			return true;
+
+		if (clauseObject.have_looked_at &&
+				this.getObjectById(clauseObject.have_looked_at).have_looked_at)
+			return true;
+
+		if (clauseObject.have_not_looked_at &&
+				!this.getObjectById(clauseObject.have_not_looked_at).have_looked_at)
 			return true;
 
 		return false;
@@ -270,5 +290,16 @@ export default class Story {
 		}
 
 		return defaultClause;
+	}
+
+	getStoryCompleteMessage() {
+		let o=this.getObjectById("complete");
+		if (!o)
+			return null;
+
+		let p=this.evalClause(o.state,StoryPredicate.cant());
+
+		if (p.isPossible())
+			return p.getMessage();
 	}
 }

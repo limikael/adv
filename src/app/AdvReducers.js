@@ -21,3 +21,9 @@ export function dismissMessage(state) {
 
 	return state;
 }
+
+export function restart(state) {
+	state.story.restart();
+
+	return state;
+}
