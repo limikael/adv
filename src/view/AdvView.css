@@ -55,8 +55,12 @@ body {
 
 .verb-selected .location-description a,
 .verb-selected .inventory a {
-	text-decoration: underline;
+	text-decoration: underline !important;
 	cursor: pointer;
+}
+
+.inventory a {
+	color: var(--color-primary) !important;
 }
 
 .modal-cover {
