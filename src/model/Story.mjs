@@ -174,7 +174,8 @@ export default class Story {
 		let res=[];
 
 		for (let object of this.objects) {
-			if (object.location==current.id)
+			if (object.type=="thing" &&
+					object.location==current.id)
 				res.push(object);
 		}
 
@@ -195,7 +196,8 @@ export default class Story {
 		let res=[];
 
 		for (let object of this.objects) {
-			if (object.location=="inventory")
+			if (object.type=="thing" &&
+					object.location=="inventory")
 				res.push(object);
 		}
 
@@ -297,7 +299,7 @@ export default class Story {
 		if (!o)
 			return null;
 
-		let p=this.evalClause(o.state,StoryPredicate.cant());
+		let p=this.evalClause(o.clause,StoryPredicate.cant());
 
 		if (p.isPossible())
 			return p.getMessage();

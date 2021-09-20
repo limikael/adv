@@ -1,0 +1,12 @@
+body.post-type-adventure #ed_toolbar {
+	display: none;
+}
+
+body.post-type-adventure .wp-editor-area {
+	margin-top: 0 !important;
+}
+
+body.post-type-adventure #wp-content-editor-container {
+	margin-top: 1em !important;
+}
+

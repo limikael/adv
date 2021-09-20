@@ -43,7 +43,7 @@ export default function LocationView(props) {
 		function linkThing(thing) {
 			return (
 				<a onclick={props.state.objectClick.bindArgs(thing.id)}>
-					{thing.indefinite}
+					{thing.getStageName()}
 				</a>
 			);
 		}
@@ -56,7 +56,7 @@ export default function LocationView(props) {
 		function linkDest(dest) {
 			return (
 				<a onclick={props.state.objectClick.bindArgs(dest.id)}>
-					{dest.name}
+					{dest.getStageName()}
 				</a>
 			);
 		}

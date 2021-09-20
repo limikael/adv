@@ -24,6 +24,10 @@ body {
 	}
 }
 
+.adv-game {
+	color: var(--color-black);
+}
+
 .btn:active,
 .btn.active {
 	filter: brightness(70%);

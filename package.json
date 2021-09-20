@@ -15,6 +15,7 @@
     "jasmine": "^3.9.0"
   },
   "dependencies": {
+    "js-yaml": "^4.1.0",
     "preact": "^10.5.14"
   }
 }

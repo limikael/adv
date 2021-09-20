@@ -3,17 +3,22 @@ export default class StoryObject {
 		for (let key in spec)
 			this[key]=spec[key];
 
-		if (!this.id)
-			throw new Error("Object needs an id");
+		if (this.thing) {
+			this.type="thing";
+			this.id=this.thing;
+		}
 
-		if (!this.type)
-			throw new Error("Object needs a type");
+		else if (this.location) {
+			this.type="location";
+			this.id=this.location;
 
-		switch (this.type) {
-			case "thing":
-				if (!this.inuse)
-					this.inuse="in use";
-				break;
+			if (!this.destinations)
+				this.destinations=[];
+		}
+
+		else if (this.state) {
+			this.type="state";
+			this.id=this.state;
 		}
 	}
 
@@ -22,9 +27,23 @@ export default class StoryObject {
 	}
 
 	getInventoryName() {
-		if (this.using)
-			return this.id+" ("+this.inuse+")";
+		if (this.using && this.inventory_name_in_use)
+			return this.inventory_name_in_use;
+
+		if (this.inventory_name)
+			return this.inventory_name;
 
 		return this.id;
+	}
+
+	getStageName() {
+		if (this.stage_name)
+			return this.stage_name;
+
+		if (this.type=="thing")
+			return "a "+this.id;
+
+		if (this.type=="location")
+			return "the "+this.id;
 	}
 }

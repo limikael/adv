@@ -34,18 +34,19 @@ export function useReducibleState(options) {
 		};
 	}
 
-	/*for (let workerName in options.workers) {
+	for (let workerName in options.workers) {
 		state[workerName]=function(...args) {
 			function update(newState) {
 				if (!newState)
-					return ref.current.state;
+					return ref.current;
 
-				ref.current.setState(JSON.parse(JSON.stringify(newState)));
+				ref.current=newState;
+				forceUpdate();
 			}
 
 			options.workers[workerName](update,...args);
 		};
-	}*/
+	}
 
 	return state;
 }
