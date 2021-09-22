@@ -1,0 +1,18 @@
+- location: bedroom
+  description: This is the bedroom.
+  destinations:
+    kitchen: 
+      and:
+      - if-using: lamp
+        else: You can't see where you are going 
+      - if-using: slippers
+        else: The floor is too cold
+
+- thing: lamp
+  location: bedroom
+
+- thing: slippers
+  location: bedroom
+  use:
+    if-having: slippers
+    else: You need to pick them up first.
