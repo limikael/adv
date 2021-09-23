@@ -19,7 +19,7 @@ export default function AdvView(props) {
 	}
 
 	return (
-		<Box pos={[0,0]} size={[20,30]} bg="dark" border="white">
+		<Box pos={[0,0]} size={[20,30]} bg="dark" border="dark">
 			{storyContent}
 		</Box>
 	);

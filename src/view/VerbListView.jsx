@@ -14,7 +14,7 @@ export default function VerbListView(props) {
 		verbButtons.push(
 			<Box pos={[0,i*2]}
 					size={[7,2]}
-					ocls={ocls} border="white" icls="text-center" text="white" bg="info"
+					ocls={ocls} border="info" icls="text-center" text="white" bg="info"
 					onclick={props.state.toggleCurrentVerb.bindArgs(verb)}>
 				{verbs[verb]}
 			</Box>

@@ -28,12 +28,12 @@ export default function AlertView(props) {
 	return (
 		<Fragment>
 			<div class="modal-cover"/>
-			<Box pos={[2,2]} size={[15,20]} border="dark" bg="light">
-				<Box pos={[0,0]} size={[14,16]} border="none" icls="location-description" ref={ref}>
+			<Box pos={[1,1]} size={[17,20]} border="light" bg="light">
+				<Box pos={[0,0]} size={[16,16]} border="none" icls="location-description" ref={ref}>
 					<p>{message}</p>
 				</Box>
 
-				<Box ocls="btn" pos={[2,16]} size={[10,2]} bg="info" border="dark" icls="text-center" text="white"
+				<Box ocls="btn" pos={[3,16]} size={[10,2]} bg="info" border="info" icls="text-center" text="white"
 						onclick={fn}>
 					{text}
 				</Box>
