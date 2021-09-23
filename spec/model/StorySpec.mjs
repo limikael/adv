@@ -1,10 +1,11 @@
 import Story from "../../src/model/Story.mjs";
 import StoryPredicate from "../../src/model/StoryPredicate.mjs";
-import morning_story from "../../src/app/morning_story.mjs";
+import yaml from "js-yaml";
+import fs from "fs";
 
 describe("story",()=>{
 	it("works",()=>{
-		let story=new Story(morning_story);
+		let story=new Story(yaml.load(fs.readFileSync("./res/morning_story.yaml")));
 
 		let bathroom=story.getObjectById("bathroom");
 		expect(bathroom.id).toEqual("bathroom");
@@ -42,17 +43,4 @@ describe("story",()=>{
 		story.execute("lookat","lamp");
 		expect(story.getMessage()).toContain("lamp is simple and elegant");
 	});
-
-	/*it("clause",()=>{
-		let story=new Story(morning_story);
-
-		let clause={
-			have_not_used: 'toothbrush',
-			fail: 'need to brush your teeth'
-		};
-
-		let p=story.evalClause(clause,StoryPredicate.can());
-
-		console.log(p.isPossible());
-	});*/
 })
