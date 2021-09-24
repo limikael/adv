@@ -6,15 +6,11 @@ require_once __DIR__."/../model/Adventure.php";
 
 class AdventureController extends Singleton {
 	protected function __construct() {
-		Adventure::registerPostType(array(
-			'supports'=>array('title','editor'),
-		));
-
+		Adventure::registerPostType();
+		Adventure::registerSaveHandler(array($this,"save"));
 		Adventure::registerContentHandler(array($this,"renderContent"));
+		Adventure::addMetaBox("Content",array($this,"contentMetaBox"));
 		Adventure::setupMessages();
-
-		add_filter('user_can_richedit',array($this,"user_can_richedit"));
-		add_filter('wp_editor_settings',array($this,"wp_editor_settings"));
 	}
 
 	public function renderContent($adventure) {
@@ -28,22 +24,32 @@ class AdventureController extends Singleton {
 			),admin_url("admin-ajax.php"))
 		);
 
-		return $t->display($vars);
+		$t->display($vars);
 	}
 
-	public function user_can_richedit($default) {
-		if( get_post_type() === 'adventure') 
-			return false;
+	public function contentMetaBox($adventure) {
+		$t=new Template(__DIR__."/../tpl/admin-content.tpl.php");
 
-		return $default;
+		$vars=array(
+			"content"=>$adventure->post_content
+		);
+
+		$t->display($vars);
 	}
 
-	public function wp_editor_settings($settings) {
-	    $current_screen = get_current_screen();
+	public function save($adventure) {
+		static $saving=FALSE;
 
-	    if ($current_screen && $current_screen->post_type=="adventure")
-		    $settings['media_buttons'] = false;
+		error_log("save...");
 
-		return $settings;
+		if (array_key_exists("adv-content",$_REQUEST) &&
+				!$saving) {
+			$this->inSaveHandler=TRUE;
+			$adventure->post_content=$_REQUEST["adv-content"];
+
+			$saving=TRUE;
+			$adventure->save();
+			$saving=FALSE;
+		}
 	}
 }

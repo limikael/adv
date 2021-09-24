@@ -32,6 +32,16 @@ class AdvPlugin extends Singleton {
 			$resUrl."/advgame.js",
 			array(),$this->data["Version"],true);
 
+		if (is_admin()) {
+			wp_enqueue_script("ace",
+				$resUrl."/ace.js",
+				array(),$this->data["Version"],true);
+
+			wp_enqueue_script("adv-admin",
+				$resUrl."/adv-admin.js",
+				array("ace","jquery"),$this->data["Version"],true);
+		}
+
 		if (!is_admin()) {
 			wp_enqueue_style("advgame-style",
 				$resUrl."/advgame.css",

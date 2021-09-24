@@ -5,6 +5,15 @@ namespace adv;
 require_once __DIR__."/Template.php";
 require_once __DIR__."/StringUtil.php";
 
+const COMPOSITE_PROPS=array(
+	"ID", "post_author", "post_date", "post_date_gmt",
+	"post_content", "post_title", "post_excerpt", "post_status",
+	"ping_status", "post_password", "post_name", "to_ping",
+	"pinged", "post_modified", "post_modified_gmt", "post_content_filtered",
+	"post_parent", "guid", "menu_order", "post_type", "post_mime_type",
+	"comment_count", "filter"
+);
+
 class ExtensiblePost {
 	private static $current;
 	public $post;
@@ -17,17 +26,17 @@ class ExtensiblePost {
 	}
 
 	public function __get($name) {
-		$compositeProps=array(
-			"ID", "post_author", "post_date", "post_date_gmt",
-			"post_content", "post_title", "post_excerpt", "post_status",
-			"ping_status", "post_password", "post_name", "to_ping",
-			"pinged", "post_modified", "post_modified_gmt", "post_content_filtered",
-			"post_parent", "guid", "menu_order", "post_type", "post_mime_type",
-			"comment_count", "filter"
-		);
-
-		if (in_array($name,$compositeProps))
+		if (in_array($name,COMPOSITE_PROPS))
 			return $this->post->$name;
+
+		throw new \Exception("Undefined: ".$name);
+	}
+
+	public function __set($name, $value) {
+		if (in_array($name,COMPOSITE_PROPS)) {
+			$this->post->$name=$value;
+			return;
+		}
 
 		throw new \Exception("Undefined: ".$name);
 	}
@@ -38,6 +47,10 @@ class ExtensiblePost {
 
 	public function setMeta($key, $value) {
 		update_post_meta($this->ID,$key,$value);
+	}
+
+	public function save() {
+		wp_update_post($this->post);
 	}
 
 	public static function findOne($p) {
@@ -156,7 +169,7 @@ class ExtensiblePost {
 			}
 		};
 
-		add_action("save_post",$f,10,3);
+		add_action("save_post",$f,30,3);
 	}
 
 	public static function useCleanSaveForm() {

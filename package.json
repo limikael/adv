@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build:ace-worker": "esbuild src/admin/worker-yaml.js --bundle --outfile=res/worker-yaml.js --target=es2017; cat src/admin/worker-yaml.deps.js >> res/worker-yaml.js",
+    "build:admin": "esbuild src/admin/adv-admin.js --bundle --outfile=res/adv-admin.js --target=es2017",
     "build": "esbuild src/advgame.jsx --minify --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017",
     "dev": "esbuild src/advgame.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017 --servedir=res",
     "test": "jasmine"
@@ -11,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "ace-builds": "^1.4.12",
     "esbuild": "^0.12.17",
     "jasmine": "^3.9.0"
   },
