@@ -1,6 +1,5 @@
-import Box from "../utils/Box.jsx";
 import {useRef, useLayoutEffect} from "react";
-import {useIsValueChanged} from "../utils/ReactUtil.jsx";
+import {useIsValueChanged, emStyle, accessibleLinkProps} from "../utils/ReactUtil.jsx";
 
 function enumerate(strings) {
 	let text=[];
@@ -37,12 +36,16 @@ export default function LocationView(props) {
 
 	text.push(<p>{props.state.story.getCurrentLocation().description}</p>);
 
-	let things=props.state.story.getThingsByCurrentLocation();
+	let accessible=null;
+	if (props.state.currentVerb)
+		accessible=accessibleLinkProps();
 
+	let things=props.state.story.getThingsByCurrentLocation();
 	if (things.length) {
 		function linkThing(thing) {
 			return (
-				<a onclick={props.state.objectClick.bindArgs(thing.id)}>
+				<a onclick={props.state.objectClick.bindArgs(thing.id)}
+						{...accessible}>
 					{thing.getStageName()}
 				</a>
 			);
@@ -55,7 +58,8 @@ export default function LocationView(props) {
 	if (destinations.length) {
 		function linkDest(dest) {
 			return (
-				<a onclick={props.state.objectClick.bindArgs(dest.id)}>
+				<a onclick={props.state.objectClick.bindArgs(dest.id)}
+						{...accessible}>
 					{dest.getStageName()}
 				</a>
 			);
@@ -66,15 +70,15 @@ export default function LocationView(props) {
 		</p>);
 	}
 
-	let cls="";
+	let cls="adv-location-description ";
 	if (props.state.currentVerb)
-		cls="verb-selected";
+		cls+="adv-verb-selected";
 
 	return (
-		<Box pos={[0,0]} size={[19,18]} border="white" bg="light" class={cls}>
-			<Box pos={[0,0]} size={[18,17]} border="none" icls="location-description" ref={ref}>
+		<div style={emStyle(0,0,19,18)} class="adv-bx bg-white text-black">
+			<div style={emStyle(0,0,18,17)} class={cls} ref={ref}>
 				{text}
-			</Box>
-		</Box>
+			</div>
+		</div>
 	);
 }

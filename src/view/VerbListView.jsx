@@ -1,33 +1,32 @@
-import Box from "../utils/Box.jsx";
+import {emStyle} from "../utils/ReactUtil.jsx";
 
 export default function VerbListView(props) {
 	let verbButtons=[];
 	let i=0;
 
 	let verbs=props.state.verbs;
+	let disabled=props.state.story.isAlertShowing();
 
 	for (let verb in verbs) {
-		let ocls="btn ";
+		let cls="bg-info adv-bx text-center text-white adv-btn ";
 		if (props.state.currentVerb==verb)
-			ocls+=" active";
+			cls+=" active";
 
 		verbButtons.push(
-			<Box pos={[0,i*2]}
-					size={[7,2]}
-					ocls={ocls} border="info" icls="text-center" text="white" bg="info"
-					onclick={props.state.toggleCurrentVerb.bindArgs(verb)}>
+			<button style={emStyle(0,i*2,7,2)}
+					class={cls}
+					onclick={props.state.toggleCurrentVerb.bindArgs(verb)}
+					disabled={disabled}>
 				{verbs[verb]}
-			</Box>
+			</button>
 		);
 
 		i++;
 	}
 
 	return (
-		<Fragment>
-			<Box pos={[0,18]} size={[8,11]} bg="background" border="white">
-				{verbButtons}
-			</Box>
-		</Fragment>
+		<div style={emStyle(0,18,8,11)} class="bg-body adv-bx">
+			{verbButtons}
+		</div>
 	);
 }

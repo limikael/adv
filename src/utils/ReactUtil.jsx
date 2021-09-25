@@ -86,3 +86,19 @@ export function emAppStyle() {
 		"height": "100%"
 	};
 }
+
+export function accessibleLinkProps() {
+	function onKeyDown(e) {
+		if (e.keyCode==13 || e.keyCode==32) {
+			e.stopPropagation();
+			e.preventDefault();
+
+			e.target.click();
+		}
+	}
+
+	return {
+		tabindex: "0",
+		onkeydown: onKeyDown
+	}
+}

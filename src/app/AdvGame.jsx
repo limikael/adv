@@ -1,10 +1,11 @@
 import ContentScaler from "../utils/ContentScaler.jsx";
 import AdvView from "../view/AdvView.jsx";
-import {useReducibleState} from "../utils/ReactUtil.jsx";
+import {useReducibleState, emAppStyle} from "../utils/ReactUtil.jsx";
 import * as AdvReducers from "./AdvReducers.js";
 import * as AdvComputers from "./AdvComputers.js";
 import * as AdvWorkers from "./AdvWorkers.js";
 import Story from "../model/Story.mjs";
+import "./AdvGame.css";
 
 export default function AdvGame(props) {
 	let verbs={
@@ -33,7 +34,11 @@ export default function AdvGame(props) {
 
 	return (
 		<ContentScaler width="200" height="300">
-			<AdvView state={state}/>
+			<div class="adv-main">
+				<div style={emAppStyle()}>
+					<AdvView state={state}/>
+				</div>
+			</div>
 		</ContentScaler>
 	);
 }

@@ -1,5 +1,5 @@
-import Box from "../utils/Box.jsx";
 import {useRef, useLayoutEffect} from "react";
+import {emStyle} from "../utils/ReactUtil.jsx";
 
 export default function AlertView(props) {
 	let ref=useRef();
@@ -27,17 +27,17 @@ export default function AlertView(props) {
 
 	return (
 		<Fragment>
-			<div class="modal-cover"/>
-			<Box pos={[1,1]} size={[17,20]} border="light" bg="light">
-				<Box pos={[0,0]} size={[16,16]} border="none" icls="location-description" ref={ref}>
+			<div class="adv-modal-cover bg-body"/>
+			<div style={emStyle(1,1,17,20)} class="bg-white adv-bx border-dark">
+				<div style={emStyle(0,0,16,16)} class="text-black adv-location-description" ref={ref}>
 					<p>{message}</p>
-				</Box>
+				</div>
 
-				<Box ocls="btn" pos={[3,16]} size={[10,2]} bg="info" border="info" icls="text-center" text="white"
+				<button style={emStyle(3,16,10,2)} class="adv-btn bg-info text-white adv-bx"
 						onclick={fn}>
 					{text}
-				</Box>
-			</Box>
+				</button>
+			</div>
 		</Fragment>
 	);
 }

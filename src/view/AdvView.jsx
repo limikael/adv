@@ -1,9 +1,8 @@
-import Box from "../utils/Box.jsx";
-import "./AdvView.css";
 import VerbListView from "./VerbListView.jsx";
 import LocationView from "./LocationView.jsx";
 import AlertView from "./AlertView.jsx";
 import InventoryView from "./InventoryView.jsx";
+import {emStyle} from "../utils/ReactUtil.jsx";
 
 export default function AdvView(props) {
 	let storyContent;
@@ -19,8 +18,9 @@ export default function AdvView(props) {
 	}
 
 	return (
-		<Box pos={[0,0]} size={[20,30]} bg="dark" border="dark">
+		<div style={emStyle(0,0,20,30)} class="bg-dark adv-bx">
 			{storyContent}
-		</Box>
+		</div>
+
 	);
 }

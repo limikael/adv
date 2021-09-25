@@ -304,4 +304,8 @@ export default class Story {
 		if (p.isPossible())
 			return p.getMessage();
 	}
+
+	isAlertShowing() {
+		return (this.getMessage() || this.getStoryCompleteMessage());
+	}
 }

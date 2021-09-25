@@ -9,6 +9,9 @@ export function toggleCurrentVerb(state, verb) {
 }
 
 export function objectClick(state, id) {
+	if (!state.currentVerb)
+		return state;
+
 	state.story.execute(state.currentVerb,id);
 
 	state.currentVerb=null;

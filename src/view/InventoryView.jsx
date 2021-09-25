@@ -1,25 +1,29 @@
-import Box from "../utils/Box.jsx";
+import {emStyle, accessibleLinkProps} from "../utils/ReactUtil.jsx";
 
 export default function InventoryView(props) {
 	let things=props.state.story.getInventoryThings();
 	let thingList=[];
 
+	let accessible=null;
+	if (props.state.currentVerb)
+		accessible=accessibleLinkProps();
+
 	for (let thing of things) {
 		thingList.push(
-			<a onclick={props.state.objectClick.bindArgs(thing.id)}>
+			<a onclick={props.state.objectClick.bindArgs(thing.id)}
+					{...accessible}>
 				{thing.getInventoryName()}
 			</a>
 		);
 	}
 
-	let cls="";
+	let cls="adv-bx bg-body text-warning adv-inventory";
 	if (props.state.currentVerb)
-		cls="verb-selected";
+		cls+=" adv-verb-selected";
 
 	return (
-		<Box pos={[8,18]} size={[11,11]} border="white" bg="background" 
-				icls="inventory" class={cls}>
+		<div style={emStyle(8,18,11,11)} class={cls}>
 			{thingList}
-		</Box>
+		</div>
 	);
 }
