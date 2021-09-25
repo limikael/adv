@@ -17,7 +17,7 @@ export default function InventoryView(props) {
 		);
 	}
 
-	let cls="adv-bx bg-body text-warning adv-inventory";
+	let cls="adv-bx bg-body text-primary adv-inventory";
 	if (props.state.currentVerb)
 		cls+=" adv-verb-selected";
 
