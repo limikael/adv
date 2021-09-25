@@ -62,3 +62,27 @@ export function useIsValueChanged(value) {
 
 	return change;
 }
+
+export function emStyle(x, y, w, h) {
+	return {
+		"left": (x+.2)+"em",
+		"top": (y+.2)+"em",
+		"width": (w-.4)+"em",
+		"height": (h-.4)+"em",
+		"box-sizing": "border-box",
+		"border-width": "0.1em",
+		"border-style": "solid",
+		"padding": "0.2em",
+		"line-height": "1em",
+		"margin": "0.2em",
+		"border-color": "transparent"
+	};
+}
+
+export function emAppStyle() {
+	return {
+		"margin": "-0.2em",
+		"width": "100%",
+		"height": "100%"
+	};
+}
