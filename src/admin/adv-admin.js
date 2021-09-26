@@ -15,6 +15,8 @@ jQuery(function($) {
 		});
 	}
 
-	console.log("yup...");	
+	$(".post-type-adventure .preview.button").click(function() {
+		window.localStorage.setItem("adventure-preview",$("[name=adv-content]").val());
+	});
 });
 

@@ -1,11 +1,11 @@
 import Story from "../../src/model/Story.mjs";
 import StoryPredicate from "../../src/model/StoryPredicate.mjs";
-import yaml from "js-yaml";
+import yaml from "yaml";
 import fs from "fs";
 
 describe("story",()=>{
 	it("works",()=>{
-		let story=new Story(yaml.load(fs.readFileSync("./spec/support/morning_story.yaml")));
+		let story=new Story(yaml.parse(fs.readFileSync("./spec/support/morning_story.yaml","utf-8")));
 
 		let bathroom=story.getObjectById("bathroom");
 		expect(bathroom.id).toEqual("bathroom");

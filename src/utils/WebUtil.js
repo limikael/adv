@@ -1,4 +1,4 @@
-import yaml from "js-yaml";
+import yaml from "yaml";
 
 export async function fetchEx(url, options={}) {
 	let res,fetchRes;
@@ -11,7 +11,7 @@ export async function fetchEx(url, options={}) {
 		switch (options.parse) {
 			case "yaml":
 				res=await fetchRes.text();
-				res=yaml.load(res);
+				res=yaml.parse(res);
 				break;
 
 			case "json":
