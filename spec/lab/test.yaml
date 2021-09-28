@@ -16,3 +16,23 @@
   use:
     if-having: slippers
     else: You need to pick them up first.
+
+- location: bedroom
+  goto:
+    - if:
+        and:
+        - target: bathroom
+        - 
+      then:
+        fail: can't do that
+      else:
+    - if:
+        not:
+          using: lamp
+      then:
+        fail: hello world
+    - cond:
+      - target: bathroom
+        then:
+      - target: bla
+        then
