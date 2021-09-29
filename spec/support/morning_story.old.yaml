@@ -1,5 +1,5 @@
 - location: bedroom
-  description: >
+  description: >-
     You are in your bedroom. It is the favourite part of your house because you
     can do what you like in there, and yet not get disturbed. There is a bed
     right in the middle of the squarish room, which takes up quite a bit of
@@ -8,14 +8,13 @@
     - bathroom
     - kitchen
   goto:
-    if-not-using: lamp
-    then-fail: >
-      The dark room is like a place out of time, a place to rest without
-      consequence. Yet the darkness makes you fumble and lose your sense of
-      direction.
-    else:
-      if-not-using: slippers
-      then-fail: >
+    - not_using: lamp
+      fail: >-
+        The dark room is like a place out of time, a place to rest without
+        consequence. Yet the darkness makes you fumble and lose your sense of
+        direction.
+    - not_using: slippers
+      fail: >-
         The cold from the floor moves in only to meet the warmth of your blood.
         You feel it wash over your skin, again and again, only to be met by the
         beat of your heart, again and again. You quickly pull your feet back in
@@ -30,8 +29,8 @@
   destinations:
     - bedroom
   goto:
-    if-not-using: slippers
-    then-fail: The floor is too cold.
+    not_using: slippers
+    fail: The floor is too cold.
 
 - location: kitchen
   description: >-
@@ -52,8 +51,8 @@
   destinations:
     - kitchen
   enter:
-    if-not-used: toothbrush
-    then-fail: >
+    have_not_used: toothbrush
+    fail: >-
       Good teeth can impact so many areas of life, including how you feel about
       yourself. The health of the brain impacts body health and social mobility,
       and that impacts family health. Everything is connected, we are all
@@ -65,37 +64,32 @@
     It is an Oral-B Pro-Health All-In-One Soft Bristle Toothbrush. One of the
     top 10 market leading toothbrushes for 2020.
   use:
-    if-have: toothbrush
-    then-succeed:
-      Swrrr... swwwrr.... Brushing sound... Your teeth are now clean...
-    else-fail:
-      Doesn''t really work, are you going to move your teeth to the toothbrush?
+    - dont_have: toothbrush
+      fail: 'Doesn''t really work, are you going to move your teeth to the toothbrush?'
+    - succeed: Swrrr... swwwrr.... Brushing sound... Your teeth are now clean...
 
 - thing: slippers
   description: A pair of slippers with rabbit ears.
   location: bedroom
   stage_name: a pair of slippers
+  inuse: on your feet
   use:
-    if-not-have: slippers
-    then-fail: In order to wear your slippers, you first need to pick them up.
-    else-succeed: You put the slippers on your feet
+    - dont_have: slippers
+      fail: 'In order to wear your slippers, you first need to pick them up.'
+    - succeed: You put the slippers on your feet
 
-  inventory_name:
-    if-using: slippers
-    then: slippers (on your feet)
-    else: slippers
+  inventory_name_in_use: slippers (on your feet)
 
 - thing: lamp
-  description: >
+  description: >-
     The sleek silver angle-poise lamp is simple and elegant - minimalist
     perhaps. You find it satisfyingly heavy too, a justification for the huge
     price tag.
   location: bedroom
   use:
-    succeed: >
+    succeed: >-
       Igniting the world anew with such brilliance! You can suddenly see where
       you are going.
-
   pickup:
     fail: It is too heavy to carry around.
 
@@ -103,10 +97,9 @@
   description: A quite ordinary shower.
   location: bathroom
   use:
-    if-have: slippers
-    then-fail: Your slippers would get all wet and soggy if you shower with them on.
-    else-succeed: Aaahhh... Nice!!!
-
+    - have: slippers
+      fail: Your slippers would get all wet and soggy if you shower with them on.
+    - succeed: Aaahhh... Nice!!!
   pickup:
     fail: It is too heavy to carry around.
 

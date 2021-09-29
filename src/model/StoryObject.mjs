@@ -26,6 +26,11 @@ export default class StoryObject {
 		this.story=story;
 	}
 
+	assertType(type) {
+		if (this.type!=type)
+			throw new Error(this.id+" is a "+this.type+", not a "+type);
+	}
+
 	getInventoryName() {
 		if (this.using && this.inventory_name_in_use)
 			return this.inventory_name_in_use;

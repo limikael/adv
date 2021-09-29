@@ -1,9 +1,24 @@
 import StoryObject from "./StoryObject.mjs";
 import StoryPredicate from "./StoryPredicate.mjs";
+import YaMachine from "../utils/YaMachine.mjs";
 
 export default class Story {
 	constructor(spec) {
 		this.spec=spec;
+
+		let functions={
+			have: (id)=>this.getThingById(id).location=="inventory",
+			in: (id)=>this.getCurrentLocation().id==id,
+			seen: (id)=>this.getThingById(id).have_looked_at,
+			using: (id)=>this.getThingById(id).using,
+			used: (id)=>this.getThingById(id).have_used,
+			fail: (message)=>StoryPredicate.fail(message),
+			succeed: (message)=>StoryPredicate.succeed(message),
+		};
+
+		this.yamachine=new YaMachine();
+		for (let f in functions)
+			this.yamachine.addFunction(f,functions[f].bind(this));
 
 		this.restart();
 	}
@@ -28,6 +43,13 @@ export default class Story {
 				return object;
 
 		return null;
+	}
+
+	getThingById(id) {
+		let o=this.getObjectById(id);
+		o.assertType("thing");
+
+		return o;
 	}
 
 	getCurrentLocation() {
@@ -77,19 +99,19 @@ export default class Story {
 			return;
 		}
 
-		let predicate=this.evalClause(current.goto,StoryPredicate.can());
+		let predicate=this.evalClause(current.goto,StoryPredicate.succeed());
 
 		if (predicate.getMessage())
 			this.currentMessage=predicate.getMessage();
 
-		if (predicate.isPossible()) {
+		if (predicate.getOutcome()) {
 			let dest=this.getObjectById(object.id);
-			let destPredicate=this.evalClause(dest.enter,StoryPredicate.can());
+			let destPredicate=this.evalClause(dest.enter,StoryPredicate.succeed());
 
 			if (destPredicate.getMessage())
 				this.currentMessage=destPredicate.getMessage();
 
-			if (destPredicate.isPossible())
+			if (destPredicate.getOutcome())
 				this.currentLocationId=object.id;
 		}
 	}
@@ -111,13 +133,13 @@ export default class Story {
 			return;
 		}
 
-		let def=StoryPredicate.cant("It is not useful.");
+		let def=StoryPredicate.succeed("It is not useful.");
 		let predicate=this.evalClause(object.use,def);
 
 		if (predicate.getMessage())
 			this.currentMessage=predicate.getMessage();
 
-		if (predicate.isPossible()) {
+		if (predicate.getOutcome()) {
 			object.using=true;
 			object.have_used=true;
 		}
@@ -129,13 +151,13 @@ export default class Story {
 			return;
 		}
 
-		let def=StoryPredicate.can("Taken.");
+		let def=StoryPredicate.succeed("Taken.");
 		let predicate=this.evalClause(object.pickup,def);
 
 		if (predicate.getMessage())
 			this.currentMessage=predicate.getMessage();
 
-		if (predicate.isPossible())
+		if (predicate.getOutcome())
 			object.location="inventory";
 	}
 
@@ -151,7 +173,7 @@ export default class Story {
 		if (predicate.getMessage())
 			this.currentMessage=predicate.getMessage();
 
-		if (predicate.isPossible()) {
+		if (predicate.getOutcome()) {
 			object.using=false;
 			object.location=this.currentLocationId;
 		}
@@ -204,94 +226,15 @@ export default class Story {
 		return res;
 	}
 
-	evalClauseObject(clauseObject) {
-		let args=[
-			"fail","succeed",
-			"have","dont_have","using","not_using",
-			"have_used","have_not_used","is_in",
-			"have_looked_at","have_not_looked_at"
-		];
+	evalClause(clause, defaultValue) {
+		let v=defaultValue;
 
-		for (let k in clauseObject)
-			if (!args.includes(k))
-				throw new Error("Unknown arg in clause: "+k);
+		if (clause!==undefined)
+			v=this.yamachine.preprocessAndEval(clause);
 
-		if (!clauseObject.have &&
-				!clauseObject.dont_have &&
-				!clauseObject.using &&
-				!clauseObject.not_using &&
-				!clauseObject.have_used &&
-				!clauseObject.have_not_used &&
-				!clauseObject.is_in &&
-				!clauseObject.have_looked_at &&
-				!clauseObject.have_not_looked_at)
-			return true;
+		v=StoryPredicate.of(v);
 
-		if (clauseObject.have &&
-				this.getObjectById(clauseObject.have).location=="inventory")
-			return true;
-
-		if (clauseObject.dont_have &&
-				this.getObjectById(clauseObject.dont_have).location!="inventory")
-			return true;
-
-		if (clauseObject.using &&
-				this.getObjectById(clauseObject.using).using)
-			return true;
-
-		if (clauseObject.not_using &&
-				!this.getObjectById(clauseObject.not_using).using)
-			return true;
-
-		if (clauseObject.have_used &&
-				this.getObjectById(clauseObject.have_used).have_used)
-			return true;
-
-		if (clauseObject.have_not_used &&
-				!this.getObjectById(clauseObject.have_not_used).have_used)
-			return true;
-
-		if (clauseObject.is_in &&
-				this.currentLocationId==clauseObject.is_in)
-			return true;
-
-		if (clauseObject.have_looked_at &&
-				this.getObjectById(clauseObject.have_looked_at).have_looked_at)
-			return true;
-
-		if (clauseObject.have_not_looked_at &&
-				!this.getObjectById(clauseObject.have_not_looked_at).have_looked_at)
-			return true;
-
-		return false;
-	}
-
-	evalClause(clause, defaultClause) {
-		if (clause instanceof Array) {
-			for (let subClause of clause) {
-				let subPred=this.evalClause(subClause);
-				if (subPred)
-					return subPred;
-			}
-
-			return defaultClause;
-		}
-
-		if (clause=="succeed")
-			return StoryPredicate.can();
-
-		if (clause=="fail")
-			return StoryPredicate.cant();
-
-		if (clause && this.evalClauseObject(clause)) {
-			if (clause.fail)
-				return StoryPredicate.cant(clause.fail);
-
-			if (clause.succeed)
-				return StoryPredicate.can(clause.succeed);
-		}
-
-		return defaultClause;
+		return v;
 	}
 
 	getStoryCompleteMessage() {
@@ -301,7 +244,7 @@ export default class Story {
 
 		let p=this.evalClause(o.clause,StoryPredicate.cant());
 
-		if (p.isPossible())
+		if (p.getOutcome())
 			return p.getMessage();
 	}
 

@@ -1,22 +1,35 @@
 export default class StoryPredicate {
-	constructor(succeed, message) {
-		this.succeed=succeed;
+	constructor(outcome, message) {
+		this.outcome=outcome;
 		this.message=message;
 	}
 
-	isPossible() {
-		return this.succeed;
+	getOutcome() {
+		return this.outcome;
 	}
 
 	getMessage() {
 		return this.message;
 	}
 
-	static can(message) {
+	static succeed(message) {
 		return new StoryPredicate(true,message);
 	}
 
-	static cant(message) {
+	static fail(message) {
 		return new StoryPredicate(false,message);
+	}
+
+	static of(v) {
+		if (v instanceof StoryPredicate)
+			return v;
+
+		if (typeof v=="boolean")
+			return new StoryPredicate(v,null);
+
+		if (v===undefined)
+			return new StoryPredicate(false,null);
+
+		return new StoryPredicate(true,v);
 	}
 }

@@ -1,6 +1,17 @@
 export default class YaMachine {
 	constructor() {
+		this.special={
+			if: this.if.bind(this),
+			and: this.and.bind(this),
+			or: this.or.bind(this)
+		}
+
 		this.functions={};
+		this.addFunction("not",(s)=>!this.castToBool(s));
+	}
+
+	castToBool(value) {
+		return value;
 	}
 
 	preprocess(clause) {
@@ -42,12 +53,6 @@ export default class YaMachine {
 
 	addFunction(name, fn) {
 		this.functions[name]=fn;
-
-		this.special={
-			if: this.if.bind(this),
-			and: this.and.bind(this),
-			or: this.or.bind(this)
-		}
 	}
 
 	and(clause) {
@@ -56,7 +61,7 @@ export default class YaMachine {
 
 		let res=true;
 		for (let argPart of clause.and)
-			res=(res && this.eval(argPart));
+			res=(res && this.castToBool(this.eval(argPart)));
 
 		return res;
 	}
@@ -67,13 +72,13 @@ export default class YaMachine {
 
 		let res=false;
 		for (let argPart of clause.or)
-			res=(res || this.eval(argPart));
+			res=(res || this.castToBool(this.eval(argPart)));
 
 		return res;
 	}
 
 	if(clause) {
-		let res=this.eval(clause.if);
+		let res=this.castToBool(this.eval(clause.if));
 		if (res && clause.then)
 			return this.eval(clause.then);
 
@@ -110,5 +115,9 @@ export default class YaMachine {
 		}
 
 		throw new Error("Unknown form: "+JSON.stringify(clause));
+	}
+
+	preprocessAndEval(clause) {
+		return this.eval(this.preprocess(clause));
 	}
 }

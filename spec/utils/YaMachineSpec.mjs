@@ -1,4 +1,4 @@
-import YaMachine from "../../src/model/YaMachine.mjs";
+import YaMachine from "../../src/utils/YaMachine.mjs";
 import yaml from "yaml";
 import fs from "fs";
 
