@@ -32,23 +32,18 @@ export default class StoryObject {
 	}
 
 	getInventoryName() {
-		if (this.using && this.inventory_name_in_use)
-			return this.inventory_name_in_use;
-
 		if (this.inventory_name)
-			return this.inventory_name;
+			return this.story.yaMachine.preprocessAndEval(this.inventory_name);
 
-		return this.id;
+		else
+			return this.id;
 	}
 
 	getStageName() {
 		if (this.stage_name)
-			return this.stage_name;
+			return this.story.yaMachine.preprocessAndEval(this.stage_name);
 
-		if (this.type=="thing")
-			return "a "+this.id;
-
-		if (this.type=="location")
-			return "the "+this.id;
+		else
+			return this.id;
 	}
 }

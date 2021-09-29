@@ -16,9 +16,9 @@ export default class Story {
 			succeed: (message)=>StoryPredicate.succeed(message),
 		};
 
-		this.yamachine=new YaMachine();
+		this.yaMachine=new YaMachine();
 		for (let f in functions)
-			this.yamachine.addFunction(f,functions[f].bind(this));
+			this.yaMachine.addFunction(f,functions[f].bind(this));
 
 		this.restart();
 	}
@@ -230,7 +230,7 @@ export default class Story {
 		let v=defaultValue;
 
 		if (clause!==undefined)
-			v=this.yamachine.preprocessAndEval(clause);
+			v=this.yaMachine.preprocessAndEval(clause);
 
 		v=StoryPredicate.of(v);
 
