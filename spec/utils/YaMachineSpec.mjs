@@ -24,10 +24,46 @@ describe("YaMachine",()=>{
           else: world
         `);
 
-		expect(y.eval(y.preprocess(p))).toEqual("hello");
+		expect(y.preprocessAndEval(p)).toEqual("hello");
 //		let q=yaml.parse(`if-not-having: test`);
 
 //		console.log(JSON.stringify(y.preprocess(p)));
 //		console.log(JSON.stringify(y.preprocess([{"not-having": "test"}])));
-	})
+	});
+
+	it("can handle return",()=>{
+		let y=new YaMachine();
+
+		let calls=0;
+		y.addFunction("hello",(s)=>{
+			calls++;
+			return s;
+		});
+
+		let p=yaml.parse(`
+- if-hello: first
+  then-return: 1
+  else: 2
+- hello: second
+`)
+//		console.log(y.preprocess(p));
+
+		expect(y.preprocessAndEval(p)).toEqual(1);
+		expect(calls).toEqual(1);
+	});
+
+	it("checked for invalid keys",()=>{
+		let y=new YaMachine();
+
+		y.addFunction("hello",(s)=>s);
+
+		let p=yaml.parse(`
+- hello: test
+  then: 1
+  else: 2
+`)
+		expect(()=>{
+			y.preprocessAndEval(p);
+		}).toThrow();
+	});
 })
