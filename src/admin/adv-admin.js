@@ -15,8 +15,13 @@ jQuery(function($) {
 		});
 	}
 
-	$(".post-type-adventure .preview.button").click(function() {
+	function saveToLocalStorage() {
 		window.localStorage.setItem("adventure-preview",$("[name=adv-content]").val());
-	});
+	}
+
+	$(".post-type-adventure .preview.button").click(saveToLocalStorage);
+	$(".post-type-adventure .preview.button").contextmenu(saveToLocalStorage);
+	$(".post-type-adventure #titlediv a").click(saveToLocalStorage);
+	$(".post-type-adventure #titlediv a").contextmenu(saveToLocalStorage);
 });
 

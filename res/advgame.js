@@ -6827,7 +6827,7 @@ ${cbNode.commentBefore}` : cb;
         onclick: props.state.objectClick.bindArgs(thing.id)
       }, accessible), thing.getInventoryName()));
     }
-    let cls = "adv-bx bg-body text-primary adv-inventory";
+    let cls = "adv-bx bg-body text-warning adv-inventory";
     if (props.state.currentVerb)
       cls += " adv-verb-selected";
     return /* @__PURE__ */ v("div", {
@@ -6953,41 +6953,182 @@ ${cbNode.commentBefore}` : cb;
     setStory(story) {
       this.story = story;
     }
+    assertType(type) {
+      if (this.type != type)
+        throw new Error(this.id + " is a " + this.type + ", not a " + type);
+    }
     getInventoryName() {
-      if (this.using && this.inventory_name_in_use)
-        return this.inventory_name_in_use;
       if (this.inventory_name)
-        return this.inventory_name;
-      return this.id;
+        return this.story.yaMachine.preprocessAndEval(this.inventory_name);
+      else
+        return this.id;
     }
     getStageName() {
       if (this.stage_name)
-        return this.stage_name;
-      if (this.type == "thing")
-        return "a " + this.id;
-      if (this.type == "location")
-        return "the " + this.id;
+        return this.story.yaMachine.preprocessAndEval(this.stage_name);
+      else
+        return this.id;
     }
   };
 
   // src/model/StoryPredicate.mjs
   init_preact_shim();
   var StoryPredicate = class {
-    constructor(succeed, message) {
-      this.succeed = succeed;
+    constructor(outcome, message) {
+      this.outcome = outcome;
       this.message = message;
     }
-    isPossible() {
-      return this.succeed;
+    getOutcome() {
+      return this.outcome;
     }
     getMessage() {
       return this.message;
     }
-    static can(message) {
+    static succeed(message) {
       return new StoryPredicate(true, message);
     }
-    static cant(message) {
+    static fail(message) {
       return new StoryPredicate(false, message);
+    }
+    static of(v3) {
+      if (v3 instanceof StoryPredicate)
+        return v3;
+      if (typeof v3 == "boolean")
+        return new StoryPredicate(v3, null);
+      if (v3 === void 0)
+        return new StoryPredicate(false, null);
+      return new StoryPredicate(true, v3);
+    }
+  };
+
+  // src/utils/YaMachine.mjs
+  init_preact_shim();
+  var YaMachineContext = class {
+    isReturned() {
+      return this.returned;
+    }
+    setReturnValue(v3) {
+      this.returned = true;
+      this.returnValue = v3;
+    }
+    getReturnValue(v3) {
+      return this.returnValue;
+    }
+  };
+  var YaMachine = class {
+    constructor() {
+      this.special = {
+        if: this.if.bind(this),
+        and: this.and.bind(this),
+        or: this.or.bind(this),
+        return: this.return.bind(this)
+      };
+      this.functions = {};
+      this.addFunction("not", (s4) => !this.castToBool(s4));
+    }
+    castToBool(value) {
+      return value;
+    }
+    assertValidKeys(o4, validKeys) {
+      let fn = Object.keys(o4)[0];
+      for (let key in o4)
+        if (!validKeys.includes(key))
+          throw new Error("Unknown key " + key + " for call to " + fn);
+    }
+    preprocess(clause) {
+      if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number")
+        return clause;
+      else if (clause instanceof Array) {
+        let res = [];
+        for (let subClause of clause)
+          res.push(this.preprocess(subClause));
+        return res;
+      } else if (typeof clause == "object") {
+        let res = {};
+        for (let k3 in clause) {
+          let a4 = k3.split("-");
+          let o4 = this.preprocess(clause[k3]);
+          for (let i4 = a4.length - 1; i4 >= 1; i4--) {
+            let newO = {};
+            newO[a4[i4]] = o4;
+            o4 = newO;
+          }
+          res[a4[0]] = o4;
+        }
+        return res;
+      } else
+        throw new Error("Unknown form: " + JSON.stringify(clause));
+    }
+    addFunction(name, fn) {
+      this.functions[name] = fn;
+    }
+    and(clause, context) {
+      this.assertValidKeys(clause, ["and"]);
+      if (context.isReturned())
+        return context.getReturnValue();
+      if (!(clause.and instanceof Array))
+        throw new Error("and needs an array");
+      let res = true;
+      for (let argPart of clause.and)
+        res = res && this.castToBool(this.eval(argPart, context));
+      return res;
+    }
+    or(clause, context) {
+      this.assertValidKeys(clause, ["or"]);
+      if (context.isReturned())
+        return context.getReturnValue();
+      if (!(clause.or instanceof Array))
+        throw new Error("or needs an array");
+      let res = false;
+      for (let argPart of clause.or)
+        res = res || this.castToBool(this.eval(argPart, context));
+      return res;
+    }
+    if(clause, context) {
+      this.assertValidKeys(clause, ["if", "then", "else"]);
+      if (context.isReturned())
+        return context.getReturnValue();
+      let res = this.castToBool(this.eval(clause.if, context));
+      if (res && clause.then)
+        return this.eval(clause.then, context);
+      if (!res && clause.else)
+        return this.eval(clause.else, context);
+      return void 0;
+    }
+    return(clause, context) {
+      this.assertValidKeys(clause, ["return"]);
+      if (context.isReturned())
+        return context.getReturnValue();
+      context.setReturnValue(this.eval(clause.return, context));
+      return context.getReturnValue();
+    }
+    eval(clause, context) {
+      if (!context)
+        context = new YaMachineContext();
+      if (context.isReturned())
+        return context.getReturnValue();
+      if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number")
+        return clause;
+      if (clause instanceof Array) {
+        let res;
+        for (let subClause of clause)
+          res = this.eval(subClause, context);
+        return res;
+      }
+      if (typeof clause == "object") {
+        let fn = Object.keys(clause)[0];
+        if (this.special[fn])
+          return this.special[fn](clause, context);
+        if (this.functions[fn]) {
+          this.assertValidKeys(clause, [fn]);
+          let arg = clause[fn];
+          return this.functions[fn](this.eval(arg, context));
+        }
+      }
+      throw new Error("Unknown form: " + JSON.stringify(clause));
+    }
+    preprocessAndEval(clause) {
+      return this.eval(this.preprocess(clause));
     }
   };
 
@@ -7006,6 +7147,18 @@ ${cbNode.commentBefore}` : cb;
         this.currentMessage = null;
       });
       this.spec = spec;
+      let functions = {
+        have: (id) => this.getThingById(id).location == "inventory",
+        in: (id) => this.getCurrentLocation().id == id,
+        seen: (id) => this.getThingById(id).have_looked_at,
+        using: (id) => this.getThingById(id).using,
+        used: (id) => this.getThingById(id).have_used,
+        fail: (message) => StoryPredicate.fail(message),
+        succeed: (message) => StoryPredicate.succeed(message)
+      };
+      this.yaMachine = new YaMachine();
+      for (let f4 in functions)
+        this.yaMachine.addFunction(f4, functions[f4].bind(this));
       this.restart();
     }
     getObjectById(id) {
@@ -7013,6 +7166,11 @@ ${cbNode.commentBefore}` : cb;
         if (object.id == id)
           return object;
       return null;
+    }
+    getThingById(id) {
+      let o4 = this.getObjectById(id);
+      o4.assertType("thing");
+      return o4;
     }
     getCurrentLocation() {
       return this.getObjectById(this.currentLocationId);
@@ -7050,15 +7208,15 @@ ${cbNode.commentBefore}` : cb;
         this.message("Can't go there");
         return;
       }
-      let predicate = this.evalClause(current.goto, StoryPredicate.can());
+      let predicate = this.evalClause(current.goto, StoryPredicate.succeed());
       if (predicate.getMessage())
         this.currentMessage = predicate.getMessage();
-      if (predicate.isPossible()) {
+      if (predicate.getOutcome()) {
         let dest = this.getObjectById(object.id);
-        let destPredicate = this.evalClause(dest.enter, StoryPredicate.can());
+        let destPredicate = this.evalClause(dest.enter, StoryPredicate.succeed());
         if (destPredicate.getMessage())
           this.currentMessage = destPredicate.getMessage();
-        if (destPredicate.isPossible())
+        if (destPredicate.getOutcome())
           this.currentLocationId = object.id;
       }
     }
@@ -7075,11 +7233,11 @@ ${cbNode.commentBefore}` : cb;
         this.message("Can't use that");
         return;
       }
-      let def = StoryPredicate.cant("It is not useful.");
+      let def = StoryPredicate.succeed("It is not useful.");
       let predicate = this.evalClause(object.use, def);
       if (predicate.getMessage())
         this.currentMessage = predicate.getMessage();
-      if (predicate.isPossible()) {
+      if (predicate.getOutcome()) {
         object.using = true;
         object.have_used = true;
       }
@@ -7089,11 +7247,11 @@ ${cbNode.commentBefore}` : cb;
         this.message("Can't pick that up");
         return;
       }
-      let def = StoryPredicate.can("Taken.");
+      let def = StoryPredicate.succeed("Taken.");
       let predicate = this.evalClause(object.pickup, def);
       if (predicate.getMessage())
         this.currentMessage = predicate.getMessage();
-      if (predicate.isPossible())
+      if (predicate.getOutcome())
         object.location = "inventory";
     }
     drop(object) {
@@ -7105,7 +7263,7 @@ ${cbNode.commentBefore}` : cb;
       let predicate = this.evalClause(object.drop, def);
       if (predicate.getMessage())
         this.currentMessage = predicate.getMessage();
-      if (predicate.isPossible()) {
+      if (predicate.getOutcome()) {
         object.using = false;
         object.location = this.currentLocationId;
       }
@@ -7143,72 +7301,19 @@ ${cbNode.commentBefore}` : cb;
       }
       return res;
     }
-    evalClauseObject(clauseObject) {
-      let args = [
-        "fail",
-        "succeed",
-        "have",
-        "dont_have",
-        "using",
-        "not_using",
-        "have_used",
-        "have_not_used",
-        "is_in",
-        "have_looked_at",
-        "have_not_looked_at"
-      ];
-      for (let k3 in clauseObject)
-        if (!args.includes(k3))
-          throw new Error("Unknown arg in clause: " + k3);
-      if (!clauseObject.have && !clauseObject.dont_have && !clauseObject.using && !clauseObject.not_using && !clauseObject.have_used && !clauseObject.have_not_used && !clauseObject.is_in && !clauseObject.have_looked_at && !clauseObject.have_not_looked_at)
-        return true;
-      if (clauseObject.have && this.getObjectById(clauseObject.have).location == "inventory")
-        return true;
-      if (clauseObject.dont_have && this.getObjectById(clauseObject.dont_have).location != "inventory")
-        return true;
-      if (clauseObject.using && this.getObjectById(clauseObject.using).using)
-        return true;
-      if (clauseObject.not_using && !this.getObjectById(clauseObject.not_using).using)
-        return true;
-      if (clauseObject.have_used && this.getObjectById(clauseObject.have_used).have_used)
-        return true;
-      if (clauseObject.have_not_used && !this.getObjectById(clauseObject.have_not_used).have_used)
-        return true;
-      if (clauseObject.is_in && this.currentLocationId == clauseObject.is_in)
-        return true;
-      if (clauseObject.have_looked_at && this.getObjectById(clauseObject.have_looked_at).have_looked_at)
-        return true;
-      if (clauseObject.have_not_looked_at && !this.getObjectById(clauseObject.have_not_looked_at).have_looked_at)
-        return true;
-      return false;
-    }
-    evalClause(clause, defaultClause) {
-      if (clause instanceof Array) {
-        for (let subClause of clause) {
-          let subPred = this.evalClause(subClause);
-          if (subPred)
-            return subPred;
-        }
-        return defaultClause;
-      }
-      if (clause == "succeed")
-        return StoryPredicate.can();
-      if (clause == "fail")
-        return StoryPredicate.cant();
-      if (clause && this.evalClauseObject(clause)) {
-        if (clause.fail)
-          return StoryPredicate.cant(clause.fail);
-        if (clause.succeed)
-          return StoryPredicate.can(clause.succeed);
-      }
-      return defaultClause;
+    evalClause(clause, defaultValue) {
+      let v3 = defaultValue;
+      if (clause !== void 0)
+        v3 = this.yaMachine.preprocessAndEval(clause);
+      v3 = StoryPredicate.of(v3);
+      return v3;
     }
     getStoryCompleteMessage() {
       let o4 = this.getObjectById("complete");
       if (!o4)
         return null;
       let p4 = this.evalClause(o4.clause, StoryPredicate.cant());
-      if (p4.isPossible())
+      if (p4.getOutcome())
         return p4.getMessage();
     }
     isAlertShowing() {

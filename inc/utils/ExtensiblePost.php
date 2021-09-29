@@ -162,7 +162,8 @@ class ExtensiblePost {
 			if ($post &&
 					$post->post_type==self::post_type() &&
 					$update &&
-					array_key_exists("save",$_POST)) {
+					array_key_exists("action",$_POST) &&
+					$_POST["action"]=="editpost") {
 				$class=get_called_class();
 				$extensiblePost=new $class($post);
 				$saveHandler($extensiblePost);
