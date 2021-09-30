@@ -1,0 +1,41 @@
+- location: Foyer
+  destinations:
+  - Cloakroom
+  - Bar
+
+- location: Cloak Room
+
+- location: Bar
+
+- path:
+  from: Foyer
+  to: Cloak Room
+
+- thing: Message
+  description:
+  - if-wearing: cloak
+    then-return:
+      You can't see the message, it is too dark
+  - if: message disturbed
+    then-return:
+      You die
+  - You win
+
+- thing: Cloak
+  description: >
+    Upon examining the cloak, you see that it is light absorbant.
+
+- thing: Toothbrush
+  use:
+  - if-not-having: Toothbrush
+    then-fail: You can't us it if you don't have it
+
+  - set: teeth clean
+  - Your teeth are now clean
+
+  - if-not: teeth clean
+    then-fail: 
+
+- state: teeth clean
+  is:
+  - if-not-having:
