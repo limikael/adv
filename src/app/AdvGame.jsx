@@ -8,17 +8,8 @@ import Story from "../model/Story.mjs";
 import "./AdvGame.css";
 
 export default function AdvGame(props) {
-	let verbs={
-		"goto": "GO TO",
-		"pickup": "PICK UP",
-		"lookat": "LOOK AT",
-		"use": "USE",
-		"drop": "DROP"
-	};
-
 	let initialState={
 		currentVerb: null,
-		verbs: verbs,
 		...props
 	};
 

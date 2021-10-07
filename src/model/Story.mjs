@@ -1,6 +1,7 @@
 import StoryObject from "./StoryObject.mjs";
 import StoryPredicate from "./StoryPredicate.mjs";
 import YaMachine from "../utils/YaMachine.mjs";
+import {createVerbs} from "./StoryVerbs.mjs";
 
 export default class Story {
 	constructor(spec) {
@@ -20,7 +21,17 @@ export default class Story {
 		for (let f in functions)
 			this.yaMachine.addFunction(f,functions[f].bind(this));
 
+		this.verbsById={};
+		for (let verb of createVerbs()) {
+			verb.setStory(this);
+			this.verbsById[verb.id]=verb;
+		}
+
 		this.restart();
+	}
+
+	getVerbs() {
+		return Object.values(this.verbsById);
 	}
 
 	restart=()=>{
@@ -59,124 +70,7 @@ export default class Story {
 	execute(verbId, objectId) {
 		let o=this.getObjectById(objectId);
 
-		switch (verbId) {
-			case "goto":
-				this.goto(o);
-				break;
-
-			case "use":
-				this.use(o);
-				break;
-
-			case "pickup":
-				this.pickup(o);
-				break;
-
-			case "lookat":
-				this.lookat(o);
-				break;
-
-			case "drop":
-				this.drop(o);
-				break;
-
-			default:
-				throw new Error("Unknown verb");
-				break;
-		}
-	}
-
-	goto(object) {
-		if (object.type!="location") {
-			this.message("Can't go there");
-			return;
-		}
-
-		let current=this.getCurrentLocation();
-
-		if (!current.destinations.includes(object.id)) {
-			this.message("Can't go there");
-			return;
-		}
-
-		let predicate=this.evalClause(current.goto,StoryPredicate.succeed());
-
-		if (predicate.getMessage())
-			this.currentMessage=predicate.getMessage();
-
-		if (predicate.getOutcome()) {
-			let dest=this.getObjectById(object.id);
-			let destPredicate=this.evalClause(dest.enter,StoryPredicate.succeed());
-
-			if (destPredicate.getMessage())
-				this.currentMessage=destPredicate.getMessage();
-
-			if (destPredicate.getOutcome())
-				this.currentLocationId=object.id;
-		}
-	}
-
-	lookat(object) {
-		if (object.type!="thing" || !object.description) {
-			this.message("Nothing interesting about it.");
-			return;
-		}
-
-		object.have_looked_at=true;
-
-		this.message(object.description);
-	}
-
-	use(object) {
-		if (object.type!="thing") {
-			this.message("Can't use that");
-			return;
-		}
-
-		let def=StoryPredicate.succeed("It is not useful.");
-		let predicate=this.evalClause(object.use,def);
-
-		if (predicate.getMessage())
-			this.currentMessage=predicate.getMessage();
-
-		if (predicate.getOutcome()) {
-			object.using=true;
-			object.have_used=true;
-		}
-	}
-
-	pickup(object) {
-		if (object.type!="thing") {
-			this.message("Can't pick that up");
-			return;
-		}
-
-		let def=StoryPredicate.succeed("Taken.");
-		let predicate=this.evalClause(object.pickup,def);
-
-		if (predicate.getMessage())
-			this.currentMessage=predicate.getMessage();
-
-		if (predicate.getOutcome())
-			object.location="inventory";
-	}
-
-	drop(object) {
-		if (object.type!="thing") {
-			this.message("Can't drop that.");
-			return;
-		}
-
-		let def=StoryPredicate.can("Dropped.");
-		let predicate=this.evalClause(object.drop,def);
-
-		if (predicate.getMessage())
-			this.currentMessage=predicate.getMessage();
-
-		if (predicate.getOutcome()) {
-			object.using=false;
-			object.location=this.currentLocationId;
-		}
+		this.verbsById[verbId].execute(o);
 	}
 
 	message(message) {
