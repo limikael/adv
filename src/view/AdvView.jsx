@@ -2,6 +2,7 @@ import VerbListView from "./VerbListView.jsx";
 import LocationView from "./LocationView.jsx";
 import AlertView from "./AlertView.jsx";
 import InventoryView from "./InventoryView.jsx";
+import HeaderView from "./HeaderView.jsx";
 import {emStyle} from "../utils/ReactUtil.jsx";
 
 export default function AdvView(props) {
@@ -9,6 +10,7 @@ export default function AdvView(props) {
 	if (props.state.story) {
 		storyContent=(
 			<Fragment>
+				<HeaderView state={props.state} />
 				<LocationView state={props.state} />
 				<InventoryView state={props.state} />
 				<VerbListView state={props.state} />

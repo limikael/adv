@@ -37,11 +37,23 @@ export default class Story {
 	restart=()=>{
 		let spec=JSON.parse(JSON.stringify(this.spec));
 
+		this.objectives=[];
 		this.objects=[];
+
 		for (let objectSpec of spec) {
-			let o=new StoryObject(objectSpec);
-			o.setStory(this);
-			this.objects.push(o);
+			let type=Object.keys(objectSpec)[0];
+
+			switch (type) {
+				case "objectives":
+					this.objectives=objectSpec.objectives;
+					break;
+
+				default:
+					let o=new StoryObject(objectSpec);
+					o.setStory(this);
+					this.objects.push(o);
+					break;
+			}			
 		}
 
 		this.currentLocationId=this.objects[0].id;
@@ -131,18 +143,26 @@ export default class Story {
 		return v;
 	}
 
-	getStoryCompleteMessage() {
-		let o=this.getObjectById("complete");
-		if (!o)
-			return null;
-
-		let p=this.evalClause(o.clause,StoryPredicate.cant());
-
-		if (p.getOutcome())
-			return p.getMessage();
+	isAlertShowing() {
+		return (this.getMessage() || this.isComplete());
 	}
 
-	isAlertShowing() {
-		return (this.getMessage() || this.getStoryCompleteMessage());
+	getCompletePercentage() {
+		if (!this.objectives.length)
+			return 0;
+
+		let complete=0;
+		for (let objectiveClause of this.objectives) {
+			let predicate=this.evalClause(objectiveClause);
+			if (predicate.getOutcome())
+				complete++;
+		}
+
+		let percentage=Math.round(100*complete/this.objectives.length);
+		return percentage;
+	}
+
+	isComplete() {
+		return (this.getCompletePercentage()==100)
 	}
 }

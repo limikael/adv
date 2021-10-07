@@ -20,6 +20,12 @@ export default class StoryObject {
 			this.type="state";
 			this.id=this.state;
 		}
+
+		else {
+			let type=Object.keys(spec)[0];
+
+			throw new Error("Unknown story object type: "+type);
+		}
 	}
 
 	setStory(story) {

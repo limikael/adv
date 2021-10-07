@@ -93,7 +93,9 @@
   description:
     The sleek silver angle-poise lamp is simple and elegant - minimalist
     perhaps. You find it satisfyingly heavy too, a justification for the huge
-    price tag.
+    price tag. A device for giving light, either one consisting of an electric 
+    bulb together with its holder and shade or cover, or one burning gas or a 
+    liquid fuel and consisting of a wick or mantle and a glass shade.
   location: bedroom
   use:
     succeed:
@@ -129,8 +131,14 @@
 
 - objectives:
   - if-used: lamp
+    then: true
     else-fail: You need to use the lamp to see where you are going
   - if-used: toothbrush
+    then: true
     else-fail: You need to brush your teeth.
+  - if-used: slippers
+    then: true
+    else-fail: You need to wear your slippers.
   - if-seen: garden gnome
+    then: true
     else-fail: Find and look at the gnome

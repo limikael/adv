@@ -16,8 +16,8 @@ export default function AlertView(props) {
 		text="OK";
 	}
 
-	else if (props.state.story.getStoryCompleteMessage()) {
-		message=props.state.story.getStoryCompleteMessage();
+	else if (props.state.story.isComplete()) {
+		message="Thanks for playing!";
 		fn=props.state.restart;
 		text="PLAY AGAIN";
 	}
@@ -28,12 +28,12 @@ export default function AlertView(props) {
 	return (
 		<Fragment>
 			<div class="adv-modal-cover bg-body"/>
-			<div style={emStyle(1,1,17,20)} class="bg-white adv-bx border-dark">
-				<div style={emStyle(0,0,16,16)} class="text-black adv-location-description" ref={ref}>
+			<div style={emStyle(1,3,17,17)} class="bg-white adv-bx border-dark">
+				<div style={emStyle(0,0,16,13)} class="text-black adv-location-description" ref={ref}>
 					<p>{message}</p>
 				</div>
 
-				<button style={emStyle(3,16,10,2)} class="adv-btn bg-info text-white adv-bx"
+				<button style={emStyle(3,13,10,2)} class="adv-btn bg-info text-white adv-bx"
 						onclick={fn}>
 					{text}
 				</button>
