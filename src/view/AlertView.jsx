@@ -17,7 +17,7 @@ export default function AlertView(props) {
 	}
 
 	else if (props.state.story.isComplete()) {
-		message="Thanks for playing!";
+		message=props.state.story.getCompleteMessage();
 		fn=props.state.restart;
 		text="PLAY AGAIN";
 	}

@@ -6,6 +6,8 @@ import {createVerbs} from "./StoryVerbs.mjs";
 export default class Story {
 	constructor(spec) {
 		this.spec=spec;
+		this.name="Interactive Fiction Game";
+		this.completeMessage="Thanks for playing!";
 
 		let functions={
 			have: (id)=>this.getThingById(id).location=="inventory",
@@ -45,7 +47,17 @@ export default class Story {
 
 			switch (type) {
 				case "objectives":
-					this.objectives=objectSpec.objectives;
+				case "name":
+				case "complete-message":
+					if (objectSpec.name)
+						this.name=objectSpec.name;
+
+					if (objectSpec["complete-message"])
+						this.completeMessage=objectSpec["complete-message"];
+
+					if (objectSpec.objectives)
+						this.objectives=objectSpec.objectives;
+
 					break;
 
 				default:
@@ -164,5 +176,13 @@ export default class Story {
 
 	isComplete() {
 		return (this.getCompletePercentage()==100)
+	}
+
+	getName() {
+		return this.name;
+	}
+
+	getCompleteMessage() {
+		return this.completeMessage;
 	}
 }

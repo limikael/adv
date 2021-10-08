@@ -75,8 +75,8 @@ export default function LocationView(props) {
 		cls+="adv-verb-selected";
 
 	return (
-		<div style={emStyle(0,1,19,17)} class="adv-bx bg-white text-black">
-			<div style={emStyle(0,0,18,16)} class={cls} ref={ref}>
+		<div style={emStyle(0,1.5,19,16.5)} class="adv-bx bg-white text-black">
+			<div style={emStyle(0,0,18,15.5)} class={cls} ref={ref}>
 				{text}
 			</div>
 		</div>
