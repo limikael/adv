@@ -6696,18 +6696,17 @@ ${cbNode.commentBefore}` : cb;
   function VerbListView(props) {
     let verbButtons = [];
     let i4 = 0;
-    let verbs = props.state.verbs;
     let disabled = props.state.story.isAlertShowing();
-    for (let verb in verbs) {
+    for (let verb of props.state.story.getVerbs()) {
       let cls = "bg-info adv-bx text-center text-white adv-btn ";
-      if (props.state.currentVerb == verb)
+      if (props.state.currentVerb == verb.id)
         cls += " active";
       verbButtons.push(/* @__PURE__ */ v("button", {
         style: emStyle(0, i4 * 2, 7, 2),
         class: cls,
-        onclick: props.state.toggleCurrentVerb.bindArgs(verb),
+        onclick: props.state.toggleCurrentVerb.bindArgs(verb.id),
         disabled
-      }, verbs[verb]));
+      }, verb.label));
       i4++;
     }
     return /* @__PURE__ */ v("div", {
@@ -6769,10 +6768,10 @@ ${cbNode.commentBefore}` : cb;
     if (props.state.currentVerb)
       cls += "adv-verb-selected";
     return /* @__PURE__ */ v("div", {
-      style: emStyle(0, 0, 19, 18),
+      style: emStyle(0, 1.5, 19, 16.5),
       class: "adv-bx bg-white text-black"
     }, /* @__PURE__ */ v("div", {
-      style: emStyle(0, 0, 18, 17),
+      style: emStyle(0, 0, 18, 15.5),
       class: cls,
       ref
     }, text));
@@ -6792,8 +6791,8 @@ ${cbNode.commentBefore}` : cb;
       message = props.state.story.getMessage();
       fn = props.state.dismissMessage;
       text = "OK";
-    } else if (props.state.story.getStoryCompleteMessage()) {
-      message = props.state.story.getStoryCompleteMessage();
+    } else if (props.state.story.isComplete()) {
+      message = props.state.story.getCompleteMessage();
       fn = props.state.restart;
       text = "PLAY AGAIN";
     } else
@@ -6801,14 +6800,14 @@ ${cbNode.commentBefore}` : cb;
     return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
       class: "adv-modal-cover bg-body"
     }), /* @__PURE__ */ v("div", {
-      style: emStyle(1, 1, 17, 20),
+      style: emStyle(1, 3, 17, 17),
       class: "bg-white adv-bx border-dark"
     }, /* @__PURE__ */ v("div", {
-      style: emStyle(0, 0, 16, 16),
+      style: emStyle(0, 0, 16, 13),
       class: "text-black adv-location-description",
       ref
     }, /* @__PURE__ */ v("p", null, message)), /* @__PURE__ */ v("button", {
-      style: emStyle(3, 16, 10, 2),
+      style: emStyle(3, 13, 10, 2),
       class: "adv-btn bg-info text-white adv-bx",
       onclick: fn
     }, text)));
@@ -6836,11 +6835,32 @@ ${cbNode.commentBefore}` : cb;
     }, thingList);
   }
 
+  // src/view/HeaderView.jsx
+  init_preact_shim();
+  function HeaderView(props) {
+    return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
+      style: emStyle(0, 0, 19, 2),
+      class: "adv-bx"
+    }), /* @__PURE__ */ v("div", {
+      style: emStyle(0.75, -0.5, 19, 2)
+    }, props.state.story.getName()), /* @__PURE__ */ v("div", {
+      style: emStyle(-0.5, -0.5, 2, 2),
+      class: "adv-bx text-center text-white bg-transparent adv-btn"
+    }, /* @__PURE__ */ v("div", {
+      class: "bi bi-three-dots-vertical"
+    })), /* @__PURE__ */ v("div", {
+      style: emStyle(14.25, -0.5, 5, 2),
+      class: "text-end"
+    }, props.state.story.getCompletePercentage(), "%"));
+  }
+
   // src/view/AdvView.jsx
   function AdvView(props) {
     let storyContent;
     if (props.state.story) {
-      storyContent = /* @__PURE__ */ v(d, null, /* @__PURE__ */ v(LocationView, {
+      storyContent = /* @__PURE__ */ v(d, null, /* @__PURE__ */ v(HeaderView, {
+        state: props.state
+      }), /* @__PURE__ */ v(LocationView, {
         state: props.state
       }), /* @__PURE__ */ v(InventoryView, {
         state: props.state
@@ -6948,6 +6968,9 @@ ${cbNode.commentBefore}` : cb;
       } else if (this.state) {
         this.type = "state";
         this.id = this.state;
+      } else {
+        let type = Object.keys(spec)[0];
+        throw new Error("Unknown story object type: " + type);
       }
     }
     setStory(story) {
@@ -7132,21 +7155,171 @@ ${cbNode.commentBefore}` : cb;
     }
   };
 
+  // src/model/StoryVerbs.mjs
+  init_preact_shim();
+  var StoryVerb = class {
+    constructor() {
+    }
+    setStory(story) {
+      this.story = story;
+    }
+  };
+  var GotoVerb = class extends StoryVerb {
+    constructor() {
+      super();
+      this.id = "goto";
+      this.label = "GO TO";
+    }
+    execute(object) {
+      if (object.type != "location") {
+        this.story.message("Can't go there");
+        return;
+      }
+      let current = this.story.getCurrentLocation();
+      if (!current.destinations.includes(object.id)) {
+        this.story.message("Can't go there");
+        return;
+      }
+      let predicate = this.story.evalClause(current.goto, StoryPredicate.succeed());
+      if (predicate.getMessage())
+        this.story.currentMessage = predicate.getMessage();
+      if (predicate.getOutcome()) {
+        let dest = this.story.getObjectById(object.id);
+        let destPredicate = this.story.evalClause(dest.enter, StoryPredicate.succeed());
+        if (destPredicate.getMessage())
+          this.story.currentMessage = destPredicate.getMessage();
+        if (destPredicate.getOutcome())
+          this.story.currentLocationId = object.id;
+      }
+    }
+  };
+  var LookatVerb = class extends StoryVerb {
+    constructor() {
+      super();
+      this.id = "lookat";
+      this.label = "LOOK AT";
+    }
+    execute(object) {
+      if (object.type != "thing" || !object.description) {
+        this.story.message("Nothing interesting about it.");
+        return;
+      }
+      object.have_looked_at = true;
+      this.story.message(object.description);
+    }
+  };
+  var UseVerb = class extends StoryVerb {
+    constructor() {
+      super();
+      this.id = "use";
+      this.label = "USE";
+    }
+    execute(object) {
+      if (object.type != "thing") {
+        this.story.message("Can't use that");
+        return;
+      }
+      let def = StoryPredicate.succeed("It is not useful.");
+      let predicate = this.story.evalClause(object.use, def);
+      if (predicate.getMessage())
+        this.story.currentMessage = predicate.getMessage();
+      if (predicate.getOutcome()) {
+        object.using = true;
+        object.have_used = true;
+      }
+    }
+  };
+  var PickupVerb = class extends StoryVerb {
+    constructor() {
+      super();
+      this.id = "pickup";
+      this.label = "PICK UP";
+    }
+    execute(object) {
+      if (object.type != "thing") {
+        this.story.message("Can't pick that up");
+        return;
+      }
+      let def = StoryPredicate.succeed("Taken.");
+      let predicate = this.story.evalClause(object.pickup, def);
+      if (predicate.getMessage())
+        this.story.currentMessage = predicate.getMessage();
+      if (predicate.getOutcome())
+        object.location = "inventory";
+    }
+  };
+  var DropVerb = class extends StoryVerb {
+    constructor() {
+      super();
+      this.id = "drop";
+      this.label = "DROP";
+    }
+    execute(object) {
+      if (object.type != "thing") {
+        this.story.message("Can't drop that.");
+        return;
+      }
+      let def = StoryPredicate.can("Dropped.");
+      let predicate = this.story.evalClause(object.drop, def);
+      if (predicate.getMessage())
+        this.story.currentMessage = predicate.getMessage();
+      if (predicate.getOutcome()) {
+        object.using = false;
+        object.location = this.story.currentLocationId;
+      }
+    }
+  };
+  function createVerbs(story) {
+    let classes = [
+      GotoVerb,
+      LookatVerb,
+      UseVerb,
+      PickupVerb,
+      DropVerb
+    ];
+    let verbs = [];
+    for (let cls of classes) {
+      let verb = new cls();
+      if (!verb.id)
+        throw new Error("Verb doesn't have an id");
+      verbs.push(verb);
+    }
+    return verbs;
+  }
+
   // src/model/Story.mjs
   var Story = class {
     constructor(spec) {
       __publicField(this, "restart", () => {
         let spec = JSON.parse(JSON.stringify(this.spec));
+        this.objectives = [];
         this.objects = [];
         for (let objectSpec of spec) {
-          let o4 = new StoryObject(objectSpec);
-          o4.setStory(this);
-          this.objects.push(o4);
+          let type = Object.keys(objectSpec)[0];
+          switch (type) {
+            case "objectives":
+            case "name":
+            case "complete-message":
+              if (objectSpec.name)
+                this.name = objectSpec.name;
+              if (objectSpec["complete-message"])
+                this.completeMessage = objectSpec["complete-message"];
+              if (objectSpec.objectives)
+                this.objectives = objectSpec.objectives;
+              break;
+            default:
+              let o4 = new StoryObject(objectSpec);
+              o4.setStory(this);
+              this.objects.push(o4);
+              break;
+          }
         }
         this.currentLocationId = this.objects[0].id;
         this.currentMessage = null;
       });
       this.spec = spec;
+      this.name = "Interactive Fiction Game";
+      this.completeMessage = "Thanks for playing!";
       let functions = {
         have: (id) => this.getThingById(id).location == "inventory",
         in: (id) => this.getCurrentLocation().id == id,
@@ -7159,7 +7332,15 @@ ${cbNode.commentBefore}` : cb;
       this.yaMachine = new YaMachine();
       for (let f4 in functions)
         this.yaMachine.addFunction(f4, functions[f4].bind(this));
+      this.verbsById = {};
+      for (let verb of createVerbs()) {
+        verb.setStory(this);
+        this.verbsById[verb.id] = verb;
+      }
       this.restart();
+    }
+    getVerbs() {
+      return Object.values(this.verbsById);
     }
     getObjectById(id) {
       for (let object of this.objects)
@@ -7177,96 +7358,7 @@ ${cbNode.commentBefore}` : cb;
     }
     execute(verbId, objectId) {
       let o4 = this.getObjectById(objectId);
-      switch (verbId) {
-        case "goto":
-          this.goto(o4);
-          break;
-        case "use":
-          this.use(o4);
-          break;
-        case "pickup":
-          this.pickup(o4);
-          break;
-        case "lookat":
-          this.lookat(o4);
-          break;
-        case "drop":
-          this.drop(o4);
-          break;
-        default:
-          throw new Error("Unknown verb");
-          break;
-      }
-    }
-    goto(object) {
-      if (object.type != "location") {
-        this.message("Can't go there");
-        return;
-      }
-      let current = this.getCurrentLocation();
-      if (!current.destinations.includes(object.id)) {
-        this.message("Can't go there");
-        return;
-      }
-      let predicate = this.evalClause(current.goto, StoryPredicate.succeed());
-      if (predicate.getMessage())
-        this.currentMessage = predicate.getMessage();
-      if (predicate.getOutcome()) {
-        let dest = this.getObjectById(object.id);
-        let destPredicate = this.evalClause(dest.enter, StoryPredicate.succeed());
-        if (destPredicate.getMessage())
-          this.currentMessage = destPredicate.getMessage();
-        if (destPredicate.getOutcome())
-          this.currentLocationId = object.id;
-      }
-    }
-    lookat(object) {
-      if (object.type != "thing" || !object.description) {
-        this.message("Nothing interesting about it.");
-        return;
-      }
-      object.have_looked_at = true;
-      this.message(object.description);
-    }
-    use(object) {
-      if (object.type != "thing") {
-        this.message("Can't use that");
-        return;
-      }
-      let def = StoryPredicate.succeed("It is not useful.");
-      let predicate = this.evalClause(object.use, def);
-      if (predicate.getMessage())
-        this.currentMessage = predicate.getMessage();
-      if (predicate.getOutcome()) {
-        object.using = true;
-        object.have_used = true;
-      }
-    }
-    pickup(object) {
-      if (object.type != "thing") {
-        this.message("Can't pick that up");
-        return;
-      }
-      let def = StoryPredicate.succeed("Taken.");
-      let predicate = this.evalClause(object.pickup, def);
-      if (predicate.getMessage())
-        this.currentMessage = predicate.getMessage();
-      if (predicate.getOutcome())
-        object.location = "inventory";
-    }
-    drop(object) {
-      if (object.type != "thing") {
-        this.message("Can't drop that.");
-        return;
-      }
-      let def = StoryPredicate.can("Dropped.");
-      let predicate = this.evalClause(object.drop, def);
-      if (predicate.getMessage())
-        this.currentMessage = predicate.getMessage();
-      if (predicate.getOutcome()) {
-        object.using = false;
-        object.location = this.currentLocationId;
-      }
+      this.verbsById[verbId].execute(o4);
     }
     message(message) {
       this.currentMessage = message;
@@ -7308,16 +7400,29 @@ ${cbNode.commentBefore}` : cb;
       v3 = StoryPredicate.of(v3);
       return v3;
     }
-    getStoryCompleteMessage() {
-      let o4 = this.getObjectById("complete");
-      if (!o4)
-        return null;
-      let p4 = this.evalClause(o4.clause, StoryPredicate.cant());
-      if (p4.getOutcome())
-        return p4.getMessage();
-    }
     isAlertShowing() {
-      return this.getMessage() || this.getStoryCompleteMessage();
+      return this.getMessage() || this.isComplete();
+    }
+    getCompletePercentage() {
+      if (!this.objectives.length)
+        return 0;
+      let complete = 0;
+      for (let objectiveClause of this.objectives) {
+        let predicate = this.evalClause(objectiveClause);
+        if (predicate.getOutcome())
+          complete++;
+      }
+      let percentage = Math.round(100 * complete / this.objectives.length);
+      return percentage;
+    }
+    isComplete() {
+      return this.getCompletePercentage() == 100;
+    }
+    getName() {
+      return this.name;
+    }
+    getCompleteMessage() {
+      return this.completeMessage;
     }
   };
 
@@ -7343,16 +7448,8 @@ ${cbNode.commentBefore}` : cb;
 
   // src/app/AdvGame.jsx
   function AdvGame(props) {
-    let verbs = {
-      "goto": "GO TO",
-      "pickup": "PICK UP",
-      "lookat": "LOOK AT",
-      "use": "USE",
-      "drop": "DROP"
-    };
     let initialState = __spreadValues({
-      currentVerb: null,
-      verbs
+      currentVerb: null
     }, props);
     let state = useReducibleState({
       workers: AdvWorkers_exports,

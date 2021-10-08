@@ -51,8 +51,9 @@
   position: static;
   line-height: 1.5em;
 }
-.adv-bx a {
+.adv-bx p a {
   position: static;
+  cursor: pointer;
 }
 .adv-location-description {
   overflow-y: scroll;
