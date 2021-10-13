@@ -129,7 +129,7 @@ class DropVerb extends StoryVerb {
 			return;
 		}
 
-		let def=StoryPredicate.can("Dropped.");
+		let def=StoryPredicate.succeed("Dropped.");
 		let predicate=this.story.evalClause(object.drop,def);
 
 		if (predicate.getMessage())
