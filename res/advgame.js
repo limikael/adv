@@ -7259,7 +7259,7 @@ ${cbNode.commentBefore}` : cb;
         this.story.message("Can't drop that.");
         return;
       }
-      let def = StoryPredicate.can("Dropped.");
+      let def = StoryPredicate.succeed("Dropped.");
       let predicate = this.story.evalClause(object.drop, def);
       if (predicate.getMessage())
         this.story.currentMessage = predicate.getMessage();
