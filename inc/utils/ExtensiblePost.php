@@ -166,7 +166,9 @@ class ExtensiblePost {
 					$_POST["action"]=="editpost") {
 				$class=get_called_class();
 				$extensiblePost=new $class($post);
-				$saveHandler($extensiblePost);
+
+				$vars=stripslashes_deep($_POST);
+				$saveHandler($extensiblePost,$vars);
 			}
 		};
 

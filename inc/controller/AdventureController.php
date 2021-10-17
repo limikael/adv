@@ -49,17 +49,13 @@ class AdventureController extends Singleton {
 		$t->display($vars);
 	}
 
-	public function save($adventure) {
+	public function save($adventure, $req) {
 		static $saving=FALSE;
 
-		error_log("save...");
-
-		if (array_key_exists("adv-content",$_REQUEST) &&
+		if (array_key_exists("adv-content",$req) &&
 				!$saving) {
-			$this->inSaveHandler=TRUE;
-			$adventure->post_content=$_REQUEST["adv-content"];
-
 			$saving=TRUE;
+			$adventure->post_content=$req["adv-content"];
 			$adventure->save();
 			$saving=FALSE;
 		}
