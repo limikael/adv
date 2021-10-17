@@ -1,0 +1,7 @@
+- location: test
+
+- choice: what
+  description: what do you want to do
+  alternatives:
+  - description: something
+  - description: something else

@@ -89,6 +89,14 @@
     then: slippers (on your feet)
     else: slippers
 
+- choice: howto slippers
+  description: what do you want to do with the slippers?
+  alternatives:
+  - description: Put them on my head it would be fun
+    then:
+  - description: Put them on my feet
+    then:
+
 - thing: lamp
   description:
     The sleek silver angle-poise lamp is simple and elegant - minimalist

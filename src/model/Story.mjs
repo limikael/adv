@@ -17,6 +17,9 @@ export default class Story {
 			used: (id)=>this.getThingById(id).have_used,
 			fail: (message)=>StoryPredicate.fail(message),
 			succeed: (message)=>StoryPredicate.succeed(message),
+			choice: (id)=>{
+				this.currentChoiceId=id;
+			}
 		};
 
 		this.yaMachine=new YaMachine();
@@ -69,6 +72,7 @@ export default class Story {
 		}
 
 		this.currentLocationId=this.objects[0].id;
+		this.currentChoiceId=null;
 		this.currentMessage=null;
 	}
 
@@ -89,6 +93,11 @@ export default class Story {
 
 	getCurrentLocation() {
 		return this.getObjectById(this.currentLocationId);
+	}
+
+	getCurrentChoice() {
+		if (this.currentChoiceId)
+			return this.getObjectById(this.currentChoiceId);
 	}
 
 	execute(verbId, objectId) {

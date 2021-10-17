@@ -5,7 +5,7 @@ import fs from "fs";
 
 describe("story",()=>{
 	it("works",()=>{
-		let story=new Story(yaml.parse(fs.readFileSync("./res/morning_story.yaml","utf-8")));
+		let story=new Story(yaml.parse(fs.readFileSync("./res/spec/morning_story.yaml","utf-8")));
 
 		let bathroom=story.getObjectById("bathroom");
 		expect(bathroom.id).toEqual("bathroom");

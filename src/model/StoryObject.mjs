@@ -1,30 +1,32 @@
 export default class StoryObject {
 	constructor(spec) {
-		for (let key in spec)
-			this[key]=spec[key];
+		this.type=Object.keys(spec)[0];
+		this.id=spec[this.type];
 
-		if (this.thing) {
-			this.type="thing";
-			this.id=this.thing;
-		}
+		switch (this.type) {
+			case "thing":
+				this.description=spec.description;
+				this.use=spec.use;
+				this.location=spec.location;
+				this.pickup=spec.pickup;
+				this.stage_name=spec.stage_name;
+				this.inventory_name=spec.inventory_name;
+				break;
 
-		else if (this.location) {
-			this.type="location";
-			this.id=this.location;
+			case "location":
+				this.description=spec.description;
+				this.destinations=spec.destinations||[];
+				this.enter=spec.enter;
+				this.goto=spec.goto;
+				break;
 
-			if (!this.destinations)
-				this.destinations=[];
-		}
+			case "choice":
+				this.description=spec.description;
+				this.alternatives=spec.alternatives;
+				break;
 
-		else if (this.state) {
-			this.type="state";
-			this.id=this.state;
-		}
-
-		else {
-			let type=Object.keys(spec)[0];
-
-			throw new Error("Unknown story object type: "+type);
+			default:
+				throw new Error("Unknown story object type: "+this.type);
 		}
 	}
 
@@ -51,5 +53,9 @@ export default class StoryObject {
 
 		else
 			return this.id;
+	}
+
+	getAlternatives() {
+		return this.alternatives;
 	}
 }
