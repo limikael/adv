@@ -5,7 +5,7 @@
  * Plugin Name:       adv
  * Plugin URI:        https://github.com/limikael/adv
  * Description:       Adventure Game.
- * Version:           0.0.6
+ * Version:           0.0.7
  */
 
 defined( 'ABSPATH' ) || exit;
