@@ -1,3 +1,8 @@
+- state: teeth clean
+- state: using slippers
+- state: room lit
+- state: seen gnome
+
 - location: bedroom
   description:
     You are in your bedroom. It is the favourite part of your house because you
@@ -7,21 +12,19 @@
   destinations:
     - bathroom
     - kitchen
-  goto:
-    - if-not-using: lamp
+  leave:
+    - if-not-state: room lit
       then-return-fail:
         The dark room is like a place out of time, a place to rest without
         consequence. Yet the darkness makes you fumble and lose your sense of
         direction.
 
-    - if-not-using: slippers
+    - if-not-state: using slippers
       then-return-fail:
         The cold from the floor moves in only to meet the warmth of your blood.
         You feel it wash over your skin, again and again, only to be met by the
         beat of your heart, again and again. You quickly pull your feet back in
         under the cover, the floor is way too cold.
-
-    - true
 
 - location: bathroom
   description:
@@ -31,10 +34,9 @@
     begins to set up a positive cycle of wellness.
   destinations:
     - bedroom
-  goto:
-    if-not-using: slippers
+  leave:
+    if-not-state: using slippers
     then-fail: The floor is too cold.
-    else: true
 
 - location: kitchen
   description:
@@ -55,13 +57,12 @@
   destinations:
     - kitchen
   enter:
-    if-not-used: toothbrush
+    if-not-state: teeth clean
     then-fail:
       Good teeth can impact so many areas of life, including how you feel about
       yourself. The health of the brain impacts body health and social mobility,
       and that impacts family health. Everything is connected, we are all
       connected. We are supposed to love and care for our neighbours, right?
-    else: true
 
 - thing: toothbrush
   location: bathroom
@@ -70,8 +71,9 @@
     top 10 market leading toothbrushes for 2020.
   use:
     if-have: toothbrush
-    then-succeed:
-      Swrrr... swwwrr.... Brushing sound... Your teeth are now clean...
+    then:
+      - set: teeth clean
+      - Swrrr... swwwrr.... Brushing sound... Your teeth are now clean...
     else-fail:
       Doesn''t really work, are you going to move your teeth to the toothbrush?
 
@@ -80,14 +82,31 @@
   location: bedroom
   stage_name: a pair of slippers
   use:
-    if-not-have: slippers
-    then-fail: In order to wear your slippers, you first need to pick them up.
-    else-succeed: You put the slippers on your feet
+    if-have: slippers
+    then: 
+    - set: using slippers
+    - You put the slippers on your feet
+    else-fail: In order to wear your slippers, you first need to pick them up.
+
+  pickup:
+    Taken
+
+  drop:
+    - reset: using slippers
+    - You put the slippers on the floor.
 
   inventory_name:
-    if-using: slippers
+    if-state: using slippers
     then: slippers (on your feet)
     else: slippers
+
+- choice: howto slippers
+  description: what do you want to do with the slippers?
+  alternatives:
+  - description: Put them on my head it would be fun
+    then:
+  - description: Put them on my feet
+    then:
 
 - thing: lamp
   description:
@@ -98,8 +117,8 @@
     liquid fuel and consisting of a wick or mantle and a glass shade.
   location: bedroom
   use:
-    succeed:
-      Igniting the world anew with such brilliance! You can suddenly see where
+    - set: room lit
+    - Igniting the world anew with such brilliance! You can suddenly see where
       you are going.
 
   pickup:
@@ -111,7 +130,7 @@
   use:
     if-have: slippers
     then-fail: Your slippers would get all wet and soggy if you shower with them on.
-    else-succeed: Aaahhh... Nice!!!
+    else: Aaahhh... Nice!!!
 
   pickup:
     fail: It is too heavy to carry around.
@@ -129,19 +148,16 @@
   pickup:
     fail: It is too heavy to carry around.
 
+  lookat:
+    set: seen gnome
+
 - objectives:
-  - if-used: lamp
-    then: true
-    else-fail: You need to use the lamp to see where you are going
-  - if-used: toothbrush
-    then: true
-    else-fail: You need to brush your teeth.
-  - if-used: slippers
-    then: true
-    else-fail: You need to wear your slippers.
-  - if-seen: garden gnome
-    then: true
-    else-fail: Find and look at the gnome
+  - if-not-state: room lit
+    then-fail: You need to use the lamp to see where you are going
+  - if-not-state: teeth clean
+    then-fail: You need to brush your teeth.
+  - if-not-state: seen gnome
+    then-fail: Find and look at the gnome
 
   name: The Morning Game
   complete-message:

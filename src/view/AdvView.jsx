@@ -3,6 +3,7 @@ import LocationView from "./LocationView.jsx";
 import AlertView from "./AlertView.jsx";
 import InventoryView from "./InventoryView.jsx";
 import HeaderView from "./HeaderView.jsx";
+import ChoiceView from "./ChoiceView.jsx";
 import {emStyle} from "../utils/ReactUtil.jsx";
 
 export default function AdvView(props) {
@@ -14,6 +15,7 @@ export default function AdvView(props) {
 				<LocationView state={props.state} />
 				<InventoryView state={props.state} />
 				<VerbListView state={props.state} />
+				<ChoiceView state={props.state} />
 				<AlertView state={props.state} />
 			</Fragment>
 		);

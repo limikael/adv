@@ -1,0 +1,37 @@
+- state: door open
+
+- location: test
+  description:
+    You are in the test place...
+    There is a door leading to the back room...
+
+  destinations:
+  - back room
+
+  leave:
+  - if-not-state: door open
+    then-fail: The door is locked
+
+- location: back room
+  description:
+    You are in the back room...
+
+- thing: lever
+  location: test
+  use:
+  - ask: what
+
+  pickup:
+  - fail: Can't pick it up
+
+- choice: what
+  description: what do you want to do
+  alternatives:
+  - if: pull lever up
+    then:
+    - set: door open
+    - The door clicks with a satisfying click..
+
+  - if: pull lever down
+    then:
+      Nothing interesting happens...

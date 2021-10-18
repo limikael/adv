@@ -19,6 +19,12 @@ export function objectClick(state, id) {
 	return state;
 }
 
+export function alternativeClick(state, index) {
+	state.story.chooseAlternative(index);
+
+	return state;
+}
+
 export function dismissMessage(state) {
 	state.story.dismissMessage();
 
