@@ -18,7 +18,7 @@ export default class Story {
 				return (this.getCurrentLocation().id==id)
 			},
 
-			choice: (id)=>{
+			ask: (id)=>{
 				this.currentChoiceId=id;
 			},
 
@@ -124,6 +124,14 @@ export default class Story {
 		let o=this.getObjectById(objectId);
 
 		this.verbsById[verbId].execute(o);
+	}
+
+	chooseAlternative(alternativeIndex) {
+		let choice=this.getCurrentChoice();
+		this.currentChoiceId=null;
+
+		let alternative=choice.getAlternative(alternativeIndex);
+		this.runClause(alternative.then);
 	}
 
 	message(message) {

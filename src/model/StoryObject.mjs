@@ -61,7 +61,20 @@ export default class StoryObject {
 	}
 
 	getAlternatives() {
-		return this.alternatives;
+		let res=[];
+
+		for (let i in this.alternatives) {
+			let alternative=this.alternatives[i];
+			alternative.index=i;
+
+			res.push(alternative)
+		}
+
+		return res;
+	}
+
+	getAlternative(index) {
+		return this.alternatives[index];
 	}
 
 	setValue(value) {
