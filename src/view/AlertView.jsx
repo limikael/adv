@@ -33,7 +33,7 @@ export default function AlertView(props) {
 					<p>{message}</p>
 				</div>
 
-				<button style={emStyle(3,13,10,3)} class="adv-btn bg-info text-white adv-bx"
+				<button style={emStyle(3,13,10,2)} class="adv-btn bg-info text-white adv-bx"
 						onclick={fn}>
 					{text}
 				</button>

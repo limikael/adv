@@ -91,6 +91,8 @@ export default class Story {
 		this.currentLocationId=this.getStartLocation().id;
 		this.currentChoiceId=null;
 		this.currentMessage=null;
+
+		this.runClause(this.getCurrentLocation().enter);
 	}
 
 	getStartLocation() {

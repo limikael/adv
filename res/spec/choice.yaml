@@ -1,4 +1,5 @@
 - state: door open
+- state: shown intro message
 
 - location: test
   description:
@@ -12,9 +13,18 @@
   - if-not-state: door open
     then-fail: The door is locked
 
+  enter:
+  - if-not-state: shown intro message
+    then:
+    - set: shown intro message
+    - Welcome to the game.
+
 - location: back room
   description:
     You are in the back room...
+
+  destinations:
+  - test
 
 - thing: lever
   location: test
