@@ -8,7 +8,9 @@ export default class StoryObject {
 				this.description=spec.description;
 				this.use=spec.use;
 				this.location=spec.location;
+				this.drop=spec.drop;
 				this.pickup=spec.pickup;
+				this.lookat=spec.lookat;
 				this.stage_name=spec.stage_name;
 				this.inventory_name=spec.inventory_name;
 				break;
@@ -17,12 +19,15 @@ export default class StoryObject {
 				this.description=spec.description;
 				this.destinations=spec.destinations||[];
 				this.enter=spec.enter;
-				this.goto=spec.goto;
+				this.leave=spec.leave;
 				break;
 
 			case "choice":
 				this.description=spec.description;
 				this.alternatives=spec.alternatives;
+				break;
+
+			case "state":
 				break;
 
 			default:
@@ -57,5 +62,14 @@ export default class StoryObject {
 
 	getAlternatives() {
 		return this.alternatives;
+	}
+
+	setValue(value) {
+		this.assertType("state");
+		this.value=value;
+	}
+
+	getValue() {
+		return this.value;
 	}
 }

@@ -1,5 +1,5 @@
 import StoryObject from "./StoryObject.mjs";
-import StoryPredicate from "./StoryPredicate.mjs";
+import StoryException from "./StoryException.mjs";
 import YaMachine from "../utils/YaMachine.mjs";
 import {createVerbs} from "./StoryVerbs.mjs";
 
@@ -10,16 +10,33 @@ export default class Story {
 		this.completeMessage="Thanks for playing!";
 
 		let functions={
-			have: (id)=>this.getThingById(id).location=="inventory",
-			in: (id)=>this.getCurrentLocation().id==id,
-			seen: (id)=>this.getThingById(id).have_looked_at,
-			using: (id)=>this.getThingById(id).using,
-			used: (id)=>this.getThingById(id).have_used,
-			fail: (message)=>StoryPredicate.fail(message),
-			succeed: (message)=>StoryPredicate.succeed(message),
+			have: (id)=>{
+				return (this.getObjectById(id,"thing").location=="inventory")
+			},
+
+			in: (id)=>{
+				return (this.getCurrentLocation().id==id)
+			},
+
 			choice: (id)=>{
 				this.currentChoiceId=id;
-			}
+			},
+
+			fail: (message)=>{
+				return new StoryException(message)
+			},
+
+			set: (stateId)=>{
+				this.getObjectById(stateId,"state").setValue(true);
+			},
+
+			reset: (stateId)=>{
+				this.getObjectById(stateId,"state").setValue(false);
+			},
+
+			state: (stateId)=>{
+				return this.getObjectById(stateId,"state").getValue();
+			},
 		};
 
 		this.yaMachine=new YaMachine();
@@ -71,24 +88,27 @@ export default class Story {
 			}			
 		}
 
-		this.currentLocationId=this.objects[0].id;
+		this.currentLocationId=this.getStartLocation().id;
 		this.currentChoiceId=null;
 		this.currentMessage=null;
 	}
 
-	getObjectById(id) {
+	getStartLocation() {
 		for (let object of this.objects)
-			if (object.id==id)
+			if (object.type=="location")
 				return object;
-
-		return null;
 	}
 
-	getThingById(id) {
-		let o=this.getObjectById(id);
-		o.assertType("thing");
+	getObjectById(id, type) {
+		for (let object of this.objects)
+			if (object.id==id) {
+				if (type)
+					object.assertType(type);
 
-		return o;
+				return object;
+			}
+
+		return null;
 	}
 
 	getCurrentLocation() {
@@ -153,15 +173,18 @@ export default class Story {
 		return res;
 	}
 
-	evalClause(clause, defaultValue) {
-		let v=defaultValue;
+	runClause(clause) {
+		let v=this.yaMachine.preprocessAndEval(clause);
 
-		if (clause!==undefined)
-			v=this.yaMachine.preprocessAndEval(clause);
+		if (v instanceof StoryException) {
+			this.currentMessage=v.getMessage();
+			return false;
+		}
 
-		v=StoryPredicate.of(v);
+		if (typeof v=="string")
+			this.currentMessage=v;
 
-		return v;
+		return true;
 	}
 
 	isAlertShowing() {
@@ -174,8 +197,9 @@ export default class Story {
 
 		let complete=0;
 		for (let objectiveClause of this.objectives) {
-			let predicate=this.evalClause(objectiveClause);
-			if (predicate.getOutcome())
+			let v=this.yaMachine.preprocessAndEval(objectiveClause);
+
+			if (!(v instanceof StoryException))
 				complete++;
 		}
 

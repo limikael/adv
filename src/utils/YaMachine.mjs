@@ -41,7 +41,8 @@ export default class YaMachine {
 	preprocess(clause) {
 		if (typeof clause=="string" ||
 				typeof clause=="boolean" ||
-				typeof clause=="number")
+				typeof clause=="number" ||
+				typeof clause=="undefined")
 			return clause;
 
 		else if (clause instanceof Array) {
@@ -146,7 +147,8 @@ export default class YaMachine {
 
 		if (typeof clause=="string" ||
 				typeof clause=="boolean" ||
-				typeof clause=="number")
+				typeof clause=="number" ||
+				typeof clause=="undefined")
 			return clause;
 
 		if (clause instanceof Array) {

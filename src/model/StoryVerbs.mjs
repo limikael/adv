@@ -1,5 +1,3 @@
-import StoryPredicate from "./StoryPredicate.mjs";
-
 class StoryVerb {
 	constructor() {
 	}
@@ -29,21 +27,9 @@ class GotoVerb extends StoryVerb {
 			return;
 		}
 
-		let predicate=this.story.evalClause(current.goto,StoryPredicate.succeed());
-
-		if (predicate.getMessage())
-			this.story.currentMessage=predicate.getMessage();
-
-		if (predicate.getOutcome()) {
-			let dest=this.story.getObjectById(object.id);
-			let destPredicate=this.story.evalClause(dest.enter,StoryPredicate.succeed());
-
-			if (destPredicate.getMessage())
-				this.story.currentMessage=destPredicate.getMessage();
-
-			if (destPredicate.getOutcome())
-				this.story.currentLocationId=object.id;
-		}
+		if (this.story.runClause(current.leave) &&
+				this.story.runClause(object.enter))
+			this.story.currentLocationId=object.id;
 	}
 }
 
@@ -60,9 +46,10 @@ class LookatVerb extends StoryVerb {
 			return;
 		}
 
-		object.have_looked_at=true;
-
-		this.story.message(object.description);
+		if (this.story.runClause(object.lookat)) {
+			if (object.description)
+				this.story.message(object.description);
+		}
 	}
 }
 
@@ -79,16 +66,7 @@ class UseVerb extends StoryVerb {
 			return;
 		}
 
-		let def=StoryPredicate.succeed("It is not useful.");
-		let predicate=this.story.evalClause(object.use,def);
-
-		if (predicate.getMessage())
-			this.story.currentMessage=predicate.getMessage();
-
-		if (predicate.getOutcome()) {
-			object.using=true;
-			object.have_used=true;
-		}
+		this.story.runClause(object.use);
 	}
 }
 
@@ -105,13 +83,7 @@ class PickupVerb extends StoryVerb {
 			return;
 		}
 
-		let def=StoryPredicate.succeed("Taken.");
-		let predicate=this.story.evalClause(object.pickup,def);
-
-		if (predicate.getMessage())
-			this.story.currentMessage=predicate.getMessage();
-
-		if (predicate.getOutcome())
+		if (this.story.runClause(object.pickup))
 			object.location="inventory";
 	}
 }
@@ -129,16 +101,8 @@ class DropVerb extends StoryVerb {
 			return;
 		}
 
-		let def=StoryPredicate.succeed("Dropped.");
-		let predicate=this.story.evalClause(object.drop,def);
-
-		if (predicate.getMessage())
-			this.story.currentMessage=predicate.getMessage();
-
-		if (predicate.getOutcome()) {
-			object.using=false;
+		if (this.story.runClause(object.drop))
 			object.location=this.story.currentLocationId;
-		}
 	}
 }
 

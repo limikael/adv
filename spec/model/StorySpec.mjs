@@ -1,5 +1,4 @@
 import Story from "../../src/model/Story.mjs";
-import StoryPredicate from "../../src/model/StoryPredicate.mjs";
 import yaml from "yaml";
 import fs from "fs";
 
@@ -20,7 +19,7 @@ describe("story",()=>{
 
 		story.execute("use","lamp");
 
-		expect(story.getObjectById("lamp").using).toEqual(true);
+		expect(story.getObjectById("room lit").getValue()).toEqual(true);
 
 		story.execute("goto","bathroom");
 		expect(story.getCurrentLocation().id).toEqual("bedroom");
@@ -30,7 +29,6 @@ describe("story",()=>{
 		story.execute("use","slippers");
 		expect(story.getMessage()).toContain("need to pick them up");
 		story.dismissMessage();
-		//console.log(story.getCurrentLocation().id);
 
 		story.execute("pickup","slippers");
 		story.execute("use","slippers");
