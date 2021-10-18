@@ -6807,7 +6807,7 @@ ${cbNode.commentBefore}` : cb;
       class: "text-black adv-location-description",
       ref
     }, /* @__PURE__ */ v("p", null, message)), /* @__PURE__ */ v("button", {
-      style: emStyle(3, 13, 10, 2),
+      style: emStyle(3, 13, 10, 3),
       class: "adv-btn bg-info text-white adv-bx",
       onclick: fn
     }, text)));
@@ -6854,6 +6854,42 @@ ${cbNode.commentBefore}` : cb;
     }, props.state.story.getCompletePercentage(), "%"));
   }
 
+  // src/view/ChoiceView.jsx
+  init_preact_shim();
+  init_preact_shim();
+  function ChoiceView(props) {
+    let ref = s2();
+    let message, fn, text;
+    h2(() => {
+      if (ref.current)
+        ref.current.scrollTop = 0;
+    });
+    if (!props.state.story.getCurrentChoice())
+      return null;
+    let choice = props.state.story.getCurrentChoice();
+    let alternativeButtons = [];
+    let i4 = 0;
+    let top = 23 - choice.getAlternatives().length * 3;
+    for (let alternative of choice.getAlternatives()) {
+      alternativeButtons.push(/* @__PURE__ */ v("button", {
+        style: emStyle(1, top + 3 * i4, 14, 3),
+        class: "adv-btn bg-info text-white adv-bx",
+        onclick: props.state.alternativeClick.bindArgs(alternative.index)
+      }, alternative.if));
+      i4++;
+    }
+    return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
+      class: "adv-modal-cover bg-body"
+    }), /* @__PURE__ */ v("div", {
+      style: emStyle(1, 3, 17, 25),
+      class: "bg-white adv-bx border-dark"
+    }, /* @__PURE__ */ v("div", {
+      style: emStyle(0, 0, 16, top),
+      class: "text-black adv-location-description",
+      ref
+    }, /* @__PURE__ */ v("p", null, choice.description)), alternativeButtons));
+  }
+
   // src/view/AdvView.jsx
   function AdvView(props) {
     let storyContent;
@@ -6865,6 +6901,8 @@ ${cbNode.commentBefore}` : cb;
       }), /* @__PURE__ */ v(InventoryView, {
         state: props.state
       }), /* @__PURE__ */ v(VerbListView, {
+        state: props.state
+      }), /* @__PURE__ */ v(ChoiceView, {
         state: props.state
       }), /* @__PURE__ */ v(AlertView, {
         state: props.state
@@ -6879,6 +6917,7 @@ ${cbNode.commentBefore}` : cb;
   // src/app/AdvReducers.js
   var AdvReducers_exports = {};
   __export(AdvReducers_exports, {
+    alternativeClick: () => alternativeClick,
     dismissMessage: () => dismissMessage,
     objectClick: () => objectClick,
     restart: () => restart,
@@ -6897,6 +6936,10 @@ ${cbNode.commentBefore}` : cb;
       return state;
     state.story.execute(state.currentVerb, id);
     state.currentVerb = null;
+    return state;
+  }
+  function alternativeClick(state, index) {
+    state.story.chooseAlternative(index);
     return state;
   }
   function dismissMessage(state) {
@@ -6955,22 +6998,33 @@ ${cbNode.commentBefore}` : cb;
   init_preact_shim();
   var StoryObject = class {
     constructor(spec) {
-      for (let key in spec)
-        this[key] = spec[key];
-      if (this.thing) {
-        this.type = "thing";
-        this.id = this.thing;
-      } else if (this.location) {
-        this.type = "location";
-        this.id = this.location;
-        if (!this.destinations)
-          this.destinations = [];
-      } else if (this.state) {
-        this.type = "state";
-        this.id = this.state;
-      } else {
-        let type = Object.keys(spec)[0];
-        throw new Error("Unknown story object type: " + type);
+      this.type = Object.keys(spec)[0];
+      this.id = spec[this.type];
+      switch (this.type) {
+        case "thing":
+          this.description = spec.description;
+          this.use = spec.use;
+          this.location = spec.location;
+          this.drop = spec.drop;
+          this.pickup = spec.pickup;
+          this.lookat = spec.lookat;
+          this.stage_name = spec.stage_name;
+          this.inventory_name = spec.inventory_name;
+          break;
+        case "location":
+          this.description = spec.description;
+          this.destinations = spec.destinations || [];
+          this.enter = spec.enter;
+          this.leave = spec.leave;
+          break;
+        case "choice":
+          this.description = spec.description;
+          this.alternatives = spec.alternatives;
+          break;
+        case "state":
+          break;
+        default:
+          throw new Error("Unknown story object type: " + this.type);
       }
     }
     setStory(story) {
@@ -6992,35 +7046,35 @@ ${cbNode.commentBefore}` : cb;
       else
         return this.id;
     }
+    getAlternatives() {
+      let res = [];
+      for (let i4 in this.alternatives) {
+        let alternative = this.alternatives[i4];
+        alternative.index = i4;
+        res.push(alternative);
+      }
+      return res;
+    }
+    getAlternative(index) {
+      return this.alternatives[index];
+    }
+    setValue(value) {
+      this.assertType("state");
+      this.value = value;
+    }
+    getValue() {
+      return this.value;
+    }
   };
 
-  // src/model/StoryPredicate.mjs
+  // src/model/StoryException.mjs
   init_preact_shim();
-  var StoryPredicate = class {
-    constructor(outcome, message) {
-      this.outcome = outcome;
+  var StoryException = class {
+    constructor(message) {
       this.message = message;
-    }
-    getOutcome() {
-      return this.outcome;
     }
     getMessage() {
       return this.message;
-    }
-    static succeed(message) {
-      return new StoryPredicate(true, message);
-    }
-    static fail(message) {
-      return new StoryPredicate(false, message);
-    }
-    static of(v3) {
-      if (v3 instanceof StoryPredicate)
-        return v3;
-      if (typeof v3 == "boolean")
-        return new StoryPredicate(v3, null);
-      if (v3 === void 0)
-        return new StoryPredicate(false, null);
-      return new StoryPredicate(true, v3);
     }
   };
 
@@ -7059,7 +7113,7 @@ ${cbNode.commentBefore}` : cb;
           throw new Error("Unknown key " + key + " for call to " + fn);
     }
     preprocess(clause) {
-      if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number")
+      if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number" || typeof clause == "undefined")
         return clause;
       else if (clause instanceof Array) {
         let res = [];
@@ -7130,7 +7184,7 @@ ${cbNode.commentBefore}` : cb;
         context = new YaMachineContext();
       if (context.isReturned())
         return context.getReturnValue();
-      if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number")
+      if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number" || typeof clause == "undefined")
         return clause;
       if (clause instanceof Array) {
         let res;
@@ -7180,17 +7234,8 @@ ${cbNode.commentBefore}` : cb;
         this.story.message("Can't go there");
         return;
       }
-      let predicate = this.story.evalClause(current.goto, StoryPredicate.succeed());
-      if (predicate.getMessage())
-        this.story.currentMessage = predicate.getMessage();
-      if (predicate.getOutcome()) {
-        let dest = this.story.getObjectById(object.id);
-        let destPredicate = this.story.evalClause(dest.enter, StoryPredicate.succeed());
-        if (destPredicate.getMessage())
-          this.story.currentMessage = destPredicate.getMessage();
-        if (destPredicate.getOutcome())
-          this.story.currentLocationId = object.id;
-      }
+      if (this.story.runClause(current.leave) && this.story.runClause(object.enter))
+        this.story.currentLocationId = object.id;
     }
   };
   var LookatVerb = class extends StoryVerb {
@@ -7204,8 +7249,10 @@ ${cbNode.commentBefore}` : cb;
         this.story.message("Nothing interesting about it.");
         return;
       }
-      object.have_looked_at = true;
-      this.story.message(object.description);
+      if (this.story.runClause(object.lookat)) {
+        if (object.description)
+          this.story.message(object.description);
+      }
     }
   };
   var UseVerb = class extends StoryVerb {
@@ -7219,14 +7266,7 @@ ${cbNode.commentBefore}` : cb;
         this.story.message("Can't use that");
         return;
       }
-      let def = StoryPredicate.succeed("It is not useful.");
-      let predicate = this.story.evalClause(object.use, def);
-      if (predicate.getMessage())
-        this.story.currentMessage = predicate.getMessage();
-      if (predicate.getOutcome()) {
-        object.using = true;
-        object.have_used = true;
-      }
+      this.story.runClause(object.use);
     }
   };
   var PickupVerb = class extends StoryVerb {
@@ -7240,11 +7280,7 @@ ${cbNode.commentBefore}` : cb;
         this.story.message("Can't pick that up");
         return;
       }
-      let def = StoryPredicate.succeed("Taken.");
-      let predicate = this.story.evalClause(object.pickup, def);
-      if (predicate.getMessage())
-        this.story.currentMessage = predicate.getMessage();
-      if (predicate.getOutcome())
+      if (this.story.runClause(object.pickup))
         object.location = "inventory";
     }
   };
@@ -7259,14 +7295,8 @@ ${cbNode.commentBefore}` : cb;
         this.story.message("Can't drop that.");
         return;
       }
-      let def = StoryPredicate.succeed("Dropped.");
-      let predicate = this.story.evalClause(object.drop, def);
-      if (predicate.getMessage())
-        this.story.currentMessage = predicate.getMessage();
-      if (predicate.getOutcome()) {
-        object.using = false;
+      if (this.story.runClause(object.drop))
         object.location = this.story.currentLocationId;
-      }
     }
   };
   function createVerbs(story) {
@@ -7314,20 +7344,35 @@ ${cbNode.commentBefore}` : cb;
               break;
           }
         }
-        this.currentLocationId = this.objects[0].id;
+        this.currentLocationId = this.getStartLocation().id;
+        this.currentChoiceId = null;
         this.currentMessage = null;
       });
       this.spec = spec;
       this.name = "Interactive Fiction Game";
       this.completeMessage = "Thanks for playing!";
       let functions = {
-        have: (id) => this.getThingById(id).location == "inventory",
-        in: (id) => this.getCurrentLocation().id == id,
-        seen: (id) => this.getThingById(id).have_looked_at,
-        using: (id) => this.getThingById(id).using,
-        used: (id) => this.getThingById(id).have_used,
-        fail: (message) => StoryPredicate.fail(message),
-        succeed: (message) => StoryPredicate.succeed(message)
+        have: (id) => {
+          return this.getObjectById(id, "thing").location == "inventory";
+        },
+        in: (id) => {
+          return this.getCurrentLocation().id == id;
+        },
+        ask: (id) => {
+          this.currentChoiceId = id;
+        },
+        fail: (message) => {
+          return new StoryException(message);
+        },
+        set: (stateId) => {
+          this.getObjectById(stateId, "state").setValue(true);
+        },
+        reset: (stateId) => {
+          this.getObjectById(stateId, "state").setValue(false);
+        },
+        state: (stateId) => {
+          return this.getObjectById(stateId, "state").getValue();
+        }
       };
       this.yaMachine = new YaMachine();
       for (let f4 in functions)
@@ -7342,23 +7387,36 @@ ${cbNode.commentBefore}` : cb;
     getVerbs() {
       return Object.values(this.verbsById);
     }
-    getObjectById(id) {
+    getStartLocation() {
       for (let object of this.objects)
-        if (object.id == id)
+        if (object.type == "location")
           return object;
-      return null;
     }
-    getThingById(id) {
-      let o4 = this.getObjectById(id);
-      o4.assertType("thing");
-      return o4;
+    getObjectById(id, type) {
+      for (let object of this.objects)
+        if (object.id == id) {
+          if (type)
+            object.assertType(type);
+          return object;
+        }
+      return null;
     }
     getCurrentLocation() {
       return this.getObjectById(this.currentLocationId);
     }
+    getCurrentChoice() {
+      if (this.currentChoiceId)
+        return this.getObjectById(this.currentChoiceId);
+    }
     execute(verbId, objectId) {
       let o4 = this.getObjectById(objectId);
       this.verbsById[verbId].execute(o4);
+    }
+    chooseAlternative(alternativeIndex) {
+      let choice = this.getCurrentChoice();
+      this.currentChoiceId = null;
+      let alternative = choice.getAlternative(alternativeIndex);
+      this.runClause(alternative.then);
     }
     message(message) {
       this.currentMessage = message;
@@ -7393,12 +7451,15 @@ ${cbNode.commentBefore}` : cb;
       }
       return res;
     }
-    evalClause(clause, defaultValue) {
-      let v3 = defaultValue;
-      if (clause !== void 0)
-        v3 = this.yaMachine.preprocessAndEval(clause);
-      v3 = StoryPredicate.of(v3);
-      return v3;
+    runClause(clause) {
+      let v3 = this.yaMachine.preprocessAndEval(clause);
+      if (v3 instanceof StoryException) {
+        this.currentMessage = v3.getMessage();
+        return false;
+      }
+      if (typeof v3 == "string")
+        this.currentMessage = v3;
+      return true;
     }
     isAlertShowing() {
       return this.getMessage() || this.isComplete();
@@ -7408,8 +7469,8 @@ ${cbNode.commentBefore}` : cb;
         return 0;
       let complete = 0;
       for (let objectiveClause of this.objectives) {
-        let predicate = this.evalClause(objectiveClause);
-        if (predicate.getOutcome())
+        let v3 = this.yaMachine.preprocessAndEval(objectiveClause);
+        if (!(v3 instanceof StoryException))
           complete++;
       }
       let percentage = Math.round(100 * complete / this.objectives.length);
