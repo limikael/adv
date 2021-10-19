@@ -1,6 +1,13 @@
 - state: door open
 - state: shown intro message
 
+- verbs:
+  - goto
+  - pickup
+  - talkto
+  - lookat
+  - use
+
 - location: test
   description:
     You are in the test place...
@@ -27,21 +34,44 @@
   - test
 
 - thing: lever
+  description:
+  - if-state: door open
+    then: There is a mysterious *lever* on the wall pointing up.
+    else: There is a mysterious *lever* on the wall.
+
   location: test
   use:
-  - ask: what
+  - spawn: what
+
+  talkto:
+  - spawn: lever convo
+
+  lookat: It looks like a lever
 
   pickup:
   - fail: Can't pick it up
 
+- thing: ball
+  location: test
+  stage_name: a ball
+  lookat:
+    it is a ball
+
+- choice: lever convo
+  description:
+    Hello says the lever
+  alternatives:
+  - label: Hello to you too
+  - label: Wassup
+
 - choice: what
   description: what do you want to do
   alternatives:
-  - if: pull lever up
-    then:
+  - label: pull lever up
+    do:
     - set: door open
     - The door clicks with a satisfying click..
 
-  - if: pull lever down
-    then:
+  - label: pull lever down
+    do:
       Nothing interesting happens...

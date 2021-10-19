@@ -41,7 +41,43 @@ export default function LocationView(props) {
 		accessible=accessibleLinkProps();
 
 	let things=props.state.story.getThingsByCurrentLocation();
-	if (things.length) {
+	listThings=[];
+
+	for (let thing of things) {
+		if (thing.description) {
+			let desc=props.state.story.evalClause(thing.description);
+			let m=desc.match(/(^.*)\*([^\*]*)\*(.*$)/);
+
+			if (m) {
+				text.push(
+					<p>
+						{m[1]}
+						<a onclick={props.state.objectClick.bindArgs(thing.id)}
+								{...accessible}>
+							{m[2]}
+						</a>
+						{m[3]}
+					</p>
+				);
+			}
+
+			else {
+				text.push(
+					<p>
+						<a onclick={props.state.objectClick.bindArgs(thing.id)}
+								{...accessible}>
+							{desc}
+						</a>
+					</p>
+				);
+			}
+		}
+
+		else
+			listThings.push(thing);
+	}
+
+	if (listThings.length) {
 		function linkThing(thing) {
 			return (
 				<a onclick={props.state.objectClick.bindArgs(thing.id)}
@@ -51,7 +87,7 @@ export default function LocationView(props) {
 			);
 		}
 
-		text.push(<p>There is {enumerate(things.map(linkThing))} here.</p>);
+		text.push(<p>There is {enumerate(listThings.map(linkThing))} here.</p>);
 	}
 
 	let destinations=props.state.story.getDestinationsByCurrentLocation();

@@ -7,6 +7,21 @@ class StoryVerb {
 	}
 }
 
+class SimpleClauseVerb extends StoryVerb {
+	constructor() {
+		super();
+	}
+
+	execute(object) {
+		if (object.type!="thing") {
+			this.story.message("Can't do that");
+			return;
+		}
+
+		this.story.runClause(object[this.id]);
+	}
+}
+
 class GotoVerb extends StoryVerb {
 	constructor() {
 		super();
@@ -30,43 +45,6 @@ class GotoVerb extends StoryVerb {
 		if (this.story.runClause(current.leave) &&
 				this.story.runClause(object.enter))
 			this.story.currentLocationId=object.id;
-	}
-}
-
-class LookatVerb extends StoryVerb {
-	constructor() {
-		super();
-		this.id="lookat";
-		this.label="LOOK AT";
-	}
-
-	execute(object) {
-		if (object.type!="thing" || !object.description) {
-			this.story.message("Nothing interesting about it.");
-			return;
-		}
-
-		if (this.story.runClause(object.lookat)) {
-			if (object.description)
-				this.story.message(object.description);
-		}
-	}
-}
-
-class UseVerb extends StoryVerb {
-	constructor() {
-		super();
-		this.id="use";
-		this.label="USE";
-	}
-
-	execute(object) {
-		if (object.type!="thing") {
-			this.story.message("Can't use that");
-			return;
-		}
-
-		this.story.runClause(object.use);
 	}
 }
 
@@ -106,10 +84,34 @@ class DropVerb extends StoryVerb {
 	}
 }
 
-export function createVerbs(story) {
+class LookatVerb extends SimpleClauseVerb {
+	constructor() {
+		super();
+		this.id="lookat";
+		this.label="LOOK AT";
+	}
+}
+
+class UseVerb extends SimpleClauseVerb {
+	constructor() {
+		super();
+		this.id="use";
+		this.label="USE";
+	}
+}
+
+class TalktoVerb extends SimpleClauseVerb {
+	constructor() {
+		super();
+		this.id="talkto";
+		this.label="TALK TO";
+	}
+}
+
+export function createVerbs() {
 	let classes=[
 		GotoVerb, LookatVerb, UseVerb,
-		PickupVerb, DropVerb
+		PickupVerb, DropVerb, TalktoVerb
 	];
 
 	let verbs=[];

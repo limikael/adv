@@ -6747,13 +6747,30 @@ ${cbNode.commentBefore}` : cb;
     if (props.state.currentVerb)
       accessible = accessibleLinkProps();
     let things = props.state.story.getThingsByCurrentLocation();
-    if (things.length) {
+    listThings = [];
+    for (let thing of things) {
+      if (thing.description) {
+        let desc = props.state.story.evalClause(thing.description);
+        let m3 = desc.match(/(^.*)\*([^\*]*)\*(.*$)/);
+        if (m3) {
+          text.push(/* @__PURE__ */ v("p", null, m3[1], /* @__PURE__ */ v("a", __spreadValues({
+            onclick: props.state.objectClick.bindArgs(thing.id)
+          }, accessible), m3[2]), m3[3]));
+        } else {
+          text.push(/* @__PURE__ */ v("p", null, /* @__PURE__ */ v("a", __spreadValues({
+            onclick: props.state.objectClick.bindArgs(thing.id)
+          }, accessible), desc)));
+        }
+      } else
+        listThings.push(thing);
+    }
+    if (listThings.length) {
       let linkThing = function(thing) {
         return /* @__PURE__ */ v("a", __spreadValues({
           onclick: props.state.objectClick.bindArgs(thing.id)
         }, accessible), thing.getStageName());
       };
-      text.push(/* @__PURE__ */ v("p", null, "There is ", enumerate(things.map(linkThing)), " here."));
+      text.push(/* @__PURE__ */ v("p", null, "There is ", enumerate(listThings.map(linkThing)), " here."));
     }
     let destinations = props.state.story.getDestinationsByCurrentLocation();
     if (destinations.length) {
@@ -6807,7 +6824,7 @@ ${cbNode.commentBefore}` : cb;
       class: "text-black adv-location-description",
       ref
     }, /* @__PURE__ */ v("p", null, message)), /* @__PURE__ */ v("button", {
-      style: emStyle(3, 13, 10, 3),
+      style: emStyle(3, 13, 10, 2),
       class: "adv-btn bg-info text-white adv-bx",
       onclick: fn
     }, text)));
@@ -6875,7 +6892,7 @@ ${cbNode.commentBefore}` : cb;
         style: emStyle(1, top + 3 * i4, 14, 3),
         class: "adv-btn bg-info text-white adv-bx",
         onclick: props.state.alternativeClick.bindArgs(alternative.index)
-      }, alternative.if));
+      }, alternative.label));
       i4++;
     }
     return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
@@ -7004,6 +7021,7 @@ ${cbNode.commentBefore}` : cb;
         case "thing":
           this.description = spec.description;
           this.use = spec.use;
+          this.talkto = spec.talkto;
           this.location = spec.location;
           this.drop = spec.drop;
           this.pickup = spec.pickup;
@@ -7218,6 +7236,18 @@ ${cbNode.commentBefore}` : cb;
       this.story = story;
     }
   };
+  var SimpleClauseVerb = class extends StoryVerb {
+    constructor() {
+      super();
+    }
+    execute(object) {
+      if (object.type != "thing") {
+        this.story.message("Can't do that");
+        return;
+      }
+      this.story.runClause(object[this.id]);
+    }
+  };
   var GotoVerb = class extends StoryVerb {
     constructor() {
       super();
@@ -7236,37 +7266,6 @@ ${cbNode.commentBefore}` : cb;
       }
       if (this.story.runClause(current.leave) && this.story.runClause(object.enter))
         this.story.currentLocationId = object.id;
-    }
-  };
-  var LookatVerb = class extends StoryVerb {
-    constructor() {
-      super();
-      this.id = "lookat";
-      this.label = "LOOK AT";
-    }
-    execute(object) {
-      if (object.type != "thing" || !object.description) {
-        this.story.message("Nothing interesting about it.");
-        return;
-      }
-      if (this.story.runClause(object.lookat)) {
-        if (object.description)
-          this.story.message(object.description);
-      }
-    }
-  };
-  var UseVerb = class extends StoryVerb {
-    constructor() {
-      super();
-      this.id = "use";
-      this.label = "USE";
-    }
-    execute(object) {
-      if (object.type != "thing") {
-        this.story.message("Can't use that");
-        return;
-      }
-      this.story.runClause(object.use);
     }
   };
   var PickupVerb = class extends StoryVerb {
@@ -7299,13 +7298,35 @@ ${cbNode.commentBefore}` : cb;
         object.location = this.story.currentLocationId;
     }
   };
-  function createVerbs(story) {
+  var LookatVerb = class extends SimpleClauseVerb {
+    constructor() {
+      super();
+      this.id = "lookat";
+      this.label = "LOOK AT";
+    }
+  };
+  var UseVerb = class extends SimpleClauseVerb {
+    constructor() {
+      super();
+      this.id = "use";
+      this.label = "USE";
+    }
+  };
+  var TalktoVerb = class extends SimpleClauseVerb {
+    constructor() {
+      super();
+      this.id = "talkto";
+      this.label = "TALK TO";
+    }
+  };
+  function createVerbs() {
     let classes = [
       GotoVerb,
       LookatVerb,
       UseVerb,
       PickupVerb,
-      DropVerb
+      DropVerb,
+      TalktoVerb
     ];
     let verbs = [];
     for (let cls of classes) {
@@ -7324,6 +7345,10 @@ ${cbNode.commentBefore}` : cb;
         let spec = JSON.parse(JSON.stringify(this.spec));
         this.objectives = [];
         this.objects = [];
+        let verbs = [
+          "goto",
+          "pickup"
+        ];
         for (let objectSpec of spec) {
           let type = Object.keys(objectSpec)[0];
           switch (type) {
@@ -7337,6 +7362,9 @@ ${cbNode.commentBefore}` : cb;
               if (objectSpec.objectives)
                 this.objectives = objectSpec.objectives;
               break;
+            case "verbs":
+              verbs = objectSpec.verbs;
+              break;
             default:
               let o4 = new StoryObject(objectSpec);
               o4.setStory(this);
@@ -7344,9 +7372,17 @@ ${cbNode.commentBefore}` : cb;
               break;
           }
         }
+        this.verbsById = {};
+        for (let verb of createVerbs()) {
+          if (verbs.includes(verb.id)) {
+            verb.setStory(this);
+            this.verbsById[verb.id] = verb;
+          }
+        }
         this.currentLocationId = this.getStartLocation().id;
         this.currentChoiceId = null;
         this.currentMessage = null;
+        this.runClause(this.getCurrentLocation().enter);
       });
       this.spec = spec;
       this.name = "Interactive Fiction Game";
@@ -7358,7 +7394,7 @@ ${cbNode.commentBefore}` : cb;
         in: (id) => {
           return this.getCurrentLocation().id == id;
         },
-        ask: (id) => {
+        spawn: (id) => {
           this.currentChoiceId = id;
         },
         fail: (message) => {
@@ -7377,11 +7413,6 @@ ${cbNode.commentBefore}` : cb;
       this.yaMachine = new YaMachine();
       for (let f4 in functions)
         this.yaMachine.addFunction(f4, functions[f4].bind(this));
-      this.verbsById = {};
-      for (let verb of createVerbs()) {
-        verb.setStory(this);
-        this.verbsById[verb.id] = verb;
-      }
       this.restart();
     }
     getVerbs() {
@@ -7416,7 +7447,7 @@ ${cbNode.commentBefore}` : cb;
       let choice = this.getCurrentChoice();
       this.currentChoiceId = null;
       let alternative = choice.getAlternative(alternativeIndex);
-      this.runClause(alternative.then);
+      this.runClause(alternative.do);
     }
     message(message) {
       this.currentMessage = message;
@@ -7460,6 +7491,9 @@ ${cbNode.commentBefore}` : cb;
       if (typeof v3 == "string")
         this.currentMessage = v3;
       return true;
+    }
+    evalClause(clause) {
+      return this.yaMachine.preprocessAndEval(clause);
     }
     isAlertShowing() {
       return this.getMessage() || this.isComplete();

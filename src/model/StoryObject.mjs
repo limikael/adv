@@ -7,6 +7,7 @@ export default class StoryObject {
 			case "thing":
 				this.description=spec.description;
 				this.use=spec.use;
+				this.talkto=spec.talkto;
 				this.location=spec.location;
 				this.drop=spec.drop;
 				this.pickup=spec.pickup;

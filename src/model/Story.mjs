@@ -18,7 +18,7 @@ export default class Story {
 				return (this.getCurrentLocation().id==id)
 			},
 
-			ask: (id)=>{
+			spawn: (id)=>{
 				this.currentChoiceId=id;
 			},
 
@@ -43,12 +43,6 @@ export default class Story {
 		for (let f in functions)
 			this.yaMachine.addFunction(f,functions[f].bind(this));
 
-		this.verbsById={};
-		for (let verb of createVerbs()) {
-			verb.setStory(this);
-			this.verbsById[verb.id]=verb;
-		}
-
 		this.restart();
 	}
 
@@ -61,6 +55,10 @@ export default class Story {
 
 		this.objectives=[];
 		this.objects=[];
+
+		let verbs=[
+			"goto", "pickup"
+		];
 
 		for (let objectSpec of spec) {
 			let type=Object.keys(objectSpec)[0];
@@ -80,12 +78,24 @@ export default class Story {
 
 					break;
 
+				case "verbs":
+					verbs=objectSpec.verbs;
+					break;
+
 				default:
 					let o=new StoryObject(objectSpec);
 					o.setStory(this);
 					this.objects.push(o);
 					break;
 			}			
+		}
+
+		this.verbsById={};
+		for (let verb of createVerbs()) {
+			if (verbs.includes(verb.id)) {
+				verb.setStory(this);
+				this.verbsById[verb.id]=verb;
+			}
 		}
 
 		this.currentLocationId=this.getStartLocation().id;
@@ -133,7 +143,7 @@ export default class Story {
 		this.currentChoiceId=null;
 
 		let alternative=choice.getAlternative(alternativeIndex);
-		this.runClause(alternative.then);
+		this.runClause(alternative.do);
 	}
 
 	message(message) {
@@ -195,6 +205,10 @@ export default class Story {
 			this.currentMessage=v;
 
 		return true;
+	}
+
+	evalClause(clause) {
+		return this.yaMachine.preprocessAndEval(clause);
 	}
 
 	isAlertShowing() {

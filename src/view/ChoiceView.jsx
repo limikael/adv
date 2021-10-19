@@ -21,7 +21,7 @@ export default function ChoiceView(props) {
 		alternativeButtons.push(
 			<button style={emStyle(1,top+3*i,14,3)} class="adv-btn bg-info text-white adv-bx"
 					onclick={props.state.alternativeClick.bindArgs(alternative.index)}>
-				{alternative.if}
+				{alternative.label}
 			</button>
 		);
 

@@ -3,6 +3,13 @@
 - state: room lit
 - state: seen gnome
 
+- verbs:
+  - goto
+  - pickup
+  - drop
+  - lookat
+  - use
+
 - location: bedroom
   description:
     You are in your bedroom. It is the favourite part of your house because you
@@ -66,7 +73,7 @@
 
 - thing: toothbrush
   location: bathroom
-  description:
+  lookat:
     It is an Oral-B Pro-Health All-In-One Soft Bristle Toothbrush. One of the
     top 10 market leading toothbrushes for 2020.
   use:
@@ -78,7 +85,7 @@
       Doesn''t really work, are you going to move your teeth to the toothbrush?
 
 - thing: slippers
-  description: A pair of slippers with rabbit ears.
+  lookat: A pair of slippers with rabbit ears.
   location: bedroom
   stage_name: a pair of slippers
   use:
@@ -100,16 +107,8 @@
     then: slippers (on your feet)
     else: slippers
 
-- choice: howto slippers
-  description: what do you want to do with the slippers?
-  alternatives:
-  - description: Put them on my head it would be fun
-    then:
-  - description: Put them on my feet
-    then:
-
 - thing: lamp
-  description:
+  lookat:
     The sleek silver angle-poise lamp is simple and elegant - minimalist
     perhaps. You find it satisfyingly heavy too, a justification for the huge
     price tag. A device for giving light, either one consisting of an electric 
@@ -125,7 +124,7 @@
     fail: It is too heavy to carry around.
 
 - thing: shower
-  description: A quite ordinary shower.
+  lookat: A quite ordinary shower.
   location: bathroom
   use:
     if-have: slippers
@@ -136,20 +135,18 @@
     fail: It is too heavy to carry around.
 
 - thing: garden gnome
-  description:
-    You would sit in the garden, feeling joy from how the sunny rays warmed your
-    skin, and listen to the tales of the gnome. For they talk, the gnomes, if
-    you can listen with your heart while your ears enjoy the birdsong. The
-    gnome's hat has gotten too old. It had been fraying for the best part of a
-    century but now the stitching around the brim was coming away and even magic
-    couldn't repair it. The once midnight blue fabric was almost an embarrassing
-    navy and the pointed top drooped worse than a well used sock.
+  lookat:
+    - set: seen gnome
+    - You would sit in the garden, feeling joy from how the sunny rays warmed your
+      skin, and listen to the tales of the gnome. For they talk, the gnomes, if
+      you can listen with your heart while your ears enjoy the birdsong. The
+      gnome's hat has gotten too old. It had been fraying for the best part of a
+      century but now the stitching around the brim was coming away and even magic
+      couldn't repair it. The once midnight blue fabric was almost an embarrassing
+      navy and the pointed top drooped worse than a well used sock.
   location: garden
   pickup:
     fail: It is too heavy to carry around.
-
-  lookat:
-    set: seen gnome
 
 - objectives:
   - if-not-state: room lit
