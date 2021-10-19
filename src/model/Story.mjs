@@ -19,7 +19,18 @@ export default class Story {
 			},
 
 			spawn: (id)=>{
-				this.currentChoiceId=id;
+				if (!id) {
+					this.currentLocationId=null;
+					return;
+				}
+
+				let o=this.getObjectById(id);
+
+				if (o.type=="choice")
+					this.currentChoiceId=id;
+
+				else if (o.type=="location")
+					this.currentLocationId=id;
 			},
 
 			fail: (message)=>{

@@ -6742,44 +6742,46 @@ ${cbNode.commentBefore}` : cb;
       if (changed)
         ref.current.scrollTop = 0;
     });
-    text.push(/* @__PURE__ */ v("p", null, props.state.story.getCurrentLocation().description));
-    let accessible = null;
-    if (props.state.currentVerb)
-      accessible = accessibleLinkProps();
-    let things = props.state.story.getThingsByCurrentLocation();
-    listThings = [];
-    for (let thing of things) {
-      if (thing.description) {
-        let desc = props.state.story.evalClause(thing.description);
-        let m3 = desc.match(/(^.*)\*([^\*]*)\*(.*$)/);
-        if (m3) {
-          text.push(/* @__PURE__ */ v("p", null, m3[1], /* @__PURE__ */ v("a", __spreadValues({
+    if (!props.state.story.getCurrentChoice()) {
+      text.push(/* @__PURE__ */ v("p", null, props.state.story.getCurrentLocation().description));
+      let accessible = null;
+      if (props.state.currentVerb)
+        accessible = accessibleLinkProps();
+      let things = props.state.story.getThingsByCurrentLocation();
+      listThings = [];
+      for (let thing of things) {
+        if (thing.description) {
+          let desc = props.state.story.evalClause(thing.description);
+          let m3 = desc.match(/(^.*)\*([^\*]*)\*(.*$)/);
+          if (m3) {
+            text.push(/* @__PURE__ */ v("p", null, m3[1], /* @__PURE__ */ v("a", __spreadValues({
+              onclick: props.state.objectClick.bindArgs(thing.id)
+            }, accessible), m3[2]), m3[3]));
+          } else {
+            text.push(/* @__PURE__ */ v("p", null, /* @__PURE__ */ v("a", __spreadValues({
+              onclick: props.state.objectClick.bindArgs(thing.id)
+            }, accessible), desc)));
+          }
+        } else
+          listThings.push(thing);
+      }
+      if (listThings.length) {
+        let linkThing = function(thing) {
+          return /* @__PURE__ */ v("a", __spreadValues({
             onclick: props.state.objectClick.bindArgs(thing.id)
-          }, accessible), m3[2]), m3[3]));
-        } else {
-          text.push(/* @__PURE__ */ v("p", null, /* @__PURE__ */ v("a", __spreadValues({
-            onclick: props.state.objectClick.bindArgs(thing.id)
-          }, accessible), desc)));
-        }
-      } else
-        listThings.push(thing);
-    }
-    if (listThings.length) {
-      let linkThing = function(thing) {
-        return /* @__PURE__ */ v("a", __spreadValues({
-          onclick: props.state.objectClick.bindArgs(thing.id)
-        }, accessible), thing.getStageName());
-      };
-      text.push(/* @__PURE__ */ v("p", null, "There is ", enumerate(listThings.map(linkThing)), " here."));
-    }
-    let destinations = props.state.story.getDestinationsByCurrentLocation();
-    if (destinations.length) {
-      let linkDest = function(dest) {
-        return /* @__PURE__ */ v("a", __spreadValues({
-          onclick: props.state.objectClick.bindArgs(dest.id)
-        }, accessible), dest.getStageName());
-      };
-      text.push(/* @__PURE__ */ v("p", null, "You can reach ", enumerate(destinations.map(linkDest)), " from here."));
+          }, accessible), thing.getStageName());
+        };
+        text.push(/* @__PURE__ */ v("p", null, "There is ", enumerate(listThings.map(linkThing)), " here."));
+      }
+      let destinations = props.state.story.getDestinationsByCurrentLocation();
+      if (destinations.length) {
+        let linkDest = function(dest) {
+          return /* @__PURE__ */ v("a", __spreadValues({
+            onclick: props.state.objectClick.bindArgs(dest.id)
+          }, accessible), dest.getStageName());
+        };
+        text.push(/* @__PURE__ */ v("p", null, "You can reach ", enumerate(destinations.map(linkDest)), " from here."));
+      }
     }
     let cls = "adv-location-description ";
     if (props.state.currentVerb)
@@ -7395,7 +7397,15 @@ ${cbNode.commentBefore}` : cb;
           return this.getCurrentLocation().id == id;
         },
         spawn: (id) => {
-          this.currentChoiceId = id;
+          if (!id) {
+            this.currentLocationId = null;
+            return;
+          }
+          let o4 = this.getObjectById(id);
+          if (o4.type == "choice")
+            this.currentChoiceId = id;
+          else if (o4.type == "location")
+            this.currentLocationId = id;
         },
         fail: (message) => {
           return new StoryException(message);

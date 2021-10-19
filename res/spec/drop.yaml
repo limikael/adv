@@ -1,0 +1,119 @@
+- state: shown intro
+
+- verbs:
+  - goto
+  - pickup
+  - use
+  - lookat
+
+- location: parking
+  description:
+  - You are in the parking lot for D.R.O.P. Eats. There is a fancy entrance, intended to be used
+    by respected patrons of this establishment. It is clear that this does not mean delivery 
+    personell, they are instead more or less respectfully referred to the delivery pickup window
+    at the back.
+  enter:
+  - if-not-state: shown intro
+    then:
+    - set: shown intro
+    - Due to circumstances, you find yourself as an employee of D.R.O.P eats.
+      The pizza delivery company with a reputation as the worst employer on this side of the river.
+  destinations:
+  - restaurant
+  - delivery window
+
+- location: delivery window
+  description:
+    The walls of this side of the building is made of raw unfinished concrete bricks. They
+    could have painted the grout between the bricks to make the place look more welcoming,
+    but choose not to. The window has an industrail looking aluminium frame.
+  enter: >
+    A faceless voice at the window says: Hey, where have you been, the pizza is getting cold. 
+    We don't have the best reputation you know, are you going to make it worse? 
+
+  destinations:
+  - parking
+
+- thing: employee manual
+  description:
+    An note labled *employee manual* is attached next to the window.
+  location: delivery window
+  lookat: >
+    It is laminated and has a company logo on it.
+    The manual reads: Smile at all times. Be grateful that you have a job. Now get on with it.
+
+- thing: pizza
+  location: delivery window
+  description:
+    A *pizza* for delivery sits on the window counter.
+  pickup:
+    You sigh to yourself as you reluctantly pick up the pizza.
+  lookat: >
+    The pizza has a note with the delivery address on it. It says "34 Earnshaw Avenue". 
+  inventory_name:
+    pizza for delivery
+
+- location: restaurant
+  description:
+    You are in the restaurant. You are not really supposed to be here.
+  destinations:
+  - parking
+
+- thing: scooter
+  location: parking
+  description: Your trusty old *scooter* is parked here.
+  lookat: It is your old scoopy. 1998 model.
+  use:
+  - spawn: ride-1
+  pickup:
+  - fail:
+      You normally don't pick up scooters. It is rather the scooter that pick up you. 
+      Or you use it to pick up things.
+
+- choice: ride-1
+  description:
+    You ride north along the East Canal Street, towards the harbour. Immagine that there once
+    was a time when people were actually making real things in this town and transported them along
+    the canal. Now it is all just banksters on their yachts snorting cocaine. 
+  alternatives:
+  - label: Turn left and cross North Harbour Bridge.
+    do:
+      spawn: ride-2
+  - label: Turn right onto Harbour Road.
+    do:
+      spawn: 
+
+- choice: ride-2
+  description:
+    You ride across the majestic old industrial steel structure that is North Harbour Bridge.
+    They don't make them like this anymore. You stop at the traffic light.
+  alternatives:
+  - label: Turn left onto West Canal Street.
+    do:
+      spawn: ride-3
+  - label:
+    do:
+      spawn: 
+
+- choice: ride-3
+  description:
+    You ride south along the West Canal Street. 
+  alternatives:
+  - label: Turn left across the New South Bridge.
+    do:
+      spawn: ride-4
+  - label:
+    do:
+      spawn: 
+
+- choice: ride-4
+  description:
+    You cross the post modern monstrosity that is the New South Bridge. In the street corner you
+    see your work place.
+  alternatives:
+  - label: Turn left onto East Canal Street.
+    do:
+      spawn: ride-1
+  - label: Go to D.R.O.P. Eats.
+    do:
+      spawn: parking
