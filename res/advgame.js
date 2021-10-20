@@ -7118,7 +7118,8 @@ ${cbNode.commentBefore}` : cb;
         if: this.if.bind(this),
         and: this.and.bind(this),
         or: this.or.bind(this),
-        return: this.return.bind(this)
+        return: this.return.bind(this),
+        seq: this.seq.bind(this)
       };
       this.functions = {};
       this.addFunction("not", (s4) => !this.castToBool(s4));
@@ -7198,6 +7199,17 @@ ${cbNode.commentBefore}` : cb;
         return context.getReturnValue();
       context.setReturnValue(this.eval(clause.return, context));
       return context.getReturnValue();
+    }
+    seq(clause, context) {
+      this.assertValidKeys(clause, ["seq"]);
+      if (!(clause.seq instanceof Array))
+        throw new Error("seq needs an array");
+      if (context.isReturned())
+        return context.getReturnValue();
+      let res = [];
+      for (let c4 of clause.seq)
+        res.push(this.eval(c4, context));
+      return res;
     }
     eval(clause, context) {
       if (!context)
@@ -7463,9 +7475,16 @@ ${cbNode.commentBefore}` : cb;
       this.currentMessage = message;
     }
     getMessage() {
+      if (this.currentMessage instanceof Array)
+        return this.currentMessage[0];
       return this.currentMessage;
     }
     dismissMessage() {
+      if (this.currentMessage instanceof Array) {
+        this.currentMessage.shift();
+        if (this.currentMessage.length)
+          return;
+      }
       this.currentMessage = null;
     }
     getThingsByCurrentLocation() {
@@ -7498,7 +7517,7 @@ ${cbNode.commentBefore}` : cb;
         this.currentMessage = v3.getMessage();
         return false;
       }
-      if (typeof v3 == "string")
+      if (typeof v3 == "string" || v3 instanceof Array)
         this.currentMessage = v3;
       return true;
     }
