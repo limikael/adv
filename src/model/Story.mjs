@@ -162,10 +162,19 @@ export default class Story {
 	}
 
 	getMessage() {
+		if (this.currentMessage instanceof Array)
+			return this.currentMessage[0];
+
 		return this.currentMessage;
 	}
 
 	dismissMessage() {
+		if (this.currentMessage instanceof Array) {
+			this.currentMessage.shift();
+			if (this.currentMessage.length)
+				return;
+		}
+
 		this.currentMessage=null;
 	}
 
@@ -212,7 +221,8 @@ export default class Story {
 			return false;
 		}
 
-		if (typeof v=="string")
+		if ((typeof v=="string") ||
+				(v instanceof Array))
 			this.currentMessage=v;
 
 		return true;

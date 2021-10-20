@@ -66,4 +66,22 @@ describe("YaMachine",()=>{
 			y.preprocessAndEval(p);
 		}).toThrow();
 	});
+
+	it("can make arrays",()=>{
+		let p=yaml.parse(`
+- if-hello: test
+  then-seq:
+  - hello: a
+  - b
+  - c
+`);
+
+		let y=new YaMachine();
+		y.addFunction("hello",(s)=>{
+			return s;
+		});
+
+		let a=y.preprocessAndEval(p);
+		expect(a).toEqual(["a","b","c"]);
+	});
 })

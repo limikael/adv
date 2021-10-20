@@ -19,7 +19,8 @@ export default class YaMachine {
 			if: this.if.bind(this),
 			and: this.and.bind(this),
 			or: this.or.bind(this),
-			return: this.return.bind(this)
+			return: this.return.bind(this),
+			seq: this.seq.bind(this)
 		}
 
 		this.functions={};
@@ -136,6 +137,23 @@ export default class YaMachine {
 
 		context.setReturnValue(this.eval(clause.return,context));
 		return context.getReturnValue();
+	}
+
+	seq(clause, context) {
+		this.assertValidKeys(clause,["seq"]);
+
+		if (!(clause.seq instanceof Array))
+			throw new Error("seq needs an array");
+
+		if (context.isReturned())
+			return context.getReturnValue();
+
+		let res=[];
+
+		for (let c of clause.seq)
+			res.push(this.eval(c,context))
+
+		return res;
 	}
 
 	eval(clause, context) {

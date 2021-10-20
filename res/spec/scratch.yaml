@@ -1,0 +1,14 @@
+- verbs:
+  - goto
+  - pickup
+  - lookat
+  - use
+
+- location: club
+  description:
+    You are in the club.
+  enter:
+    seq:
+    - You are DJing on the stage. People are dancing to the rhythm.
+    - Suddenly something hits your ear and you fall on the ground.
+      People panic.
