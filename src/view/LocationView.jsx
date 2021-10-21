@@ -108,15 +108,17 @@ export default function LocationView(props) {
 		}
 	}
 
-	let cls="adv-location-description ";
+	let cls="adv-bx bg-white text-black adv-location-description ";
 	if (props.state.currentVerb)
 		cls+="adv-verb-selected";
 
 	return (
-		<div style={emStyle(0,1.5,19,16.5)} class="adv-bx bg-white text-black">
-			<div style={emStyle(0,0,18,15.5)} class={cls} ref={ref}>
+		<Fragment>
+			<div style={emStyle(0,2,19,16)} class="adv-bx bg-white"/>
+
+			<div style={emStyle(0.25,2,18.5,16)} class={cls} ref={ref}>
 				{text}
 			</div>
-		</div>
+		</Fragment>
 	);
 }

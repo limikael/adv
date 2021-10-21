@@ -1,4 +1,4 @@
-import {useRef, useReducer} from "react";
+import {useRef, useReducer, useState, useEffect} from "react";
 
 export function useForceUpdate() {
 	const [_, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -101,4 +101,56 @@ export function accessibleLinkProps() {
 		tabindex: "0",
 		onkeydown: onKeyDown
 	}
+}
+
+export function useInterval(callback, delay) {
+	const savedCallback = useRef(callback)
+
+	// Remember the latest callback if it changes.
+	useEffect(() => {
+		savedCallback.current = callback
+	}, [callback])
+
+	// Set up the interval.
+	useEffect(() => {
+		// Don't schedule if no delay is specified.
+			if (delay === null) {
+				return
+		}
+
+		const id = setInterval(() => savedCallback.current(), delay)
+
+		return () => clearInterval(id)
+	}, [delay])
+}
+
+export function useCountUp(value, enable) {
+	let [currentValue,setCurrentValue]=useState(value);
+
+	if (value<currentValue)
+		setCurrentValue(value);
+
+	function count() {
+		if (Math.abs(value-currentValue)<1) {
+			setCurrentValue(value);
+			return;
+		}
+
+		if (currentValue<value) {
+			currentValue=currentValue+(value-currentValue)*.25;
+
+			setCurrentValue(currentValue);
+		}
+	}
+
+	let delay=null;
+	if (value!=currentValue && enable)
+		delay=50;
+
+	useInterval(count,delay);
+
+	if (!enable)
+		return value;
+
+	return currentValue;
 }

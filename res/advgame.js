@@ -6691,6 +6691,41 @@ ${cbNode.commentBefore}` : cb;
       onkeydown: onKeyDown
     };
   }
+  function useInterval(callback, delay) {
+    const savedCallback = s2(callback);
+    y2(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+    y2(() => {
+      if (delay === null) {
+        return;
+      }
+      const id = setInterval(() => savedCallback.current(), delay);
+      return () => clearInterval(id);
+    }, [delay]);
+  }
+  function useCountUp(value, enable) {
+    let [currentValue, setCurrentValue] = l2(value);
+    if (value < currentValue)
+      setCurrentValue(value);
+    function count() {
+      if (Math.abs(value - currentValue) < 1) {
+        setCurrentValue(value);
+        return;
+      }
+      if (currentValue < value) {
+        currentValue = currentValue + (value - currentValue) * 0.25;
+        setCurrentValue(currentValue);
+      }
+    }
+    let delay = null;
+    if (value != currentValue && enable)
+      delay = 50;
+    useInterval(count, delay);
+    if (!enable)
+      return value;
+    return currentValue;
+  }
 
   // src/view/VerbListView.jsx
   function VerbListView(props) {
@@ -6783,14 +6818,14 @@ ${cbNode.commentBefore}` : cb;
         text.push(/* @__PURE__ */ v("p", null, "You can reach ", enumerate(destinations.map(linkDest)), " from here."));
       }
     }
-    let cls = "adv-location-description ";
+    let cls = "adv-bx bg-white text-black adv-location-description ";
     if (props.state.currentVerb)
       cls += "adv-verb-selected";
-    return /* @__PURE__ */ v("div", {
-      style: emStyle(0, 1.5, 19, 16.5),
-      class: "adv-bx bg-white text-black"
-    }, /* @__PURE__ */ v("div", {
-      style: emStyle(0, 0, 18, 15.5),
+    return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
+      style: emStyle(0, 2, 19, 16),
+      class: "adv-bx bg-white"
+    }), /* @__PURE__ */ v("div", {
+      style: emStyle(0.25, 2, 18.5, 16),
       class: cls,
       ref
     }, text));
@@ -6857,20 +6892,22 @@ ${cbNode.commentBefore}` : cb;
   // src/view/HeaderView.jsx
   init_preact_shim();
   function HeaderView(props) {
+    let countScore = Math.round(useCountUp(props.state.story.getCompletePercentage(), true));
     return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
       style: emStyle(0, 0, 19, 2),
-      class: "adv-bx"
+      class: "adv-bx bg-black"
     }), /* @__PURE__ */ v("div", {
-      style: emStyle(0.75, -0.5, 19, 2)
+      style: emStyle(0, 0, 19, 2),
+      class: "adv-bx adv-btn bg-black text-white text-center"
     }, props.state.story.getName()), /* @__PURE__ */ v("div", {
-      style: emStyle(-0.5, -0.5, 2, 2),
-      class: "adv-bx text-center text-white bg-transparent adv-btn"
+      style: emStyle(0, 0, 2, 2),
+      class: "adv-bx text-center text-white adv-btn"
     }, /* @__PURE__ */ v("div", {
       class: "bi bi-three-dots-vertical"
     })), /* @__PURE__ */ v("div", {
-      style: emStyle(14.25, -0.5, 5, 2),
-      class: "text-end"
-    }, props.state.story.getCompletePercentage(), "%"));
+      style: emStyle(14, 0, 5, 2),
+      class: "adv-bx text-end text-white"
+    }, countScore, "%"));
   }
 
   // src/view/ChoiceView.jsx

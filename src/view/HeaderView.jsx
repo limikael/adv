@@ -1,17 +1,19 @@
-import {emStyle} from "../utils/ReactUtil.jsx";
+import {emStyle, useCountUp} from "../utils/ReactUtil.jsx";
 
 export default function HeaderView(props) {
+	let countScore=Math.round(useCountUp(props.state.story.getCompletePercentage(),true));
+
 	return (
 		<Fragment>
-			<div style={emStyle(0,0,19,2)} class="adv-bx" />
-			<div style={emStyle(0.75,-0.5,19,2)}>
+			<div style={emStyle(0,0,19,2)} class="adv-bx bg-black" />
+			<div style={emStyle(0,0,19,2)} class="adv-bx adv-btn bg-black text-white text-center">
 				{props.state.story.getName()}
 			</div>
-			<div style={emStyle(-0.5,-0.5,2,2)} class="adv-bx text-center text-white bg-transparent adv-btn">
+			<div style={emStyle(0,0,2,2)} class="adv-bx text-center text-white adv-btn">
 				<div class="bi bi-three-dots-vertical"></div>
 			</div>
-			<div style={emStyle(14.25,-0.5,5,2)} class="text-end">
-				{props.state.story.getCompletePercentage()}%
+			<div style={emStyle(14,0,5,2)} class="adv-bx text-end text-white">
+				{countScore}%
 			</div>
 		</Fragment>
 	);
