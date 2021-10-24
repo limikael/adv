@@ -6778,7 +6778,9 @@ ${cbNode.commentBefore}` : cb;
         ref.current.scrollTop = 0;
     });
     if (!props.state.story.getCurrentChoice()) {
-      text.push(/* @__PURE__ */ v("p", null, props.state.story.getCurrentLocation().description));
+      let descs = props.state.story.getCurrentLocationDescriptions();
+      for (let desc of descs)
+        text.push(/* @__PURE__ */ v("p", null, desc));
       let accessible = null;
       if (props.state.currentVerb)
         accessible = accessibleLinkProps();
@@ -7079,6 +7081,7 @@ ${cbNode.commentBefore}` : cb;
           this.alternatives = spec.alternatives;
           break;
         case "state":
+          this.value = spec.value;
           break;
         default:
           throw new Error("Unknown story object type: " + this.type);
@@ -7108,7 +7111,13 @@ ${cbNode.commentBefore}` : cb;
       for (let i4 in this.alternatives) {
         let alternative = this.alternatives[i4];
         alternative.index = i4;
-        res.push(alternative);
+        let use = true;
+        if (alternative.exists) {
+          if (!this.story.evalClause(alternative.exists))
+            use = false;
+        }
+        if (use)
+          res.push(alternative);
       }
       return res;
     }
@@ -7393,7 +7402,7 @@ ${cbNode.commentBefore}` : cb;
   var Story = class {
     constructor(spec) {
       __publicField(this, "restart", () => {
-        let spec = JSON.parse(JSON.stringify(this.spec));
+        let spec = this.yaMachine.preprocess(JSON.parse(JSON.stringify(this.spec)));
         this.objectives = [];
         this.objects = [];
         let verbs = [
@@ -7472,6 +7481,11 @@ ${cbNode.commentBefore}` : cb;
       this.yaMachine = new YaMachine();
       for (let f4 in functions)
         this.yaMachine.addFunction(f4, functions[f4].bind(this));
+      for (let verb of createVerbs()) {
+        this.yaMachine.addFunction(verb.id, (arg) => {
+          this.execute(verb.id, arg);
+        });
+      }
       this.restart();
     }
     getVerbs() {
@@ -7493,6 +7507,9 @@ ${cbNode.commentBefore}` : cb;
     }
     getCurrentLocation() {
       return this.getObjectById(this.currentLocationId);
+    }
+    getCurrentLocationDescriptions() {
+      return this.evalClauseArray(this.getCurrentLocation().description);
     }
     getCurrentChoice() {
       if (this.currentChoiceId)
@@ -7560,6 +7577,21 @@ ${cbNode.commentBefore}` : cb;
     }
     evalClause(clause) {
       return this.yaMachine.preprocessAndEval(clause);
+    }
+    evalClauseArray(clauseArray) {
+      let res = [];
+      if (!(clauseArray instanceof Array))
+        return [this.evalClause(clauseArray)];
+      for (let clause of clauseArray) {
+        let c4 = this.evalClause(clause);
+        if (c4) {
+          if (c4 instanceof Array)
+            res = [...res, ...c4];
+          else
+            res.push(c4);
+        }
+      }
+      return res;
     }
     isAlertShowing() {
       return this.getMessage() || this.isComplete();
