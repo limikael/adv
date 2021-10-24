@@ -4,11 +4,20 @@
   - lookat
   - use
 
+- state: scratch
+
 - location: club
   description:
-    You are in the club.
+    - You are in the club.
+    - if-state: scratch
+      then: something something
   enter:
     seq:
     - You are DJing on the stage. People are dancing to the rhythm.
     - Suddenly something hits your ear and you fall on the ground.
       People panic.
+
+- thing: turntable
+  location: club
+  use:
+  - set: scratch

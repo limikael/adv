@@ -35,7 +35,9 @@ export default function LocationView(props) {
 	});
 
 	if (!props.state.story.getCurrentChoice()) {
-		text.push(<p>{props.state.story.getCurrentLocation().description}</p>);
+		let descs=props.state.story.getCurrentLocationDescriptions();
+		for (let desc of descs)
+			text.push(<p>{desc}</p>);
 
 		let accessible=null;
 		if (props.state.currentVerb)

@@ -29,6 +29,7 @@ export default class StoryObject {
 				break;
 
 			case "state":
+				this.value=spec.value;
 				break;
 
 			default:
@@ -68,7 +69,13 @@ export default class StoryObject {
 			let alternative=this.alternatives[i];
 			alternative.index=i;
 
-			res.push(alternative)
+			let use=true;
+			if (alternative.exists)
+				if (!this.story.evalClause(alternative.exists))
+					use=false;
+
+			if (use)
+				res.push(alternative)
 		}
 
 		return res;

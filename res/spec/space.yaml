@@ -1,0 +1,130 @@
+- verbs:
+  - goto
+  - pickup
+  - talkto
+  - use
+  - lookat
+
+- state: talked to crew member
+- state: weapons active
+- state: red alert
+
+- location: command deck
+  description:
+  - You are standing on the command deck of your spaceship, as befits a captain like you.
+  - if-not-state: talked to crew member
+    then:
+      You are on a routine mission to transport passengers to a distant planet.
+
+- thing: personal screen
+  location: command deck
+  description:
+  - if-state: weapons active
+    then-return:
+      A light on your *personal screen* blinks worrying.
+      There is a little weapons icon with a circle around it.
+  - if-state: talked to crew member
+    then-return: A light on your *personal screen* blinks worrying.
+  - A light on your *personal screen* glows calm and blue.
+
+  lookat:
+  - use: personal screen
+
+  pickup:
+  - fail: It is firmly attached.
+
+  use:
+  - if-not-state: talked to crew member
+    then: It glows calm and blue.
+    else-spawn: command choices
+
+  talkto:
+    This story takes place in the distant future, when humanity has finally
+    realized that Alexa was a bad idea. We generally interact with computers
+    by pressing buttons.
+
+- thing: crew member
+  location: command deck
+  description: 
+  - if-not-state: talked to crew member
+    then: A *crew member* suddenly approaches, flailing her arms.
+    else: The *crew member* looks to you for firm leadership.
+
+  pickup:
+  - fail: Doesn't make sense
+
+  use:
+  - fail: Doesn't make sense
+
+  lookat:
+  - if-state: talked to crew member
+    then: The crew member looks horrified.
+    else: The crew member looks like she has something important to tell you.
+
+  talkto:
+  - if-not-state: talked to crew member
+    then:
+    - set: talked to crew member
+    - seq:
+      - 'The crew member announces: "Another ship is approaching."'
+      - Hardly has she had time to say that, when your ship shakes and the lights blink.
+        "We have been shot!" Suddenly, your mission to transport passengers to a distant
+        planet takes a different turn.
+    else:
+      'She says: "Do something captain!!!"'
+
+- choice: command choices
+  description:
+    The AI system of the ship has conveniently placed some typical options for this situation
+    on your personal screen.
+  alternatives:
+  - label: Red alert
+    exists-not-state: red alert
+    do:
+    - set: red alert
+    - A monotonous voice starts repeatedly announcing that a red alert has been declared.
+      Blinking red lights appear. The crew starts hustling and bustling around computers. Your
+      first officer says something, but you can’t hear it over the computerised alert
+      announcement.
+
+  - label: Cancel red alert
+    exists-state: red alert
+    do:
+    - reset: red alert
+    - >
+      The voice stops. The lights return to normal. Your first officer says:
+      "Thanks. I couldn’t hear the music on my headphones over that."
+
+  - label: Take power from the shields for weapons
+    exists-not-state: weapons active
+    do:
+    - set: weapons active
+    - Your screen announces that the shields are now at 60% and that the weapons are ready.
+
+  - label: Activate weapons
+    exists-state: weapons active
+    do:
+    - Boom..
+
+  - label: Disable weapons
+    exists-state: weapons active
+    do:
+    - reset: weapons active
+    - Your screen announces that the shields are now at 100%
+
+  - label: Activate escape sequence
+    do:
+    - spawn: planet one
+    - >
+      The computer announces: "Escape sequence activated!"
+      You feel a sharp jolt and the scenery outside the ship becomes filled with blurry white
+      lines.
+      "We are doing a jump!" the first officer states. "I wonder where!"
+      After only a few minutes, the white stripes outside turn into more star-like patterns.
+
+- location: planet one
+  description: 
+  - A screen in front of you wakes up and displays a map of a solar system with two planets,
+    numbered Planet 1 and Planet 2 .
+  - The voice of the computer helpfully informs you that your fuel is at 5% and that you
+    should head to the nearest spaceship fuel station.

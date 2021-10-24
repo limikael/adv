@@ -54,6 +54,12 @@ export default class Story {
 		for (let f in functions)
 			this.yaMachine.addFunction(f,functions[f].bind(this));
 
+		for (let verb of createVerbs()) {
+			this.yaMachine.addFunction(verb.id,(arg)=>{
+				this.execute(verb.id,arg);
+			});
+		}
+
 		this.restart();
 	}
 
@@ -62,7 +68,7 @@ export default class Story {
 	}
 
 	restart=()=>{
-		let spec=JSON.parse(JSON.stringify(this.spec));
+		let spec=this.yaMachine.preprocess(JSON.parse(JSON.stringify(this.spec)));
 
 		this.objectives=[];
 		this.objects=[];
@@ -136,6 +142,10 @@ export default class Story {
 
 	getCurrentLocation() {
 		return this.getObjectById(this.currentLocationId);
+	}
+
+	getCurrentLocationDescriptions() {
+		return this.evalClauseArray(this.getCurrentLocation().description);
 	}
 
 	getCurrentChoice() {
@@ -230,6 +240,26 @@ export default class Story {
 
 	evalClause(clause) {
 		return this.yaMachine.preprocessAndEval(clause);
+	}
+
+	evalClauseArray(clauseArray) {
+		let res=[];
+
+		if (!(clauseArray instanceof Array))
+			return [this.evalClause(clauseArray)];
+
+		for (let clause of clauseArray) {
+			let c=this.evalClause(clause);
+			if (c) {
+				if (c instanceof Array)
+					res=[...res,...c];
+
+				else
+					res.push(c);
+			}
+		}
+
+		return res;
 	}
 
 	isAlertShowing() {
