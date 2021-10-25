@@ -77,6 +77,8 @@ export default class Story {
 			"goto", "pickup"
 		];
 
+		let startId;
+
 		for (let objectSpec of spec) {
 			let type=Object.keys(objectSpec)[0];
 
@@ -84,6 +86,7 @@ export default class Story {
 				case "objectives":
 				case "name":
 				case "complete-message":
+				case "start":
 					if (objectSpec.name)
 						this.name=objectSpec.name;
 
@@ -93,6 +96,8 @@ export default class Story {
 					if (objectSpec.objectives)
 						this.objectives=objectSpec.objectives;
 
+					if (objectSpec.start)
+						startId=objectSpec.start;
 					break;
 
 				case "verbs":
@@ -115,7 +120,10 @@ export default class Story {
 			}
 		}
 
-		this.currentLocationId=this.getStartLocation().id;
+		if (!startId)
+			startId=this.getStartLocation().id;
+
+		this.currentLocationId=startId;
 		this.currentChoiceId=null;
 		this.currentMessage=null;
 

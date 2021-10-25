@@ -5,15 +5,17 @@ export default class StoryObject {
 
 		switch (this.type) {
 			case "thing":
-				this.description=spec.description;
-				this.use=spec.use;
-				this.talkto=spec.talkto;
-				this.location=spec.location;
-				this.drop=spec.drop;
-				this.pickup=spec.pickup;
-				this.lookat=spec.lookat;
-				this.stage_name=spec.stage_name;
-				this.inventory_name=spec.inventory_name;
+				this.applySpec(spec,{
+					description: null,
+					use: {fail: "Can't do that"},
+					talkto: {fail: "Can't do that"},
+					location: null,
+					drop: "Dropped",
+					pickup: "Taken",
+					lookat: "Nothing interesting about it",
+					stage_name: null,
+					inventory_name: null,
+				});
 				break;
 
 			case "location":
@@ -34,6 +36,16 @@ export default class StoryObject {
 
 			default:
 				throw new Error("Unknown story object type: "+this.type);
+		}
+	}
+
+	applySpec(spec, defaults) {
+		for (let k in defaults) {
+			if (spec[k])
+				this[k]=spec[k];
+
+			else
+				this[k]=defaults[k];
 		}
 	}
 

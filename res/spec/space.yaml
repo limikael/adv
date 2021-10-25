@@ -9,6 +9,8 @@
 - state: weapons active
 - state: red alert
 
+#- start: planet street
+
 - location: command deck
   description:
   - You are standing on the command deck of your spaceship, as befits a captain like you.
@@ -103,8 +105,13 @@
 
   - label: Activate weapons
     exists-state: weapons active
-    do:
-    - Boom..
+    do-seq:
+    - You can see strays of light shooting from your ship towards the enemy spaceship, which
+      is still too far to be seen.
+    - You don't have time to see if the weapons hit their target though, before another impact
+      shakes your ship.
+    - Life support systems are down! The first officer announces, and that’s the last thing you
+      hear.
 
   - label: Disable weapons
     exists-state: weapons active
@@ -114,7 +121,7 @@
 
   - label: Activate escape sequence
     do:
-    - spawn: planet one
+    - spawn: escape sequence
     - >
       The computer announces: "Escape sequence activated!"
       You feel a sharp jolt and the scenery outside the ship becomes filled with blurry white
@@ -122,9 +129,49 @@
       "We are doing a jump!" the first officer states. "I wonder where!"
       After only a few minutes, the white stripes outside turn into more star-like patterns.
 
-- location: planet one
+- location: escape sequence
   description: 
-  - A screen in front of you wakes up and displays a map of a solar system with two planets,
-    numbered Planet 1 and Planet 2 .
   - The voice of the computer helpfully informs you that your fuel is at 5% and that you
     should head to the nearest spaceship fuel station.
+
+- thing: planet screen
+  location: escape sequence
+  description:
+    A *screen* in front of you wakes up and displays a map of a solar system.
+
+  lookat-use: planet screen
+  use-spawn: planet choice
+  pickup:
+    fail: The screen is firmly attached
+
+  talkto:
+    fail: Doesn't make sense
+
+- choice: planet choice
+  description:
+    The map of the solar system has two planets, numbered Planet 1 and Planet 2.
+
+  alternatives:
+  - label: Plot a course for planet 1
+    do:
+    - spawn: planet street
+    - You and two of your crew members, Shirley and Bob, teleports to the
+      surface of the planet.
+  - label: Plot a coutse for planet 2
+
+- location: planet street
+  description: 
+    You appear in the middle of a busy street.
+
+- thing: creatures
+  location: planet street
+  pickup:
+    fail: Can't do that.
+  description:
+    The street is full of strange *creatures*, who are walking on both directions.
+  lookat:
+    They look a bit like humans but are green and constantly smiling.
+
+- thing: door
+  location: planet street
+  description: There is a high wall on both sides of the street with only one *door* one your left.
