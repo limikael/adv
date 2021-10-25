@@ -5,6 +5,8 @@
   - use
   - lookat
 
+- name: Space Adventure
+
 - state: talked to crew member
 - state: weapons active
 - state: red alert
