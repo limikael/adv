@@ -6,6 +6,7 @@ export default class StoryObject {
 		switch (this.type) {
 			case "thing":
 				this.applySpec(spec,{
+					thing: null,
 					description: null,
 					use: {fail: "Can't do that"},
 					talkto: {fail: "Can't do that"},
@@ -15,6 +16,7 @@ export default class StoryObject {
 					lookat: "Nothing interesting about it",
 					stage_name: null,
 					inventory_name: null,
+					exists: true
 				});
 				break;
 
@@ -47,6 +49,10 @@ export default class StoryObject {
 			else
 				this[k]=defaults[k];
 		}
+
+		for (let k in spec)
+			if (!defaults.hasOwnProperty(k))
+				throw new Error("Unknown property: "+k);
 	}
 
 	setStory(story) {

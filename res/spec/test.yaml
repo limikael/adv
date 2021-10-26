@@ -1,0 +1,39 @@
+- verbs:
+  - goto
+  - pickup
+  - lookat
+  - talkto
+  - drop
+
+- location: kitchen
+  description: You are in the kitchen
+  destinations:
+  - garden
+
+- location: garden
+  description: You are in the garden
+  destinations:
+  - kitchen
+  - street
+
+- location: street
+  description: You are in the street
+  destinations:
+  - garden
+
+- thing: plant
+  description: Next to the wall, there is a beautiful *plant* growing.
+  stage_name: a plant
+  location: garden
+  lookat:
+    The plant is green
+  talkto:
+    if-in: kitchen
+    then: I'm in the kitchen
+    else: Hello says the plant
+
+- thing: shoe
+  stage_name: a shoe
+  location: garden
+  pickup:
+    fail: The shoe is too dirty
