@@ -49,7 +49,10 @@ export default function LocationView(props) {
 		for (let thing of things) {
 			if (thing.description) {
 				let desc=props.state.story.evalClause(thing.description);
-				let m=desc.match(/(^.*)\*([^\*]*)\*(.*$)/);
+				let m=desc.match(/(^.*)\[([^\*]*)\](.*$)/);
+
+				if (!m)
+					m=desc.match(/(^.*)\*([^\*]*)\*(.*$)/);
 
 				if (m) {
 					text.push(

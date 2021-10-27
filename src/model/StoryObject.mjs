@@ -16,15 +16,35 @@ export default class StoryObject {
 					lookat: "Nothing interesting about it",
 					stage_name: null,
 					inventory_name: null,
-					exists: true
+					exists: true,
+					goto: {fail: "Can't do that"}
 				});
 				break;
 
 			case "location":
-				this.description=spec.description;
-				this.destinations=spec.destinations||[];
-				this.enter=spec.enter;
-				this.leave=spec.leave;
+				this.applySpec(spec,{
+					location: null,
+					description: undefined,
+					destinations: [],
+					things: [],
+					enter: undefined,
+					leave: undefined
+				});
+
+				let thingSpecs=this.things;
+				this.things=[];
+
+				for (let i in thingSpecs) {
+					let thingSpec={
+						thing: this.id+"/"+i,
+						...thingSpecs[i],
+					}
+
+					if (!thingSpec.pickup)
+						thingSpec.pickup={fail: "Can't do that"};
+
+					this.things.push(new StoryObject(thingSpec));
+				}
 				break;
 
 			case "choice":
@@ -43,7 +63,7 @@ export default class StoryObject {
 
 	applySpec(spec, defaults) {
 		for (let k in defaults) {
-			if (spec[k])
+			if (spec.hasOwnProperty(k))
 				this[k]=spec[k];
 
 			else
@@ -57,6 +77,11 @@ export default class StoryObject {
 
 	setStory(story) {
 		this.story=story;
+
+		if (this.type=="location") {
+			for (let i in this.things)
+				this.things[i].setStory(story);
+		}
 	}
 
 	assertType(type) {

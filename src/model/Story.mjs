@@ -108,6 +108,11 @@ export default class Story {
 					let o=new StoryObject(objectSpec);
 					o.setStory(this);
 					this.objects.push(o);
+
+					if (o.things)
+						for (let object of o.things)
+							this.objects.push(object);
+
 					break;
 			}			
 		}
@@ -204,6 +209,11 @@ export default class Story {
 			if (object.type=="thing" &&
 					object.location==current.id &&
 					this.evalClause(object.exists))
+				res.push(object);
+		}
+
+		for (let object of current.things) {
+			if (this.evalClause(object.exists))
 				res.push(object);
 		}
 

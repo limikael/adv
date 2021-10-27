@@ -2,13 +2,17 @@
   - goto
   - pickup
   - lookat
-  - talkto
+  - use
   - drop
 
+- state: nope
+
 - location: kitchen
-  description: You are in the kitchen
-  destinations:
-  - garden
+  description: You are in the kitchen.
+  things:
+  - description: there is a [door] leading to the garden
+    goto-spawn: garden
+    use-goto: garden
 
 - location: garden
   description: You are in the garden
@@ -24,7 +28,8 @@
 - thing: plant
   description: Next to the wall, there is a beautiful *plant* growing.
   stage_name: a plant
-  location: garden
+  location: kitchen
+  exists: false
   lookat:
     The plant is green
   talkto:

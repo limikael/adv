@@ -30,21 +30,19 @@ class GotoVerb extends StoryVerb {
 	}
 
 	execute(object) {
-		if (object.type!="location") {
-			this.story.message("Can't go there");
-			return;
-		}
-
 		let current=this.story.getCurrentLocation();
 
-		if (!current.destinations.includes(object.id)) {
-			this.story.message("Can't go there");
+		if (!this.story.runClause(current.leave))
 			return;
+
+		if (object.type=="thing") {
+			this.story.runClause(object.goto);
 		}
 
-		if (this.story.runClause(current.leave) &&
-				this.story.runClause(object.enter))
-			this.story.currentLocationId=object.id;
+		else {
+			if (this.story.runClause(object.enter))
+				this.story.currentLocationId=object.id;
+		}
 	}
 }
 
