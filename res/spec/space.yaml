@@ -11,7 +11,7 @@
 - state: weapons active
 - state: red alert
 
-#- start: planet street
+- start: planet street
 
 - location: command deck
   description:
@@ -150,6 +150,8 @@
   talkto:
     fail: Doesn't make sense
 
+- state: seen symbol
+
 - choice: planet choice
   description:
     The map of the solar system has two planets, numbered Planet 1 and Planet 2.
@@ -164,17 +166,51 @@
 
 - location: planet street
   description: 
-    You appear in the middle of a busy street.
+  - You appear in the middle of a busy street.
+  - There is a high wall on both sides of the street with only one closed door one your left.
 
-- thing: creatures
-  location: planet street
-  pickup:
-    fail: Can't do that.
+  things:
+  - description: There is a [handle] on the door.
+    exists-state: seen symbol
+    use:
+    - spawn: planet garden
+    - As soon as you touch the handle, the door opens to an open garden.
+
+  - description: There is a strange [symbol] on the door.
+    lookat:
+    - set: seen symbol
+    - seq:
+      - Your portable translation device tells you that the symbol above the door handle stands
+        for "barber shop". The creatures on the street don’t even look at you when they keep
+        walking on.
+      - Under the symbol, you notice a door handle.
+
+  - description: The street is full of strange [creatures], who are walking on both directions.
+    lookat: They look a bit like humans but are green and constantly smiling.
+
+- location: planet garden
   description:
-    The street is full of strange *creatures*, who are walking on both directions.
-  lookat:
-    They look a bit like humans but are green and constantly smiling.
+  - The weather is sunny and pleasant and lizards are singing high up in the strange treetops.
 
-- thing: door
-  location: planet street
-  description: There is a high wall on both sides of the street with only one *door* one your left.
+  things:
+  - description: There is a [chair] in the middle of the garden.
+    use:
+      spawn: haircut
+
+  - description: One of the green aliens is standing next to the chair, in front of a big [box], smiling.
+    lookat:
+      You approach the box, which is open from the top, and see that it’s full of strange
+      looking tools.
+
+  - description: There is a [door] leading back to the street.
+    goto:
+      spawn: planet street
+
+- choice: haircut
+  description:
+    You sit on the chair, and the green alien says something that sounds like "GGGhhrrriijjk
+    bloooob". Your translation device automatically translates this to mean 
+    "Would you like a complete or superficial haircut, sir?"
+  alternatives:
+  - label: Complete
+  - label: Superficial
