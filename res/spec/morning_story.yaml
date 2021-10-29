@@ -12,13 +12,12 @@
 
 - location: bedroom
   description:
-    You are in your bedroom. It is the favourite part of your house because you
-    can do what you like in there, and yet not get disturbed. There is a bed
-    right in the middle of the squarish room, which takes up quite a bit of
-    space, but you like it that way.
-  destinations:
-    - bathroom
-    - kitchen
+    - You are in your bedroom. It is the favourite part of your house because you
+      can do what you like in there, and yet not get disturbed. There is a bed
+      right in the middle of the squarish room, which takes up quite a bit of
+      space, but you like it that way.
+    - There is a [lamp] next to the bed, and a door leading to the [bathroom].
+      There is another door leading to the [kitchen].
   leave:
     - if-not-state: room lit
       then-return-fail:
@@ -33,36 +32,49 @@
         beat of your heart, again and again. You quickly pull your feet back in
         under the cover, the floor is way too cold.
 
+- thing: lamp
+  lookat:
+    The sleek silver angle-poise lamp is simple and elegant - minimalist
+    perhaps. You find it satisfyingly heavy too, a justification for the huge
+    price tag. A device for giving light, either one consisting of an electric 
+    bulb together with its holder and shade or cover, or one burning gas or a 
+    liquid fuel and consisting of a wick or mantle and a glass shade.
+  use:
+    - set: room lit
+    - Igniting the world anew with such brilliance! You can suddenly see where
+      you are going.
+
+  pickup:
+    fail: It is too heavy to carry around.
+
 - location: bathroom
   description:
-    You are in your bathroom. It is a place of washing, of nurturing our sanity
-    with the sensation of warm water and aromatic soaps. For the body must feel
-    loved and cared for, for then it feeds back these messages to the brain and
-    begins to set up a positive cycle of wellness.
-  destinations:
-    - bedroom
+    - You are in your bathroom. It is a place of washing, of nurturing our sanity
+      with the sensation of warm water and aromatic soaps. For the body must feel
+      loved and cared for, for then it feeds back these messages to the brain and
+      begins to set up a positive cycle of wellness.
+    - You can reach your [bedroom] from here.
+    - Your [shower] is here.
   leave:
     if-not-state: using slippers
     then-fail: The floor is too cold.
 
 - location: kitchen
   description:
-    This is your kitchen. To work in the kitchen is to work for the love and
-    nourishment of others, to give of yourself, to put your soul into the food.
-  destinations:
-    - bedroom
-    - garden
+    - This is your kitchen. To work in the kitchen is to work for the love and
+      nourishment of others, to give of yourself, to put your soul into the food.
+    - There is a door to your [bedroom]. The front door leads out ot the [garden].
 
 - location: garden
   description:
-    The grass always seems to whisper in the spring, like a church full of
-    people all saying ssssh together. The stalks sway with a salsa rhythm,
-    nodding their heads in delight. At night, the wind dies down and a
-    newly-minted moon appears, drenching shady glades with silver light. 
-    Yipping fox cubs can be heard in the distance and the lonely hoot of an owl
-    sounds like a phantom lost in the darkness.
-  destinations:
-    - kitchen
+    - The grass always seems to whisper in the spring, like a church full of
+      people all saying ssssh together. The stalks sway with a salsa rhythm,
+      nodding their heads in delight. At night, the wind dies down and a
+      newly-minted moon appears, drenching shady glades with silver light. 
+      Yipping fox cubs can be heard in the distance and the lonely hoot of an owl
+      sounds like a phantom lost in the darkness.
+    - The front door of your house leads directly to the [kitchen]. In front
+      of the door sits yur [garden gnome].
   enter:
     if-not-state: teeth clean
     then-fail:
@@ -72,6 +84,7 @@
       connected. We are supposed to love and care for our neighbours, right?
 
 - thing: toothbrush
+  description: There is a [toothbrush] here.
   location: bathroom
   lookat:
     It is an Oral-B Pro-Health All-In-One Soft Bristle Toothbrush. One of the
@@ -85,9 +98,17 @@
       Doesn''t really work, are you going to move your teeth to the toothbrush?
 
 - thing: slippers
+  description:
+    There is [slippers] on the floor.
   lookat: A pair of slippers with rabbit ears.
   location: bedroom
-  stage_name: a pair of slippers
+  name:
+  - if-state: using slippers
+    then-return: slippers (on your feet)
+  - if-have: slippers
+    then-return: slippers
+  - a pair of slippers
+
   use:
     if-have: slippers
     then: 
@@ -102,30 +123,8 @@
     - reset: using slippers
     - You put the slippers on the floor.
 
-  inventory_name:
-    if-state: using slippers
-    then: slippers (on your feet)
-    else: slippers
-
-- thing: lamp
-  lookat:
-    The sleek silver angle-poise lamp is simple and elegant - minimalist
-    perhaps. You find it satisfyingly heavy too, a justification for the huge
-    price tag. A device for giving light, either one consisting of an electric 
-    bulb together with its holder and shade or cover, or one burning gas or a 
-    liquid fuel and consisting of a wick or mantle and a glass shade.
-  location: bedroom
-  use:
-    - set: room lit
-    - Igniting the world anew with such brilliance! You can suddenly see where
-      you are going.
-
-  pickup:
-    fail: It is too heavy to carry around.
-
 - thing: shower
   lookat: A quite ordinary shower.
-  location: bathroom
   use:
     if-have: slippers
     then-fail: Your slippers would get all wet and soggy if you shower with them on.

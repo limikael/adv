@@ -34,3 +34,15 @@ export async function fetchEx(url, options={}) {
 
 	return res;
 }
+
+export function linkify(text, processor) {
+	let m=text.match(/(^.*)\[([^\*]*)\](.*$)/);
+
+	if (!m)
+		m=text.match(/(^.*)\*([^\*]*)\*(.*$)/);
+
+	if (!m)
+		return [text];
+
+	return [...linkify(m[1],processor),processor(m[2]),...linkify(m[3],processor)];
+}

@@ -7,15 +7,14 @@ export default class StoryObject {
 			case "thing":
 				this.applySpec(spec,{
 					thing: null,
-					description: null,
+					description: undefined,
 					use: {fail: "Can't do that"},
 					talkto: {fail: "Can't do that"},
 					location: null,
 					drop: "Dropped",
 					pickup: "Taken",
 					lookat: "Nothing interesting about it",
-					stage_name: null,
-					inventory_name: null,
+					name: spec.thing,
 					exists: true,
 					goto: {fail: "Can't do that"}
 				});
@@ -23,9 +22,9 @@ export default class StoryObject {
 
 			case "location":
 				this.applySpec(spec,{
+					name: spec.location,
 					location: null,
 					description: undefined,
-					destinations: [],
 					things: [],
 					enter: undefined,
 					leave: undefined
@@ -89,20 +88,8 @@ export default class StoryObject {
 			throw new Error(this.id+" is a "+this.type+", not a "+type);
 	}
 
-	getInventoryName() {
-		if (this.inventory_name)
-			return this.story.yaMachine.preprocessAndEval(this.inventory_name);
-
-		else
-			return this.id;
-	}
-
-	getStageName() {
-		if (this.stage_name)
-			return this.story.yaMachine.preprocessAndEval(this.stage_name);
-
-		else
-			return this.id;
+	getName() {
+		return this.story.yaMachine.preprocessAndEval(this.name);
 	}
 
 	getAlternatives() {
