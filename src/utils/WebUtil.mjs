@@ -36,6 +36,9 @@ export async function fetchEx(url, options={}) {
 }
 
 export function linkify(text, processor) {
+	/*console.log(text);
+	console.log(typeof text);*/
+
 	let m=text.match(/(^.*)\[([^\*]*)\](.*$)/);
 
 	if (!m)

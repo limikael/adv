@@ -25,12 +25,12 @@ export default class StoryObject {
 					name: spec.location,
 					location: null,
 					description: undefined,
-					things: [],
+//					things: [],
 					enter: undefined,
 					leave: undefined
 				});
 
-				let thingSpecs=this.things;
+				/*let thingSpecs=this.things;
 				this.things=[];
 
 				for (let i in thingSpecs) {
@@ -43,7 +43,7 @@ export default class StoryObject {
 						thingSpec.pickup={fail: "Can't do that"};
 
 					this.things.push(new StoryObject(thingSpec));
-				}
+				}*/
 				break;
 
 			case "choice":

@@ -37,6 +37,13 @@ export default class Story {
 				return new StoryException(message)
 			},
 
+			die: (message)=>{
+				let e=new StoryException(message);
+				e.type="die";
+
+				return e;
+			},
+
 			set: (stateId)=>{
 				this.getObjectById(stateId,"state").setValue(true);
 			},
@@ -70,6 +77,7 @@ export default class Story {
 	restart=()=>{
 		let spec=this.yaMachine.preprocess(JSON.parse(JSON.stringify(this.spec)));
 
+		this.dead=false;
 		this.objectives=[];
 		this.objects=[];
 
@@ -247,6 +255,9 @@ export default class Story {
 
 		if (v instanceof StoryException) {
 			this.currentMessage=v.getMessage();
+			if (v.type=="die")
+				this.dead=true;
+
 			return false;
 		}
 
@@ -302,7 +313,7 @@ export default class Story {
 	}
 
 	isComplete() {
-		return (this.getCompletePercentage()==100)
+		return (this.dead || this.getCompletePercentage()==100)
 	}
 
 	getName() {

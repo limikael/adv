@@ -1,6 +1,5 @@
 - verbs:
   - goto
-  - pickup
   - talkto
   - use
   - lookat
@@ -11,7 +10,7 @@
 - state: weapons active
 - state: red alert
 
-- start: planet street
+- start: planet garden
 
 - location: command deck
   description:
@@ -164,47 +163,87 @@
       surface of the planet.
   - label: Plot a coutse for planet 2
 
+#
+# Planet 1
+#
+
+- state: bob dead
+
+- thing: shirley
+  pickup-fail: Can't do that.
+
+- thing: bob
+  pickup-fail: Can't do that.
+
+#
+# Planet 1 street
+#
+
 - location: planet street
   description: 
   - You appear in the middle of a busy street.
+  - if-not-state: bob dead
+    then: Your crew members [shirley] and [bob] is with you.
+    else: Your crew member [shirley] is with you.
   - There is a high wall on both sides of the street with only one closed door one your left.
+    There is a [symbol] on the door, just above the [handle].
+  - The street is full of strange [creatures], who are walking on both directions.
 
-  things:
-  - description: There is a [handle] on the door.
-    exists-state: seen symbol
-    use:
-    - spawn: planet garden
-    - As soon as you touch the handle, the door opens to an open garden.
+- thing: symbol
+  pickup-fail: Can't pick it up.
+  lookat:
+  - set: seen symbol
+  - seq:
+    - Your portable translation device tells you that the symbol above the door handle stands
+      for "barber shop". The creatures on the street don’t even look at you when they keep
+      walking on.
+    - As you examine the symbol you suddenly hear a mechanism click inside the door.
 
-  - description: There is a strange [symbol] on the door.
-    lookat:
-    - set: seen symbol
-    - seq:
-      - Your portable translation device tells you that the symbol above the door handle stands
-        for "barber shop". The creatures on the street don’t even look at you when they keep
-        walking on.
-      - Under the symbol, you notice a door handle.
+- thing: handle
+  pickup-fail: Can't pick it up.
+  use:
+    - if-state: seen symbol
+      then:
+      - spawn: planet garden
+      - As soon as you touch the handle, the door opens to an open garden.
+      else:
+      - Nothing happens, the door is firmly locked.
 
-  - description: The street is full of strange [creatures], who are walking on both directions.
-    lookat: They look a bit like humans but are green and constantly smiling.
+- thing: creatures
+  lookat: They look a bit like humans but are green and constantly smiling.
+  pickup-fail: Can't do that.
+  talkto:
+    They say "FFFhhrrriijjk bliiiib". Your translation device is unable to translate
+    as it seems to be an unknown street slang.
+
+#
+# Planet 1 garden
+#
 
 - location: planet garden
   description:
   - The weather is sunny and pleasant and lizards are singing high up in the strange treetops.
+  - There is a [chair] in the middle of the garden, and one of the green aliens is standing next
+    to it in front of a big [box], smiling. 
+  - if-not-state: bob dead
+    then: '[bob] standing next to you, while Shirley stayed outside, waiting.'
+    else: '[shirley] is outside, waiting.'
+  - There is a [garden door] leading back to the street.
 
-  things:
-  - description: There is a [chair] in the middle of the garden.
-    use:
-      spawn: haircut
+- thing: chair
+  use-spawn: haircut
 
-  - description: One of the green aliens is standing next to the chair, in front of a big [box], smiling.
-    lookat:
-      You approach the box, which is open from the top, and see that it’s full of strange
+- thing: box
+  lookat:
+    seq:
+    - You approach the box, which is open from the top, and see that it’s full of strange
       looking tools.
+    - You try to examine it more closely, but the creatures look at you suspiciously.
 
-  - description: There is a [door] leading back to the street.
-    goto:
-      spawn: planet street
+- thing: garden door
+  goto-spawn: planet street
+  use-spawn: planet street
+  name: door
 
 - choice: haircut
   description:
@@ -213,4 +252,11 @@
     "Would you like a complete or superficial haircut, sir?"
   alternatives:
   - label: Complete
+    do-die: 
+      The barber alien reaches for the box and takes out a tool that looks like a laser wand.
+      You feel a sharp pain on your neck and see nothing more.
   - label: Superficial
+    do:
+    - The barber alien reaches for the box and takes out a pair of very ordinary looking
+      scissors. After completing your haircut he holds out a mirror, and you can see that it’s a
+      very nice haircut indeed.

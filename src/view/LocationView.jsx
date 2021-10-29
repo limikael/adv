@@ -38,6 +38,9 @@ export default function LocationView(props) {
 	function storyLink(objectId) {
 		let object=props.state.story.getObjectById(objectId);
 
+		if (!object)
+			throw new Error("Unknown object: "+objectId);
+
 		let accessible=null;
 		if (props.state.currentVerb)
 			accessible=accessibleLinkProps();
@@ -53,16 +56,19 @@ export default function LocationView(props) {
 
 	if (!props.state.story.getCurrentChoice()) {
 		let descs=props.state.story.getCurrentLocationDescriptions();
-		for (let desc of descs)
-			text.push(<p>{linkify(desc,storyLink)}</p>);
 
-		let things=props.state.story.getThingsByCurrentLocation();
+		for (let desc of descs) {
+			desc=desc.toString();//console.log("linkify: "+desc);
+			text.push(<p>{linkify(desc,storyLink)}</p>);
+		}
+
+/*		let things=props.state.story.getThingsByCurrentLocation();
 		for (let thing of things) {
 			let desc=props.state.story.evalClause(thing.description);
 
 			if (desc)
 				text.push(<p>{linkify(desc,storyLink)}</p>);
-		}
+		}*/
 	}
 
 	let cls="adv-bx bg-white text-black adv-location-description ";
