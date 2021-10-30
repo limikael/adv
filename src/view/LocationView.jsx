@@ -62,13 +62,13 @@ export default function LocationView(props) {
 			text.push(<p>{linkify(desc,storyLink)}</p>);
 		}
 
-/*		let things=props.state.story.getThingsByCurrentLocation();
+		let things=props.state.story.getThingsByCurrentLocation();
 		for (let thing of things) {
 			let desc=props.state.story.evalClause(thing.description);
 
 			if (desc)
 				text.push(<p>{linkify(desc,storyLink)}</p>);
-		}*/
+		}
 	}
 
 	let cls="adv-bx bg-white text-black adv-location-description ";

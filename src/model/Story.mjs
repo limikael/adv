@@ -61,7 +61,11 @@ export default class Story {
 		for (let f in functions)
 			this.yaMachine.addFunction(f,functions[f].bind(this));
 
+		this.verbsById={};
 		for (let verb of createVerbs()) {
+			this.verbsById[verb.id]=verb;
+			verb.setStory(this);
+
 			this.yaMachine.addFunction(verb.id,(arg)=>{
 				this.execute(verb.id,arg);
 			});
@@ -71,7 +75,13 @@ export default class Story {
 	}
 
 	getVerbs() {
-		return Object.values(this.verbsById);
+		let res=[];
+
+		for (let verbId in this.verbsById)
+			if (this.storyVerbs.includes(verbId))
+				res.push(this.verbsById[verbId]);
+
+		return res;
 	}
 
 	restart=()=>{
@@ -80,10 +90,7 @@ export default class Story {
 		this.dead=false;
 		this.objectives=[];
 		this.objects=[];
-
-		let verbs=[
-			"goto", "pickup"
-		];
+		this.storyVerbs=["goto","pickup"];
 
 		let startId;
 
@@ -109,7 +116,7 @@ export default class Story {
 					break;
 
 				case "verbs":
-					verbs=objectSpec.verbs;
+					this.storyVerbs=objectSpec.verbs;
 					break;
 
 				default:
@@ -123,14 +130,6 @@ export default class Story {
 
 					break;
 			}			
-		}
-
-		this.verbsById={};
-		for (let verb of createVerbs()) {
-			if (verbs.includes(verb.id)) {
-				verb.setStory(this);
-				this.verbsById[verb.id]=verb;
-			}
 		}
 
 		if (!startId)
@@ -215,13 +214,8 @@ export default class Story {
 
 		for (let object of this.objects) {
 			if (object.type=="thing" &&
-					object.location==current.id &&
-					this.evalClause(object.exists))
-				res.push(object);
-		}
-
-		for (let object of current.things) {
-			if (this.evalClause(object.exists))
+					object.location==current.id/* &&
+					this.evalClause(object.exists)*/)
 				res.push(object);
 		}
 

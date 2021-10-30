@@ -10,7 +10,7 @@
 - state: weapons active
 - state: red alert
 
-- start: planet garden
+- start: escape sequence
 
 - location: command deck
   description:
@@ -137,9 +137,10 @@
     should head to the nearest spaceship fuel station.
 
 - thing: planet screen
+  name: screen
   location: escape sequence
   description:
-    A *screen* in front of you wakes up and displays a map of a solar system.
+    A [planet screen] in front of you wakes up and displays a map of a solar system.
 
   lookat-use: planet screen
   use-spawn: planet choice
@@ -168,12 +169,36 @@
 #
 
 - state: bob dead
+- state: haircut done
 
 - thing: shirley
+  name: Shirley
   pickup-fail: Can't do that.
 
 - thing: bob
+  name: Bob
   pickup-fail: Can't do that.
+  talkto:
+  - if-in: planet garden
+    then:
+      if-state: haircut done
+      then:
+      - set: bob dead
+      - seq:
+          - You look at Bob,‭ ‬your officer in his red uniform,‭ ‬who shrugs and approaches the chair and the alien.‭ 
+            ‬He sits on the chair and the green alien says something that sounds like‭ “‬GGGhhrrriijjk bloooob‭”‬.‭
+            ‬You can hear‭ ‬Bob’s translation device automatically translating this to mean‭
+            "‬Would you like a complete or superficial haircut,‭ ‬sir‭?"
+          - Bob says:‭ "Oh,‭ ‬nice,‭ ‬a complete one please.‭ ‬My hair is very overgrown at the moment.‭"
+          - The barber reaches for his‭ ‬box‭ ‬for what looks like a laser wand,‭ ‬and without ceremony cuts Bob’s head off with‭ ‬it,‭ ‬
+            as his body is still left sitting on the‭ ‬chair.‭ ‬
+            The alien seems a bit confused about the amount of blood spilled,‭ ‬and inspects its tool.
+      else:
+        Why don't you try the haircut, sir?
+    else:
+      Hello sir, I'm bob
+
+  lookat-talkto: bob
 
 #
 # Planet 1 street
@@ -185,7 +210,7 @@
   - if-not-state: bob dead
     then: Your crew members [shirley] and [bob] is with you.
     else: Your crew member [shirley] is with you.
-  - There is a high wall on both sides of the street with only one closed door one your left.
+  - There is a high wall on both sides of the [planet upstreet] with only one closed door one your left.
     There is a [symbol] on the door, just above the [handle].
   - The street is full of strange [creatures], who are walking on both directions.
 
@@ -227,18 +252,43 @@
     to it in front of a big [box], smiling. 
   - if-not-state: bob dead
     then: '[bob] standing next to you, while Shirley stayed outside, waiting.'
-    else: '[shirley] is outside, waiting.'
+    else: "The aliens are curiously investigating Bob's corpse. Shirley is stayed outside, waiting."
   - There is a [garden door] leading back to the street.
 
 - thing: chair
   use-spawn: haircut
+  goto-use: chair
+  lookat:
+  - It looks like a hairdressers chair, but slightly alien.
+
+- thing: holographic key
+  location: inventory
+  lookat:
+  - It looks like a key
+  pickup: true
+  use:
+  - if-in: planet upstreet
+    then-seq:
+    - The key seem to fit in the big doors. They slowly open to reveal what's on the other side.
+    - Suddenly you and Shirley are back inside your ship. The computer screen shows
+      "Transport error. Reset performed."
+    - spawn: escape sequence
+    else:
+      It doesn't seem to be usable here.
 
 - thing: box
+  use-lookat: box
+  goto-lookat: box
   lookat:
     seq:
     - You approach the box, which is open from the top, and see that it’s full of strange
       looking tools.
-    - You try to examine it more closely, but the creatures look at you suspiciously.
+    - if-state: bob dead
+      then:
+      - pickup: holographic key
+      - As the aliens discuss what happened with Bob's head, you manage to find a holographic key
+        at the bottom of the box.
+      else: You try to examine it more closely, but the creatures look at you suspiciously.
 
 - thing: garden door
   goto-spawn: planet street
@@ -257,6 +307,27 @@
       You feel a sharp pain on your neck and see nothing more.
   - label: Superficial
     do:
+    - set: haircut done
     - The barber alien reaches for the box and takes out a pair of very ordinary looking
       scissors. After completing your haircut he holds out a mirror, and you can see that it’s a
       very nice haircut indeed.
+
+# planet 1 up the street
+
+- location: planet upstreet
+  name: street
+  description:
+  - You walk down the street which continues the same for a long time,‭ ‬just like‭ ‬[where you came from],‭ ‬until it ends to a building.‭ 
+  - There are‭ ‬[big doors] through which the‭ ‬green‭ ‬aliens walk in and out of the building,‭ ‬constantly smiling.
+
+- thing: big doors
+  lookat:
+  - When you reach the doors,‭ ‬you see that although there is a gap between them,‭ ‬you can’t see through it to the‭ ‬other side.‭ 
+    The creatures who walk out from it and continue‭ ‬up the street seem to be emerging through a wall.
+  use:
+  - They are firmly locked.
+  goto-use: big doors
+
+- thing: where you came from
+  goto-spawn: planet street
+  lookat: Looking back to the place where you came from, you just see the amiling aliens walking around.
