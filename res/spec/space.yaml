@@ -9,6 +9,9 @@
 - state: talked to crew member
 - state: weapons active
 - state: red alert
+- state: seen symbol
+- state: bob dead
+- state: haircut done
 
 - start: escape sequence
 
@@ -150,8 +153,6 @@
   talkto:
     fail: Doesn't make sense
 
-- state: seen symbol
-
 - choice: planet choice
   description:
     The map of the solar system has two planets, numbered Planet 1 and Planet 2.
@@ -167,9 +168,6 @@
 #
 # Planet 1
 #
-
-- state: bob dead
-- state: haircut done
 
 - thing: shirley
   name: Shirley
