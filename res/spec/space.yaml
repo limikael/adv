@@ -12,27 +12,66 @@
 - state: seen symbol
 - state: bob dead
 - state: haircut done
+- state: escape sequence
 
-- start: escape sequence
+- start: command deck
+
+#
+# Ship
+#
 
 - location: command deck
   description:
   - You are standing on the command deck of your spaceship, as befits a captain like you.
+    There is a door to your [quarters] behind you.
   - if-not-state: talked to crew member
     then:
       You are on a routine mission to transport passengers to a distant planet.
+  - if-state: escape sequence
+    then:
+      The voice of the computer helpfully informs you that your fuel is at 5% and that you
+      should head to the nearest spaceship fuel station.
+
+- location: quarters
+  name: personal captain's quarters
+  description:
+  - Ah, your personal quarters. You always withdraw here when things heat up out on the [command deck].
+  - There is a [bed] here, and a shelf where you keep your [souvenirs] from the space academy.
+  - There is even a small [window].
+
+- thing: souvenirs
+  use: They are souvenirs, not really useful for anything. But they make you feel like a captain.
+  lookat-use: souvenirs
+
+- thing: bed
+  goto-use: bed
+  use:
+    Ah... You lie down on the bed. You relax a little, but the thought about space command
+    calling you to check on your mission makes you nervous.
+  lookat:
+    You have kept the duvet from you childhood room. It has stars, planets and rockets in
+    a comforting pattern.
+
+- thing: window
+  use:
+    You often have the urge to jump out this window. But today is not the day.
+  lookat:
+    Ah, a window. You have made it. Not everyone gets to have a room with a window in space.
 
 - thing: personal screen
   location: command deck
   exists-state: talked to crew member
   description:
+  - if-state: escape sequence
+    then-return:
+      Your [personal screen] in front of you displays a map of a strange solar system
+      that you don't recognize.
   - if-state: weapons active
     then-return:
-      A light on your *personal screen* blinks worrying.
+      A light on your [personal screen] blinks worrying.
       There is a little weapons icon with a circle around it.
   - if-state: talked to crew member
     then-return: A light on your *personal screen* blinks worrying.
-  - A light on your *personal screen* glows calm and blue.
 
   lookat:
   - use: personal screen
@@ -41,6 +80,8 @@
   - fail: It is firmly attached.
 
   use:
+  - if-state: escape sequence
+    then-return-spawn: planet choice
   - if-not-state: talked to crew member
     then: It glows calm and blue.
     else-spawn: command choices
@@ -79,6 +120,10 @@
         planet takes a different turn.
     else:
       'She says: "Do something captain!!!"'
+
+#
+# Choices
+#
 
 - choice: command choices
   description:
@@ -126,32 +171,13 @@
 
   - label: Activate escape sequence
     do:
-    - spawn: escape sequence
+    - set: escape sequence
     - >
       The computer announces: "Escape sequence activated!"
       You feel a sharp jolt and the scenery outside the ship becomes filled with blurry white
       lines.
       "We are doing a jump!" the first officer states. "I wonder where!"
       After only a few minutes, the white stripes outside turn into more star-like patterns.
-
-- location: escape sequence
-  description: 
-  - The voice of the computer helpfully informs you that your fuel is at 5% and that you
-    should head to the nearest spaceship fuel station.
-
-- thing: planet screen
-  name: screen
-  location: escape sequence
-  description:
-    A [planet screen] in front of you wakes up and displays a map of a solar system.
-
-  lookat-use: planet screen
-  use-spawn: planet choice
-  pickup:
-    fail: The screen is firmly attached
-
-  talkto:
-    fail: Doesn't make sense
 
 - choice: planet choice
   description:
@@ -260,7 +286,6 @@
   - It looks like a hairdressers chair, but slightly alien.
 
 - thing: holographic key
-  location: inventory
   lookat:
   - It looks like a key
   pickup: true
@@ -270,7 +295,7 @@
     - The key seem to fit in the big doors. They slowly open to reveal what's on the other side.
     - Suddenly you and Shirley are back inside your ship. The computer screen shows
       "Transport error. Reset performed."
-    - spawn: escape sequence
+    - spawn: command deck
     else:
       It doesn't seem to be usable here.
 

@@ -214,8 +214,8 @@ export default class Story {
 
 		for (let object of this.objects) {
 			if (object.type=="thing" &&
-					object.location==current.id/* &&
-					this.evalClause(object.exists)*/)
+					object.location==current.id &&
+					this.evalClause(object.exists))
 				res.push(object);
 		}
 
