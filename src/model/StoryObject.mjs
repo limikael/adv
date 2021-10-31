@@ -105,6 +105,6 @@ export default class StoryObject {
 	}
 
 	getValue() {
-		return this.value;
+		return this.story.evalClause(this.value);
 	}
 }
