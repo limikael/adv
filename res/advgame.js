@@ -654,13 +654,6 @@
     }
   });
 
-  // src/app/AdvComputers.js
-  var require_AdvComputers = __commonJS({
-    "src/app/AdvComputers.js"() {
-      init_preact_shim();
-    }
-  });
-
   // node_modules/yaml/dist/PlainValue-ec8e588e.js
   var require_PlainValue_ec8e588e = __commonJS({
     "node_modules/yaml/dist/PlainValue-ec8e588e.js"(exports) {
@@ -6301,6 +6294,13 @@ ${cbNode.commentBefore}` : cb;
     }
   });
 
+  // src/app/AdvComputers.js
+  var require_AdvComputers = __commonJS({
+    "src/app/AdvComputers.js"() {
+      init_preact_shim();
+    }
+  });
+
   // src/advgame.jsx
   init_preact_shim();
 
@@ -6753,22 +6753,46 @@ ${cbNode.commentBefore}` : cb;
   // src/view/LocationView.jsx
   init_preact_shim();
   init_preact_shim();
-  function enumerate(strings) {
-    let text = [];
-    for (let i4 = 0; i4 < strings.length; i4++) {
-      let string = strings[i4];
-      if (i4 == 0)
-        text.push(string);
-      else if (i4 < strings.length - 1) {
-        text.push(", ");
-        text.push(string);
-      } else {
-        text.push(" and ");
-        text.push(string);
+
+  // src/utils/WebUtil.mjs
+  init_preact_shim();
+  var import_yaml = __toModule(require_yaml());
+  async function fetchEx(url, options = {}) {
+    let res, fetchRes;
+    try {
+      fetchRes = await fetch(url, {
+        method: "GET"
+      });
+      switch (options.parse) {
+        case "yaml":
+          res = await fetchRes.text();
+          res = import_yaml.default.parse(res);
+          break;
+        case "json":
+          res = await fetchRes.json();
+          break;
+        default:
+          res = await fetchRes.text();
+          break;
       }
+    } catch (e3) {
+      console.log(e3);
+      throw e3;
     }
-    return text;
+    if (fetchRes.status != 200)
+      throw new Error(res.message);
+    return res;
   }
+  function linkify(text, processor) {
+    let m3 = text.match(/(^.*)\[([^\*]*)\](.*$)/);
+    if (!m3)
+      m3 = text.match(/(^.*)\*([^\*]*)\*(.*$)/);
+    if (!m3)
+      return [text];
+    return [...linkify(m3[1], processor), processor(m3[2]), ...linkify(m3[3], processor)];
+  }
+
+  // src/view/LocationView.jsx
   function LocationView(props) {
     let ref = s2();
     let changed = useIsValueChanged(props.state.story.currentLocationId);
@@ -6777,47 +6801,28 @@ ${cbNode.commentBefore}` : cb;
       if (changed)
         ref.current.scrollTop = 0;
     });
-    if (!props.state.story.getCurrentChoice()) {
-      let descs = props.state.story.getCurrentLocationDescriptions();
-      for (let desc of descs)
-        text.push(/* @__PURE__ */ v("p", null, desc));
+    function storyLink(objectId) {
+      let object = props.state.story.getObjectById(objectId);
+      if (!object)
+        throw new Error("Unknown object: " + objectId);
       let accessible = null;
       if (props.state.currentVerb)
         accessible = accessibleLinkProps();
+      return /* @__PURE__ */ v("a", __spreadValues({
+        onclick: props.state.objectClick.bindArgs(object.id)
+      }, accessible), object.getName());
+    }
+    if (!props.state.story.getCurrentChoice()) {
+      let descs = props.state.story.getCurrentLocationDescriptions();
+      for (let desc of descs) {
+        desc = desc.toString();
+        text.push(/* @__PURE__ */ v("p", null, linkify(desc, storyLink)));
+      }
       let things = props.state.story.getThingsByCurrentLocation();
-      listThings = [];
       for (let thing of things) {
-        if (thing.description) {
-          let desc = props.state.story.evalClause(thing.description);
-          let m3 = desc.match(/(^.*)\*([^\*]*)\*(.*$)/);
-          if (m3) {
-            text.push(/* @__PURE__ */ v("p", null, m3[1], /* @__PURE__ */ v("a", __spreadValues({
-              onclick: props.state.objectClick.bindArgs(thing.id)
-            }, accessible), m3[2]), m3[3]));
-          } else {
-            text.push(/* @__PURE__ */ v("p", null, /* @__PURE__ */ v("a", __spreadValues({
-              onclick: props.state.objectClick.bindArgs(thing.id)
-            }, accessible), desc)));
-          }
-        } else
-          listThings.push(thing);
-      }
-      if (listThings.length) {
-        let linkThing = function(thing) {
-          return /* @__PURE__ */ v("a", __spreadValues({
-            onclick: props.state.objectClick.bindArgs(thing.id)
-          }, accessible), thing.getStageName());
-        };
-        text.push(/* @__PURE__ */ v("p", null, "There is ", enumerate(listThings.map(linkThing)), " here."));
-      }
-      let destinations = props.state.story.getDestinationsByCurrentLocation();
-      if (destinations.length) {
-        let linkDest = function(dest) {
-          return /* @__PURE__ */ v("a", __spreadValues({
-            onclick: props.state.objectClick.bindArgs(dest.id)
-          }, accessible), dest.getStageName());
-        };
-        text.push(/* @__PURE__ */ v("p", null, "You can reach ", enumerate(destinations.map(linkDest)), " from here."));
+        let desc = props.state.story.evalClause(thing.description);
+        if (desc)
+          text.push(/* @__PURE__ */ v("p", null, linkify(desc, storyLink)));
       }
     }
     let cls = "adv-bx bg-white text-black adv-location-description ";
@@ -6880,7 +6885,7 @@ ${cbNode.commentBefore}` : cb;
     for (let thing of things) {
       thingList.push(/* @__PURE__ */ v("a", __spreadValues({
         onclick: props.state.objectClick.bindArgs(thing.id)
-      }, accessible), thing.getInventoryName()));
+      }, accessible), thing.getName()));
     }
     let cls = "adv-bx bg-body text-warning adv-inventory";
     if (props.state.currentVerb)
@@ -7019,36 +7024,6 @@ ${cbNode.commentBefore}` : cb;
   });
   init_preact_shim();
 
-  // src/utils/WebUtil.js
-  init_preact_shim();
-  var import_yaml = __toModule(require_yaml());
-  async function fetchEx(url, options = {}) {
-    let res, fetchRes;
-    try {
-      fetchRes = await fetch(url, {
-        method: "GET"
-      });
-      switch (options.parse) {
-        case "yaml":
-          res = await fetchRes.text();
-          res = import_yaml.default.parse(res);
-          break;
-        case "json":
-          res = await fetchRes.json();
-          break;
-        default:
-          res = await fetchRes.text();
-          break;
-      }
-    } catch (e3) {
-      console.log(e3);
-      throw e3;
-    }
-    if (fetchRes.status != 200)
-      throw new Error(res.message);
-    return res;
-  }
-
   // src/model/Story.mjs
   init_preact_shim();
 
@@ -7060,21 +7035,28 @@ ${cbNode.commentBefore}` : cb;
       this.id = spec[this.type];
       switch (this.type) {
         case "thing":
-          this.description = spec.description;
-          this.use = spec.use;
-          this.talkto = spec.talkto;
-          this.location = spec.location;
-          this.drop = spec.drop;
-          this.pickup = spec.pickup;
-          this.lookat = spec.lookat;
-          this.stage_name = spec.stage_name;
-          this.inventory_name = spec.inventory_name;
+          this.applySpec(spec, {
+            thing: null,
+            description: void 0,
+            use: { fail: "Can't do that" },
+            talkto: { fail: "Can't do that" },
+            location: null,
+            drop: "Dropped",
+            pickup: "Taken",
+            lookat: "Nothing interesting about it",
+            name: spec.thing,
+            exists: true,
+            goto: { fail: "Can't do that" }
+          });
           break;
         case "location":
-          this.description = spec.description;
-          this.destinations = spec.destinations || [];
-          this.enter = spec.enter;
-          this.leave = spec.leave;
+          this.applySpec(spec, {
+            name: spec.location,
+            location: null,
+            description: void 0,
+            enter: void 0,
+            leave: void 0
+          });
           break;
         case "choice":
           this.description = spec.description;
@@ -7087,24 +7069,30 @@ ${cbNode.commentBefore}` : cb;
           throw new Error("Unknown story object type: " + this.type);
       }
     }
+    applySpec(spec, defaults) {
+      for (let k3 in defaults) {
+        if (spec.hasOwnProperty(k3))
+          this[k3] = spec[k3];
+        else
+          this[k3] = defaults[k3];
+      }
+      for (let k3 in spec)
+        if (!defaults.hasOwnProperty(k3))
+          throw new Error("Unknown property: " + k3);
+    }
     setStory(story) {
       this.story = story;
+      if (this.type == "location") {
+        for (let i4 in this.things)
+          this.things[i4].setStory(story);
+      }
     }
     assertType(type) {
       if (this.type != type)
         throw new Error(this.id + " is a " + this.type + ", not a " + type);
     }
-    getInventoryName() {
-      if (this.inventory_name)
-        return this.story.yaMachine.preprocessAndEval(this.inventory_name);
-      else
-        return this.id;
-    }
-    getStageName() {
-      if (this.stage_name)
-        return this.story.yaMachine.preprocessAndEval(this.stage_name);
-      else
-        return this.id;
+    getName() {
+      return this.story.yaMachine.preprocessAndEval(this.name);
     }
     getAlternatives() {
       let res = [];
@@ -7129,7 +7117,7 @@ ${cbNode.commentBefore}` : cb;
       this.value = value;
     }
     getValue() {
-      return this.value;
+      return this.story.evalClause(this.value);
     }
   };
 
@@ -7208,8 +7196,6 @@ ${cbNode.commentBefore}` : cb;
     }
     and(clause, context) {
       this.assertValidKeys(clause, ["and"]);
-      if (context.isReturned())
-        return context.getReturnValue();
       if (!(clause.and instanceof Array))
         throw new Error("and needs an array");
       let res = true;
@@ -7219,8 +7205,6 @@ ${cbNode.commentBefore}` : cb;
     }
     or(clause, context) {
       this.assertValidKeys(clause, ["or"]);
-      if (context.isReturned())
-        return context.getReturnValue();
       if (!(clause.or instanceof Array))
         throw new Error("or needs an array");
       let res = false;
@@ -7230,8 +7214,6 @@ ${cbNode.commentBefore}` : cb;
     }
     if(clause, context) {
       this.assertValidKeys(clause, ["if", "then", "else"]);
-      if (context.isReturned())
-        return context.getReturnValue();
       let res = this.castToBool(this.eval(clause.if, context));
       if (res && clause.then)
         return this.eval(clause.then, context);
@@ -7250,8 +7232,6 @@ ${cbNode.commentBefore}` : cb;
       this.assertValidKeys(clause, ["seq"]);
       if (!(clause.seq instanceof Array))
         throw new Error("seq needs an array");
-      if (context.isReturned())
-        return context.getReturnValue();
       let res = [];
       for (let c4 of clause.seq)
         res.push(this.eval(c4, context));
@@ -7315,17 +7295,15 @@ ${cbNode.commentBefore}` : cb;
       this.label = "GO TO";
     }
     execute(object) {
-      if (object.type != "location") {
-        this.story.message("Can't go there");
-        return;
-      }
       let current = this.story.getCurrentLocation();
-      if (!current.destinations.includes(object.id)) {
-        this.story.message("Can't go there");
+      if (!this.story.runClause(current.leave))
         return;
+      if (object.type == "thing") {
+        this.story.runClause(object.goto);
+      } else {
+        if (this.story.runClause(object.enter))
+          this.story.currentLocationId = object.id;
       }
-      if (this.story.runClause(current.leave) && this.story.runClause(object.enter))
-        this.story.currentLocationId = object.id;
     }
   };
   var PickupVerb = class extends StoryVerb {
@@ -7403,43 +7381,43 @@ ${cbNode.commentBefore}` : cb;
     constructor(spec) {
       __publicField(this, "restart", () => {
         let spec = this.yaMachine.preprocess(JSON.parse(JSON.stringify(this.spec)));
+        this.dead = false;
         this.objectives = [];
         this.objects = [];
-        let verbs = [
-          "goto",
-          "pickup"
-        ];
+        this.storyVerbs = ["goto", "pickup"];
+        let startId;
         for (let objectSpec of spec) {
           let type = Object.keys(objectSpec)[0];
           switch (type) {
             case "objectives":
             case "name":
             case "complete-message":
+            case "start":
               if (objectSpec.name)
                 this.name = objectSpec.name;
               if (objectSpec["complete-message"])
                 this.completeMessage = objectSpec["complete-message"];
               if (objectSpec.objectives)
                 this.objectives = objectSpec.objectives;
+              if (objectSpec.start)
+                startId = objectSpec.start;
               break;
             case "verbs":
-              verbs = objectSpec.verbs;
+              this.storyVerbs = objectSpec.verbs;
               break;
             default:
               let o4 = new StoryObject(objectSpec);
               o4.setStory(this);
               this.objects.push(o4);
+              if (o4.things)
+                for (let object of o4.things)
+                  this.objects.push(object);
               break;
           }
         }
-        this.verbsById = {};
-        for (let verb of createVerbs()) {
-          if (verbs.includes(verb.id)) {
-            verb.setStory(this);
-            this.verbsById[verb.id] = verb;
-          }
-        }
-        this.currentLocationId = this.getStartLocation().id;
+        if (!startId)
+          startId = this.getStartLocation().id;
+        this.currentLocationId = startId;
         this.currentChoiceId = null;
         this.currentMessage = null;
         this.runClause(this.getCurrentLocation().enter);
@@ -7468,6 +7446,11 @@ ${cbNode.commentBefore}` : cb;
         fail: (message) => {
           return new StoryException(message);
         },
+        die: (message) => {
+          let e3 = new StoryException(message);
+          e3.type = "die";
+          return e3;
+        },
         set: (stateId) => {
           this.getObjectById(stateId, "state").setValue(true);
         },
@@ -7481,15 +7464,23 @@ ${cbNode.commentBefore}` : cb;
       this.yaMachine = new YaMachine();
       for (let f4 in functions)
         this.yaMachine.addFunction(f4, functions[f4].bind(this));
+      this.verbsById = {};
       for (let verb of createVerbs()) {
+        this.verbsById[verb.id] = verb;
+        verb.setStory(this);
         this.yaMachine.addFunction(verb.id, (arg) => {
           this.execute(verb.id, arg);
         });
       }
       this.restart();
+      window.story = this;
     }
     getVerbs() {
-      return Object.values(this.verbsById);
+      let res = [];
+      for (let verbId in this.verbsById)
+        if (this.storyVerbs.includes(verbId))
+          res.push(this.verbsById[verbId]);
+      return res;
     }
     getStartLocation() {
       for (let object of this.objects)
@@ -7545,7 +7536,7 @@ ${cbNode.commentBefore}` : cb;
       let current = this.getCurrentLocation();
       let res = [];
       for (let object of this.objects) {
-        if (object.type == "thing" && object.location == current.id)
+        if (object.type == "thing" && object.location == current.id && this.evalClause(object.exists))
           res.push(object);
       }
       return res;
@@ -7569,6 +7560,8 @@ ${cbNode.commentBefore}` : cb;
       let v3 = this.yaMachine.preprocessAndEval(clause);
       if (v3 instanceof StoryException) {
         this.currentMessage = v3.getMessage();
+        if (v3.type == "die")
+          this.dead = true;
         return false;
       }
       if (typeof v3 == "string" || v3 instanceof Array)
@@ -7602,14 +7595,14 @@ ${cbNode.commentBefore}` : cb;
       let complete = 0;
       for (let objectiveClause of this.objectives) {
         let v3 = this.yaMachine.preprocessAndEval(objectiveClause);
-        if (!(v3 instanceof StoryException))
+        if (v3 && !(v3 instanceof StoryException))
           complete++;
       }
       let percentage = Math.round(100 * complete / this.objectives.length);
       return percentage;
     }
     isComplete() {
-      return this.getCompletePercentage() == 100;
+      return this.dead || this.getCompletePercentage() == 100;
     }
     getName() {
       return this.name;
