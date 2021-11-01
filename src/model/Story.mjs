@@ -72,6 +72,7 @@ export default class Story {
 		}
 
 		this.restart();
+		window.story=this;
 	}
 
 	getVerbs() {
@@ -298,7 +299,8 @@ export default class Story {
 		for (let objectiveClause of this.objectives) {
 			let v=this.yaMachine.preprocessAndEval(objectiveClause);
 
-			if (!(v instanceof StoryException))
+//			if (!(v instanceof StoryException))
+			if (v && !(v instanceof StoryException))
 				complete++;
 		}
 

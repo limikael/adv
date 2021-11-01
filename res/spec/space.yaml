@@ -7,12 +7,17 @@
 - name: Space Adventure
 
 - state: talked to crew member
+- state: used screen
 - state: weapons active
 - state: red alert
 - state: seen symbol
 - state: bob dead
 - state: haircut done
 - state: escape sequence
+- state: translation done
+- state: found cartridge
+- state: key found
+- state: key used
 - state: planet 1 visited
 - state: planet 2 visited
 - state: planets visited
@@ -20,6 +25,7 @@
   - state: planet 1 visited
   - state: planet 2 visited
 - state: complete
+- state: mission complete
   value-and:
   - state: planets visited
   - not-have: holographic key
@@ -35,6 +41,20 @@
   use:
   - It is not useful, really. 
 
+- objectives:
+  - state: talked to crew member
+  - state: used screen
+  - state: planets visited
+  - state: mission complete
+  - state: seen symbol
+  - state: haircut done
+  - state: bob dead
+  - state: translation done
+  - state: found cartridge
+  - state: key found
+  - state: key used
+  - state: complete
+
 #
 # Ship
 #
@@ -46,7 +66,9 @@
   - if-not-state: talked to crew member
     then:
       You are on a routine mission to transport passengers to a distant planet.
-  - if-state: escape sequence
+  - if-and:
+    - state: escape sequence
+    - not-state: planet 2 visited
     then:
       The voice of the computer helpfully informs you that your fuel is at 5% and that you
       should head to the nearest spaceship fuel station.
@@ -81,8 +103,8 @@
   location: command deck
   exists-state: talked to crew member
   description:
-  - if-state: complete
-    then-return: Your [personal screen] blinks to signal an incoming call from you mom.
+  - if-state: mission complete
+    then-return: Your [personal screen] blinks to signal an incoming call from space command.
   - if-state: planets visited
     then-return: Your personal screen seems calm, for a change.
   - if-state: escape sequence
@@ -103,9 +125,13 @@
   - fail: It is firmly attached.
 
   use:
-  - if-state: complete
-    then-return-seq:
-    - Hello, this is your mom.
+  - set: used screen
+  - if-state: mission complete
+    then-return:
+    - set: complete
+    - seq:
+      - Hello, this is space command, we are calling to see how the mission is going.
+      - You are too tired to answer and hang up. Enough for one day. You can worry about it tomorrow.
   - if-state: escape sequence
     then-return-spawn: planet choice
   - if-state: talked to crew member
@@ -119,6 +145,7 @@
 
 - thing: crew member
   location: command deck
+  exists-not-state: talked to crew member
   description: 
   - if-not-state: talked to crew member
     then: A *crew member* suddenly approaches, flailing her arms.
@@ -212,13 +239,22 @@
   alternatives:
   - label: Plot a course for planet 1
     do:
-    - spawn: planet street
-    - You and two of your crew members, Shirley and Bob, teleports to the
-      surface of the planet.
+    - if-state: planet 1 visited
+      then:
+      - After thinking about it for a while, you decide not to. You assess the risk of decapitation by
+        pan galactic barbers as too great.
+      else:
+      - goto: planet street
+      - You and two of your crew members, Shirley and Bob, teleports to the
+        surface of the planet.
   - label: Plot a coutse for planet 2
     do:
-    - spawn: planet 2
-    - You and two of your crew members,‭ ‬Shirley and‭ ‬Jason,‭ ‬have been teleported to the surface of the planet.‭
+    - if-state: planet 2 visited
+      then:
+      - Although the robots seemed happy, it is probably better to leave them alone.
+      else:
+      - goto: planet 2
+      - You and two of your crew members,‭ ‬Shirley and‭ ‬Jason,‭ ‬have been teleported to the surface of the planet.‭
 
 #
 # Planet 1
@@ -322,16 +358,17 @@
   pickup: true
   use:
   - if-in: planet upstreet
-    then-return-seq:
-    - The key seem to fit in the big doors. They slowly open to reveal what's on the other side.
-    - Suddenly you and Shirley are back inside your ship. The computer screen shows
-      "Transport error. Reset performed."
+    then-return:
+    - set: key used
     - spawn: command deck
-
+    - seq:
+      - The key seem to fit in the big doors. They slowly open to reveal what's on the other side.
+      - Suddenly you and Shirley are back inside your ship. The computer screen shows
+        "Transport error. Reset performed."
   - if-in: quarters
-    then-return-seq:
-    - You place the key next to your souvenirs on the shelf.
+    then-return:
     - drop: holographic key
+    - You place the key next to your souvenirs on the shelf.
 
   - It doesn't seem to be usable here.
 
@@ -344,6 +381,7 @@
       looking tools.
     - if-state: bob dead
       then:
+      - set: key found
       - pickup: holographic key
       - As the aliens discuss what happened with Bob's head, you manage to find a holographic key
         at the bottom of the box.
@@ -409,6 +447,7 @@
   use:
   - if-in: planet 2 buildings
     then-return:
+    - set: translation done
     - spawn: command deck
     - seq:
       - >
@@ -502,6 +541,7 @@
 
 - thing: controls
   lookat:
+  - set: found cartridge
   - pickup: translation cartridge
   - seq:
     - Examining the controls closely, you see that one panel is in fact a compartment for space gloves.
