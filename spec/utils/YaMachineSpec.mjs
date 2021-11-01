@@ -50,6 +50,13 @@ describe("YaMachine",()=>{
 
 		expect(y.preprocessAndEval(p)).toEqual(1);
 		expect(calls).toEqual(1);
+
+		p=yaml.parse(`
+return: 123
+`)
+//		console.log(y.preprocess(p));
+
+		expect(y.preprocessAndEval(p)).toEqual(123);
 	});
 
 	it("checked for invalid keys",()=>{

@@ -84,9 +84,6 @@ export default class YaMachine {
 	and(clause, context) {
 		this.assertValidKeys(clause,["and"]);
 
-		/*if (context.isReturned())
-			return context.getReturnValue();*/
-
 		if (!(clause.and instanceof Array))
 			throw new Error("and needs an array");
 
@@ -100,9 +97,6 @@ export default class YaMachine {
 	or(clause, context) {
 		this.assertValidKeys(clause,["or"]);
 
-		/*if (context.isReturned())
-			return context.getReturnValue();*/
-
 		if (!(clause.or instanceof Array))
 			throw new Error("or needs an array");
 
@@ -115,9 +109,6 @@ export default class YaMachine {
 
 	if(clause, context) {
 		this.assertValidKeys(clause,["if","then","else"]);
-
-		/*if (context.isReturned())
-			return context.getReturnValue();*/
 
 		let res=this.castToBool(this.eval(clause.if,context));
 		if (res && clause.then)
@@ -145,9 +136,6 @@ export default class YaMachine {
 		if (!(clause.seq instanceof Array))
 			throw new Error("seq needs an array");
 
-		/*if (context.isReturned())
-			return context.getReturnValue();*/
-
 		let res=[];
 
 		for (let c of clause.seq)
@@ -174,6 +162,9 @@ export default class YaMachine {
 			for (let subClause of clause)
 				res=this.eval(subClause,context);
 
+			if (context.isReturned())
+				return context.getReturnValue();
+
 			return res;
 		}
 
@@ -186,7 +177,12 @@ export default class YaMachine {
 			if (this.functions[fn]) {
 				this.assertValidKeys(clause,[fn]);
 				let arg=clause[fn];
-				return this.functions[fn](this.eval(arg,context));
+				let res=this.functions[fn](this.eval(arg,context));
+
+				if (context.isReturned())
+					return context.getReturnValue();
+
+				return res;
 			}
 		}
 

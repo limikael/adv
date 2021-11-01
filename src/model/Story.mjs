@@ -72,7 +72,6 @@ export default class Story {
 		}
 
 		this.restart();
-		window.story=this;
 	}
 
 	getVerbs() {
