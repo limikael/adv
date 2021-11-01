@@ -1,4 +1,4 @@
-import {fetchEx} from "../utils/WebUtil.js";
+import {fetchEx} from "../utils/WebUtil.mjs";
 import Story from "../model/Story.mjs";
 import yaml from "yaml";
 

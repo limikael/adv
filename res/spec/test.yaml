@@ -1,0 +1,44 @@
+- verbs:
+  - goto
+  - pickup
+  - lookat
+  - use
+  - drop
+
+- state: nope
+
+- location: kitchen
+  description: You are in the kitchen.
+  things:
+  - description: there is a [door] leading to the garden
+    goto-spawn: garden
+    use-goto: garden
+
+- location: garden
+  description: You are in the garden
+  destinations:
+  - kitchen
+  - street
+
+- location: street
+  description: You are in the street
+  destinations:
+  - garden
+
+- thing: plant
+  description: Next to the wall, there is a beautiful *plant* growing.
+  stage_name: a plant
+  location: kitchen
+  exists: false
+  lookat:
+    The plant is green
+  talkto:
+    if-in: kitchen
+    then: I'm in the kitchen
+    else: Hello says the plant
+
+- thing: shoe
+  stage_name: a shoe
+  location: garden
+  pickup:
+    fail: The shoe is too dirty

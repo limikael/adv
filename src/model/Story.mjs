@@ -37,6 +37,13 @@ export default class Story {
 				return new StoryException(message)
 			},
 
+			die: (message)=>{
+				let e=new StoryException(message);
+				e.type="die";
+
+				return e;
+			},
+
 			set: (stateId)=>{
 				this.getObjectById(stateId,"state").setValue(true);
 			},
@@ -54,28 +61,37 @@ export default class Story {
 		for (let f in functions)
 			this.yaMachine.addFunction(f,functions[f].bind(this));
 
+		this.verbsById={};
 		for (let verb of createVerbs()) {
+			this.verbsById[verb.id]=verb;
+			verb.setStory(this);
+
 			this.yaMachine.addFunction(verb.id,(arg)=>{
 				this.execute(verb.id,arg);
 			});
 		}
 
 		this.restart();
+		window.story=this;
 	}
 
 	getVerbs() {
-		return Object.values(this.verbsById);
+		let res=[];
+
+		for (let verbId in this.verbsById)
+			if (this.storyVerbs.includes(verbId))
+				res.push(this.verbsById[verbId]);
+
+		return res;
 	}
 
 	restart=()=>{
 		let spec=this.yaMachine.preprocess(JSON.parse(JSON.stringify(this.spec)));
 
+		this.dead=false;
 		this.objectives=[];
 		this.objects=[];
-
-		let verbs=[
-			"goto", "pickup"
-		];
+		this.storyVerbs=["goto","pickup"];
 
 		let startId;
 
@@ -101,23 +117,20 @@ export default class Story {
 					break;
 
 				case "verbs":
-					verbs=objectSpec.verbs;
+					this.storyVerbs=objectSpec.verbs;
 					break;
 
 				default:
 					let o=new StoryObject(objectSpec);
 					o.setStory(this);
 					this.objects.push(o);
+
+					if (o.things)
+						for (let object of o.things)
+							this.objects.push(object);
+
 					break;
 			}			
-		}
-
-		this.verbsById={};
-		for (let verb of createVerbs()) {
-			if (verbs.includes(verb.id)) {
-				verb.setStory(this);
-				this.verbsById[verb.id]=verb;
-			}
 		}
 
 		if (!startId)
@@ -202,7 +215,8 @@ export default class Story {
 
 		for (let object of this.objects) {
 			if (object.type=="thing" &&
-					object.location==current.id)
+					object.location==current.id &&
+					this.evalClause(object.exists))
 				res.push(object);
 		}
 
@@ -236,6 +250,9 @@ export default class Story {
 
 		if (v instanceof StoryException) {
 			this.currentMessage=v.getMessage();
+			if (v.type=="die")
+				this.dead=true;
+
 			return false;
 		}
 
@@ -282,7 +299,8 @@ export default class Story {
 		for (let objectiveClause of this.objectives) {
 			let v=this.yaMachine.preprocessAndEval(objectiveClause);
 
-			if (!(v instanceof StoryException))
+//			if (!(v instanceof StoryException))
+			if (v && !(v instanceof StoryException))
 				complete++;
 		}
 
@@ -291,7 +309,7 @@ export default class Story {
 	}
 
 	isComplete() {
-		return (this.getCompletePercentage()==100)
+		return (this.dead || this.getCompletePercentage()==100)
 	}
 
 	getName() {

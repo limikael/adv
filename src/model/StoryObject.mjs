@@ -6,23 +6,28 @@ export default class StoryObject {
 		switch (this.type) {
 			case "thing":
 				this.applySpec(spec,{
-					description: null,
+					thing: null,
+					description: undefined,
 					use: {fail: "Can't do that"},
 					talkto: {fail: "Can't do that"},
 					location: null,
 					drop: "Dropped",
 					pickup: "Taken",
 					lookat: "Nothing interesting about it",
-					stage_name: null,
-					inventory_name: null,
+					name: spec.thing,
+					exists: true,
+					goto: {fail: "Can't do that"}
 				});
 				break;
 
 			case "location":
-				this.description=spec.description;
-				this.destinations=spec.destinations||[];
-				this.enter=spec.enter;
-				this.leave=spec.leave;
+				this.applySpec(spec,{
+					name: spec.location,
+					location: null,
+					description: undefined,
+					enter: undefined,
+					leave: undefined
+				});
 				break;
 
 			case "choice":
@@ -41,16 +46,25 @@ export default class StoryObject {
 
 	applySpec(spec, defaults) {
 		for (let k in defaults) {
-			if (spec[k])
+			if (spec.hasOwnProperty(k))
 				this[k]=spec[k];
 
 			else
 				this[k]=defaults[k];
 		}
+
+		for (let k in spec)
+			if (!defaults.hasOwnProperty(k))
+				throw new Error("Unknown property: "+k);
 	}
 
 	setStory(story) {
 		this.story=story;
+
+		if (this.type=="location") {
+			for (let i in this.things)
+				this.things[i].setStory(story);
+		}
 	}
 
 	assertType(type) {
@@ -58,20 +72,8 @@ export default class StoryObject {
 			throw new Error(this.id+" is a "+this.type+", not a "+type);
 	}
 
-	getInventoryName() {
-		if (this.inventory_name)
-			return this.story.yaMachine.preprocessAndEval(this.inventory_name);
-
-		else
-			return this.id;
-	}
-
-	getStageName() {
-		if (this.stage_name)
-			return this.story.yaMachine.preprocessAndEval(this.stage_name);
-
-		else
-			return this.id;
+	getName() {
+		return this.story.yaMachine.preprocessAndEval(this.name);
 	}
 
 	getAlternatives() {
@@ -103,6 +105,6 @@ export default class StoryObject {
 	}
 
 	getValue() {
-		return this.value;
+		return this.story.evalClause(this.value);
 	}
 }

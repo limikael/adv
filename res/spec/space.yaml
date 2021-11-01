@@ -1,6 +1,5 @@
 - verbs:
   - goto
-  - pickup
   - talkto
   - use
   - lookat
@@ -8,28 +7,116 @@
 - name: Space Adventure
 
 - state: talked to crew member
+- state: used screen
 - state: weapons active
 - state: red alert
+- state: seen symbol
+- state: bob dead
+- state: haircut done
+- state: escape sequence
+- state: translation done
+- state: found cartridge
+- state: key found
+- state: key used
+- state: planet 1 visited
+- state: planet 2 visited
+- state: planets visited
+  value-and:
+  - state: planet 1 visited
+  - state: planet 2 visited
+- state: complete
+- state: mission complete
+  value-and:
+  - state: planets visited
+  - not-have: holographic key
+  - not-have: translation cartridge
 
-#- start: planet street
+- start: command deck
+
+- thing: captain's badge
+  location: inventory
+  lookat:
+  - It serves to remind others, and, more importantly, yourself, about the painstaking
+    climb you have made within this space organisation.
+  use:
+  - It is not useful, really. 
+
+- objectives:
+  - state: talked to crew member
+  - state: used screen
+  - state: planets visited
+  - state: mission complete
+  - state: seen symbol
+  - state: haircut done
+  - state: bob dead
+  - state: translation done
+  - state: found cartridge
+  - state: key found
+  - state: key used
+  - state: complete
+
+#
+# Ship
+#
 
 - location: command deck
   description:
   - You are standing on the command deck of your spaceship, as befits a captain like you.
+    There is a door to your [quarters] behind you.
   - if-not-state: talked to crew member
     then:
       You are on a routine mission to transport passengers to a distant planet.
+  - if-and:
+    - state: escape sequence
+    - not-state: planet 2 visited
+    then:
+      The voice of the computer helpfully informs you that your fuel is at 5% and that you
+      should head to the nearest spaceship fuel station.
+
+- location: quarters
+  name: personal captain's quarters
+  description:
+  - Ah, your personal quarters. You always withdraw here when things heat up out on the [command deck].
+  - There is a [bed] here, and a shelf where you keep your [souvenirs] from the space academy.
+  - There is even a small [window].
+
+- thing: souvenirs
+  use: They are souvenirs, not really useful for anything. But they make you feel like a captain.
+  lookat-use: souvenirs
+
+- thing: bed
+  goto-use: bed
+  use:
+    Ah... You lie down on the bed. You relax a little, but the thought about space command
+    calling you to check on your mission makes you nervous.
+  lookat:
+    You have kept the duvet from you childhood room. It has stars, planets and rockets in
+    a comforting pattern.
+
+- thing: window
+  use:
+    You often have the urge to jump out this window. But today is not the day.
+  lookat:
+    Ah, a window. You have made it. Not everyone gets to have a room with a window in space.
 
 - thing: personal screen
   location: command deck
+  exists-state: talked to crew member
   description:
+  - if-state: mission complete
+    then-return: Your [personal screen] blinks to signal an incoming call from space command.
+  - if-state: planets visited
+    then-return: Your personal screen seems calm, for a change.
+  - if-state: escape sequence
+    then-return:
+      Your [personal screen] in front of you displays a map of a strange solar system
+      that you don't recognize.
   - if-state: weapons active
     then-return:
-      A light on your *personal screen* blinks worrying.
+      A light on your [personal screen] blinks worrying.
       There is a little weapons icon with a circle around it.
   - if-state: talked to crew member
-    then-return: A light on your *personal screen* blinks worrying.
-  - A light on your *personal screen* glows calm and blue.
+    then-return: A light on your [personal screen] blinks worrying.
 
   lookat:
   - use: personal screen
@@ -38,9 +125,18 @@
   - fail: It is firmly attached.
 
   use:
-  - if-not-state: talked to crew member
-    then: It glows calm and blue.
-    else-spawn: command choices
+  - set: used screen
+  - if-state: mission complete
+    then-return:
+    - set: complete
+    - seq:
+      - Hello, this is space command, we are calling to see how the mission is going.
+      - You are too tired to answer and hang up. Enough for one day. You can worry about it tomorrow.
+  - if-state: escape sequence
+    then-return-spawn: planet choice
+  - if-state: talked to crew member
+    then-return-spawn: command choices
+  - return: It glows calm and blue.
 
   talkto:
     This story takes place in the distant future, when humanity has finally
@@ -49,6 +145,7 @@
 
 - thing: crew member
   location: command deck
+  exists-not-state: talked to crew member
   description: 
   - if-not-state: talked to crew member
     then: A *crew member* suddenly approaches, flailing her arms.
@@ -76,6 +173,10 @@
         planet takes a different turn.
     else:
       'She says: "Do something captain!!!"'
+
+#
+# Choices
+#
 
 - choice: command choices
   description:
@@ -123,31 +224,13 @@
 
   - label: Activate escape sequence
     do:
-    - spawn: escape sequence
+    - set: escape sequence
     - >
       The computer announces: "Escape sequence activated!"
       You feel a sharp jolt and the scenery outside the ship becomes filled with blurry white
       lines.
       "We are doing a jump!" the first officer states. "I wonder where!"
       After only a few minutes, the white stripes outside turn into more star-like patterns.
-
-- location: escape sequence
-  description: 
-  - The voice of the computer helpfully informs you that your fuel is at 5% and that you
-    should head to the nearest spaceship fuel station.
-
-- thing: planet screen
-  location: escape sequence
-  description:
-    A *screen* in front of you wakes up and displays a map of a solar system.
-
-  lookat-use: planet screen
-  use-spawn: planet choice
-  pickup:
-    fail: The screen is firmly attached
-
-  talkto:
-    fail: Doesn't make sense
 
 - choice: planet choice
   description:
@@ -156,24 +239,332 @@
   alternatives:
   - label: Plot a course for planet 1
     do:
-    - spawn: planet street
-    - You and two of your crew members, Shirley and Bob, teleports to the
-      surface of the planet.
+    - if-state: planet 1 visited
+      then:
+      - After thinking about it for a while, you decide not to. You assess the risk of decapitation by
+        pan galactic barbers as too great.
+      else:
+      - goto: planet street
+      - You and two of your crew members, Shirley and Bob, teleports to the
+        surface of the planet.
   - label: Plot a coutse for planet 2
+    do:
+    - if-state: planet 2 visited
+      then:
+      - Although the robots seemed happy, it is probably better to leave them alone.
+      else:
+      - goto: planet 2
+      - You and two of your crew members,‭ ‬Shirley and‭ ‬Jason,‭ ‬have been teleported to the surface of the planet.‭
+
+#
+# Planet 1
+#
+
+- thing: shirley
+  name: Shirley
+  pickup-fail: Can't do that.
+
+- thing: bob
+  name: Bob
+  pickup-fail: Can't do that.
+  talkto:
+  - if-in: planet garden
+    then:
+      if-state: haircut done
+      then:
+      - set: bob dead
+      - seq:
+          - You look at Bob,‭ ‬your officer in his red uniform,‭ ‬who shrugs and approaches the chair and the alien.‭ 
+            ‬He sits on the chair and the green alien says something that sounds like‭ “‬GGGhhrrriijjk bloooob‭”‬.‭
+            ‬You can hear‭ ‬Bob’s translation device automatically translating this to mean‭
+            "‬Would you like a complete or superficial haircut,‭ ‬sir‭?"
+          - Bob says:‭ "Oh,‭ ‬nice,‭ ‬a complete one please.‭ ‬My hair is very overgrown at the moment.‭"
+          - The barber reaches for his‭ ‬box‭ ‬for what looks like a laser wand,‭ ‬and without ceremony cuts Bob’s head off with‭ ‬it,‭ ‬
+            as his body is still left sitting on the‭ ‬chair.‭ ‬
+            The alien seems a bit confused about the amount of blood spilled,‭ ‬and inspects its tool.
+      else:
+        Why don't you try the haircut, sir?
+    else:
+      Hello sir, I'm bob
+
+  lookat-talkto: bob
+
+#
+# Planet 1 street
+#
 
 - location: planet street
+  enter-set: planet 1 visited
   description: 
-    You appear in the middle of a busy street.
+  - You appear in the middle of a busy street.
+  - if-not-state: bob dead
+    then: Your crew members [shirley] and [bob] is with you.
+    else: Your crew member [shirley] is with you.
+  - There is a high wall on both sides of the [planet upstreet] with only one closed door one your left.
+    There is a [symbol] on the door, just above the [handle].
+  - The street is full of strange [creatures], who are walking on both directions.
+
+- thing: symbol
+  pickup-fail: Can't pick it up.
+  lookat:
+  - set: seen symbol
+  - seq:
+    - Your portable translation device tells you that the symbol above the door handle stands
+      for "barber shop". The creatures on the street don’t even look at you when they keep
+      walking on.
+    - As you examine the symbol you suddenly hear a mechanism click inside the door.
+
+- thing: handle
+  pickup-fail: Can't pick it up.
+  use:
+    - if-state: seen symbol
+      then:
+      - spawn: planet garden
+      - As soon as you touch the handle, the door opens to an open garden.
+      else:
+      - Nothing happens, the door is firmly locked.
 
 - thing: creatures
-  location: planet street
-  pickup:
-    fail: Can't do that.
-  description:
-    The street is full of strange *creatures*, who are walking on both directions.
-  lookat:
-    They look a bit like humans but are green and constantly smiling.
+  lookat: They look a bit like humans but are green and constantly smiling.
+  pickup-fail: Can't do that.
+  talkto:
+    They say "FFFhhrrriijjk bliiiib". Your translation device is unable to translate
+    as it seems to be an unknown street slang.
 
-- thing: door
-  location: planet street
-  description: There is a high wall on both sides of the street with only one *door* one your left.
+#
+# Planet 1 garden
+#
+
+- location: planet garden
+  description:
+  - The weather is sunny and pleasant and lizards are singing high up in the strange treetops.
+  - There is a [chair] in the middle of the garden, and one of the green aliens is standing next
+    to it in front of a big [box], smiling. 
+  - if-not-state: bob dead
+    then: '[bob] standing next to you, while Shirley stayed outside, waiting.'
+    else: "The aliens are curiously investigating Bob's corpse. Shirley is stayed outside, waiting."
+  - There is a [garden door] leading back to the street.
+
+- thing: chair
+  use-spawn: haircut
+  goto-use: chair
+  lookat:
+  - It looks like a hairdressers chair, but slightly alien.
+
+- thing: holographic key
+  description: The [holographic key] from the planet with the lethal barber shop sits next to the souvenirs.
+  lookat:
+  - It looks like a key
+  pickup: true
+  use:
+  - if-in: planet upstreet
+    then-return:
+    - set: key used
+    - spawn: command deck
+    - seq:
+      - The key seem to fit in the big doors. They slowly open to reveal what's on the other side.
+      - Suddenly you and Shirley are back inside your ship. The computer screen shows
+        "Transport error. Reset performed."
+  - if-in: quarters
+    then-return:
+    - drop: holographic key
+    - You place the key next to your souvenirs on the shelf.
+
+  - It doesn't seem to be usable here.
+
+- thing: box
+  use-lookat: box
+  goto-lookat: box
+  lookat:
+    seq:
+    - You approach the box, which is open from the top, and see that it’s full of strange
+      looking tools.
+    - if-state: bob dead
+      then:
+      - set: key found
+      - pickup: holographic key
+      - As the aliens discuss what happened with Bob's head, you manage to find a holographic key
+        at the bottom of the box.
+      else: You try to examine it more closely, but the creatures look at you suspiciously.
+
+- thing: garden door
+  goto-spawn: planet street
+  use-spawn: planet street
+  name: door
+
+- choice: haircut
+  description:
+    You sit on the chair, and the green alien says something that sounds like "GGGhhrrriijjk
+    bloooob". Your translation device automatically translates this to mean 
+    "Would you like a complete or superficial haircut, sir?"
+  alternatives:
+  - label: Complete
+    do-die: 
+      The barber alien reaches for the box and takes out a tool that looks like a laser wand.
+      You feel a sharp pain on your neck and see nothing more.
+  - label: Superficial
+    do:
+    - set: haircut done
+    - The barber alien reaches for the box and takes out a pair of very ordinary looking
+      scissors. After completing your haircut he holds out a mirror, and you can see that it’s a
+      very nice haircut indeed.
+
+# planet 1 up the street
+
+- location: planet upstreet
+  name: street
+  description:
+  - You walk down the street which continues the same for a long time,‭ ‬just like‭ ‬[where you came from],‭ ‬until it ends to a building.‭ 
+  - There are‭ ‬[big doors] through which the‭ ‬green‭ ‬aliens walk in and out of the building,‭ ‬constantly smiling.
+
+- thing: big doors
+  lookat:
+  - When you reach the doors,‭ ‬you see that although there is a gap between them,‭ ‬you can’t see through it to the‭ ‬other side.‭ 
+    The creatures who walk out from it and continue‭ ‬up the street seem to be emerging through a wall.
+  use:
+  - They are firmly locked.
+  goto-use: big doors
+
+- thing: where you came from
+  goto-spawn: planet street
+  lookat: Looking back to the place where you came from, you just see the amiling aliens walking around.
+
+#
+# Planet 2
+#
+
+- thing: translation cartridge
+  description: The [translation cartridge] from the planet with the robots also sits neatly on the shelf.
+  lookat:
+  - seq:
+    - It is a 72 pin cartridge, it fits into your translation device.
+    - >
+      By conincidence, the layout of the cartridge pins is exactly the same as was once used 
+      by a company called "Nindendo" located on a remote planet. It was only used for a short while,
+      roughly at the time when the planet had spun 1,980 times around its host star after
+      one man had been nailed to a tree for saying how great it would be to be nice to people for a change.
+    - But this story has nothing to do with that man, nor the company.
+  use:
+  - if-in: planet 2 buildings
+    then-return:
+    - set: translation done
+    - spawn: command deck
+    - seq:
+      - >
+        Shirley inserts the cartridge into her translator device, and starts a conversation with the robots.
+        "‬Do you understand me‭?"
+
+      - >
+        The robots wait while one of them moves forward from behind the others.‭ ‬This one is bigger and dustier than many.‭ 
+        It stops in front of you and says: "‬I understand.‭ ‬Are you looking for us‭?"
+
+      - >
+        "Perhaps‭..." ‬Shirley says cautiously.‭ "‬We need fuel for our spaceship."
+
+      - >
+        All the robots make a sound at the same time,‭ ‬a sound that sounds like‭ “‬brrrrrrr‭!”‬,‭ ‬and start wheeling,‭ 
+        rattling and bouncing around Shirley.
+
+      - >
+        "‬We've got it‭!" ‬The boss robot says.‭ "‬We are the ones you were looking for.‭"
+
+      - >
+        The robots prepare a tank ship to service your vessel while it reaches the orbit,‭
+        ‬and you signal to your ship's computer to transfer you back.
+  - if-in: quarters
+    then-return-seq:
+    - You place the cartridge next to your souvenirs on the shelf.
+    - drop: translation cartridge
+  - Can't use that here.
+
+# planet 2 desert
+
+- location: planet 2
+  enter-set: planet 2 visited
+  name: path
+  description:
+  - The three of you are standing in the middle of a big,‭ ‬flat area.‭ ‬All around you looks like a desert.‭ 
+    There is only dunes of sand and sand-coloured‭ [planet 2 buildings] ‬on one side of the asphalted clearing where you are standing.‭ 
+    On the other side,‭ ‬you see many‭ ‬parked‭ ‬flying‭ ‬[planet 2 shuttles] and‭ ‬other‭ ‬vehicles,‭ ‬all covered with a thick layer of dust.
+  - You heard a creaking noise and a rusty‭ ‬robot appears from behind the corner of one of the [planet 2 buildings].‭ 
+    It detects you and starts coming towards you.
+
+# planet 2 buildings
+
+- location: planet 2 buildings
+  name: buildings
+  description:
+  - As you walk towards the buildings,‭ ‬hundreds and hundreds of [robots] appear from inside and around the structures.‭ ‬
+  - Jason hesitates.‭ "‬I think we should go‭ [the other way].‭"
+  - Shirley looks pensive.
+
+- thing: the other way
+  goto-spawn: planet 2
+
+- thing: robots
+  lookat:
+  - Some of them are rolling,‭ ‬some are walking with four or more legs.‭
+    They are all talking in a strange language,‭ ‬but your translator device tells you what they are saying.‭ 
+    They are all just repeating:‭ "Are you looking for me‭?"
+  talkto:
+  - seq:
+    - You wait for the robots to reach you.‭ ‬They all keep talking at the same time,‭ ‬repeating:‭ "‬Are you looking for me‭?"
+    - The robots keep talking, but your translation device is unable to translate.
+  pickup-fail: That's too dangerous!
+
+# planet 2 shuttles
+
+- location: planet 2 shuttles
+  name: shuttles
+  description:
+  - When you approach the parked shuttles,‭ ‬you can see that there are many different ships of all shapes and sizes.‭ 
+    Even though a few look like they haven't flown for a while,‭ 
+    there are also some that seem brand new under their‭ ‬slight‭ ‬coating of dust.‭ 
+    In fact,‭ ‬the nearest one of those even has a door open to its‭ ‬[planet 2 command deck].
+  - >
+    "‬Let's‭ ‬go back" ‬Shirley says.‭ "‬I've got a bad feeling about this."
+  - Next to the shuttles is the [planet 2] back to where you came from.
+
+# planet 2 command deck
+
+- location: planet 2 command deck
+  name: command deck
+  description:
+  - You enter the ship's command deck through‭ ‬the open [command deck door].‭ 
+    The vessel is too small for interstellar travel,‭ ‬but it looks fit enough for travelling inside a solar system.
+  - >
+    ‬"If we can start this,‭ ‬we could use it to transport fuel to our ship,‭ ‬assuming we can find some.‭
+    ‬And there must be fuel here somewhere.‭ ‬Look at all these ships‭!" ‬Jason exclaims.
+  - The ship's [controls] are not entirely familiar. The only thing you clearly recognise is the main‭ ‬[start switch].
+  - >
+    "‬Really,‭ ‬we should‭ ‬leave"‬,‭ ‬Shirley says.
+
+- thing: controls
+  lookat:
+  - set: found cartridge
+  - pickup: translation cartridge
+  - seq:
+    - Examining the controls closely, you see that one panel is in fact a compartment for space gloves.
+    - Inside the compartment you find a translation cartridge.
+
+- thing: command deck door
+  name: door
+  use-spawn: planet 2 shuttles
+  goto-spawn: planet 2 shuttles
+  lookat: The door is still open.
+
+- thing: start switch
+  use:
+  - die-seq:
+    - As soon as you have touched the ship’s start switch,‭ ‬it becomes alive.‭ 
+      ‬The lights of the command deck turn on,‭ ‬and the computer starts speaking:‭ 
+      "Biomarker incorrect.‭ ‬Say override password.‭"
+    - This keeps on going for a while.‭ 
+      Then,‭ ‬suddenly,‭ ‬the ship’s doors shut behind you,‭ ‬and the computer message changes to:‭ "‬Calling security‭".
+      Before you have time to react,‭ ‬three armed police robots teleport to the command deck behind you.
+    - >
+      "You are under arrest for attempted theft‭! ‬Calling the judge‭!"
+      The robots surround you.‭ ‬Another robot with an old-fashioned judge’s wig materialises behind them.
+    - >
+      "‬Guilty as charged‭!" ‬The judge robot screams.‭ "‬The punishment is writing one billion times‭
+      '‬I will not unlawfully take into my possession any vehicle that does not belong to me‭!'"

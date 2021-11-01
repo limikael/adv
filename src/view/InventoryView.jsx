@@ -12,7 +12,7 @@ export default function InventoryView(props) {
 		thingList.push(
 			<a onclick={props.state.objectClick.bindArgs(thing.id)}
 					{...accessible}>
-				{thing.getInventoryName()}
+				{thing.getName()}
 			</a>
 		);
 	}
