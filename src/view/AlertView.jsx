@@ -1,5 +1,5 @@
 import {useRef, useLayoutEffect} from "react";
-import {emStyle} from "../utils/ReactUtil.jsx";
+import {emStyle} from "../utils/react-util.js";
 
 export default function AlertView(props) {
 	let ref=useRef();
@@ -10,15 +10,15 @@ export default function AlertView(props) {
 			ref.current.scrollTop=0;
 	});
 
-	if (props.state.story.getMessage()) {
-		message=props.state.story.getMessage();
-		fn=props.state.dismissMessage;
+	if (props.model.story.getMessage()) {
+		message=props.model.story.getMessage();
+		fn=props.model.dispatcher("dismissMessage");
 		text="OK";
 	}
 
-	else if (props.state.story.isComplete()) {
-		message=props.state.story.getCompleteMessage();
-		fn=props.state.restart;
+	else if (props.model.story.isComplete()) {
+		message=props.model.story.getCompleteMessage();
+		fn=props.model.dispatcher("restart");
 		text="PLAY AGAIN";
 	}
 

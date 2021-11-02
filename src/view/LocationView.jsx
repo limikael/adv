@@ -1,5 +1,5 @@
 import {useRef, useLayoutEffect} from "react";
-import {useIsValueChanged, emStyle, accessibleLinkProps} from "../utils/ReactUtil.jsx";
+import {useIsValueChanged, emStyle, accessibleLinkProps} from "../utils/react-util.js";
 import {linkify} from "../utils/WebUtil.mjs";
 
 function enumerate(strings) {
@@ -27,7 +27,7 @@ function enumerate(strings) {
 
 export default function LocationView(props) {
 	let ref=useRef();
-	let changed=useIsValueChanged(props.state.story.currentLocationId);
+	let changed=useIsValueChanged(props.model.story.currentLocationId);
 	let text=[];
 
 	useLayoutEffect(()=>{
@@ -36,17 +36,17 @@ export default function LocationView(props) {
 	});
 
 	function storyLink(objectId) {
-		let object=props.state.story.getObjectById(objectId);
+		let object=props.model.story.getObjectById(objectId);
 
 		if (!object)
 			throw new Error("Unknown object: "+objectId);
 
 		let accessible=null;
-		if (props.state.currentVerb)
+		if (props.model.currentVerb)
 			accessible=accessibleLinkProps();
 
 		return (
-			<a onclick={props.state.objectClick.bindArgs(object.id)}
+			<a onclick={props.model.dispatcher("objectClick",object.id)}
 					{...accessible}>
 				{object.getName()}
 			</a>
@@ -54,17 +54,17 @@ export default function LocationView(props) {
 	}
 
 
-	if (!props.state.story.getCurrentChoice()) {
-		let descs=props.state.story.getCurrentLocationDescriptions();
+	if (!props.model.story.getCurrentChoice()) {
+		let descs=props.model.story.getCurrentLocationDescriptions();
 
 		for (let desc of descs) {
 			desc=desc.toString();//console.log("linkify: "+desc);
 			text.push(<p>{linkify(desc,storyLink)}</p>);
 		}
 
-		let things=props.state.story.getThingsByCurrentLocation();
+		let things=props.model.story.getThingsByCurrentLocation();
 		for (let thing of things) {
-			let desc=props.state.story.evalClause(thing.description);
+			let desc=props.model.story.evalClause(thing.description);
 
 			if (desc)
 				text.push(<p>{linkify(desc,storyLink)}</p>);
@@ -72,7 +72,7 @@ export default function LocationView(props) {
 	}
 
 	let cls="adv-bx bg-white text-black adv-location-description ";
-	if (props.state.currentVerb)
+	if (props.model.currentVerb)
 		cls+="adv-verb-selected";
 
 	return (

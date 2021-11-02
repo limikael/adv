@@ -4,19 +4,19 @@ import AlertView from "./AlertView.jsx";
 import InventoryView from "./InventoryView.jsx";
 import HeaderView from "./HeaderView.jsx";
 import ChoiceView from "./ChoiceView.jsx";
-import {emStyle} from "../utils/ReactUtil.jsx";
+import {emStyle} from "../utils/react-util.js";
 
 export default function AdvView(props) {
 	let storyContent;
-	if (props.state.story) {
+	if (props.model.story) {
 		storyContent=(
 			<Fragment>
-				<HeaderView state={props.state} />
-				<LocationView state={props.state} />
-				<InventoryView state={props.state} />
-				<VerbListView state={props.state} />
-				<ChoiceView state={props.state} />
-				<AlertView state={props.state} />
+				<HeaderView model={props.model} />
+				<LocationView model={props.model} />
+				<InventoryView model={props.model} />
+				<VerbListView model={props.model} />
+				<ChoiceView model={props.model} />
+				<AlertView model={props.model} />
 			</Fragment>
 		);
 	}

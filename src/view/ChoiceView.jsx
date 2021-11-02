@@ -1,5 +1,5 @@
 import {useRef, useLayoutEffect} from "react";
-import {emStyle} from "../utils/ReactUtil.jsx";
+import {emStyle} from "../utils/react-util.js";
 
 export default function ChoiceView(props) {
 	let ref=useRef();
@@ -10,17 +10,17 @@ export default function ChoiceView(props) {
 			ref.current.scrollTop=0;
 	});
 
-	if (!props.state.story.getCurrentChoice())
+	if (!props.model.story.getCurrentChoice())
 		return null;
 
-	let choice=props.state.story.getCurrentChoice();
+	let choice=props.model.story.getCurrentChoice();
 	let alternativeButtons=[];
 	let i=0;
 	let top=23-choice.getAlternatives().length*3;
 	for (let alternative of choice.getAlternatives()) {
 		alternativeButtons.push(
 			<button style={emStyle(1,top+3*i,14,3)} class="adv-btn bg-info text-white adv-bx"
-					onclick={props.state.alternativeClick.bindArgs(alternative.index)}>
+					onclick={props.model.dispatcher("alternativeClick",alternative.index)}>
 				{alternative.label}
 			</button>
 		);

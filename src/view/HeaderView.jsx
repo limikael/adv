@@ -1,13 +1,13 @@
-import {emStyle, useCountUp} from "../utils/ReactUtil.jsx";
+import {emStyle, useCountUp} from "../utils/react-util.js";
 
 export default function HeaderView(props) {
-	let countScore=Math.round(useCountUp(props.state.story.getCompletePercentage(),true));
+	let countScore=Math.round(useCountUp(props.model.story.getCompletePercentage(),true));
 
 	return (
 		<Fragment>
 			<div style={emStyle(0,0,19,2)} class="adv-bx bg-black" />
 			<div style={emStyle(0,0,19,2)} class="adv-bx adv-btn bg-black text-white text-center">
-				{props.state.story.getName()}
+				{props.model.story.getName()}
 			</div>
 			<div style={emStyle(0,0,2,2)} class="adv-bx text-center text-white adv-btn">
 				<div class="bi bi-three-dots-vertical"></div>

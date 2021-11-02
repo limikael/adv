@@ -1,16 +1,16 @@
-import {emStyle, accessibleLinkProps} from "../utils/ReactUtil.jsx";
+import {emStyle, accessibleLinkProps} from "../utils/react-util.js";
 
 export default function InventoryView(props) {
-	let things=props.state.story.getInventoryThings();
+	let things=props.model.story.getInventoryThings();
 	let thingList=[];
 
 	let accessible=null;
-	if (props.state.currentVerb)
+	if (props.model.currentVerb)
 		accessible=accessibleLinkProps();
 
 	for (let thing of things) {
 		thingList.push(
-			<a onclick={props.state.objectClick.bindArgs(thing.id)}
+			<a onclick={props.model.dispatcher("objectClick",thing.id)}
 					{...accessible}>
 				{thing.getName()}
 			</a>
@@ -18,7 +18,7 @@ export default function InventoryView(props) {
 	}
 
 	let cls="adv-bx bg-body text-warning adv-inventory";
-	if (props.state.currentVerb)
+	if (props.model.currentVerb)
 		cls+=" adv-verb-selected";
 
 	return (

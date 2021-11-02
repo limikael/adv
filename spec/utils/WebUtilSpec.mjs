@@ -9,7 +9,7 @@ describe("linkify",()=>{
 			return "**key: "+key+"**";
 		}
 
-		console.log(linkify("hello [test] world [and] such",processor));
+//		console.log(linkify("hello [test] world [and] such",processor));
 
 //		expect(linkify("hello [test] world [and] such",processor)).toEqual(["hello","**key: test**","world"]);
 	});

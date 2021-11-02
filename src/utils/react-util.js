@@ -1,4 +1,4 @@
-import {useRef, useReducer, useState, useEffect} from "react";
+import {useRef, useReducer, useState, useEffect, useLayoutEffect} from "react";
 
 export function useForceUpdate() {
 	const [_, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -6,49 +6,33 @@ export function useForceUpdate() {
 	return forceUpdate;
 }
 
-export function useReducibleState(options) {
-	if (!options.reducers) options.reducers={};
-	if (!options.computers) options.computers={};
-	if (!options.workers) options.workers={};
+export function useFactory(factory) {
+	let ref=useRef();
 
+	if (!ref.current)
+		ref.current=factory();
+
+	return ref.current;
+}
+
+export function useEventUpdate(target, event) {
 	let forceUpdate=useForceUpdate();
-	let ref=useRef(options.initial);
-	let state=ref.current;
 
-	for (let reducerName in options.reducers) {
-		let f=(...args)=>{
-			ref.current=options.reducers[reducerName](state,...args);
-			forceUpdate();
-		};
+	useLayoutEffect(()=>{
+		let updater=forceUpdate;
 
-		f.bindArgs=(...args)=>{
-			return f.bind(this,...args);
-		};
+		target.on(event,updater);
+		return (()=>{
+			target.off(event,updater);
+		});
+	},[target,event]);
+}
 
-		state[reducerName]=f;
-	}
+export function useModel(cls, config) {
+	let model=useFactory(()=>new cls(config));
+	useEventUpdate(model,"change");
 
-	for (let computerName in options.computers) {
-		state[computerName]=function(...args) {
-			return options.computers[computerName](state,...args);
-		};
-	}
-
-	for (let workerName in options.workers) {
-		state[workerName]=function(...args) {
-			function update(newState) {
-				if (!newState)
-					return ref.current;
-
-				ref.current=newState;
-				forceUpdate();
-			}
-
-			options.workers[workerName](update,...args);
-		};
-	}
-
-	return state;
+	return model;
 }
 
 export function useIsValueChanged(value) {

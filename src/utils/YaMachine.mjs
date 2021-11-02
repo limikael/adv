@@ -144,7 +144,10 @@ export default class YaMachine {
 		return res;
 	}
 
-	eval(clause, context) {
+	async evalAsync(clause, context) {
+		/*if (clause instanceof Promise)
+			clause=await clause;*/
+
 		if (!context)
 			context=new YaMachineContext();
 
@@ -160,7 +163,7 @@ export default class YaMachine {
 		if (clause instanceof Array) {
 			let res;
 			for (let subClause of clause)
-				res=this.eval(subClause,context);
+				res=await this.evalAsync(subClause,context);
 
 			if (context.isReturned())
 				return context.getReturnValue();
@@ -171,13 +174,20 @@ export default class YaMachine {
 		if (typeof clause=="object") {
 			let fn=Object.keys(clause)[0];
 
-			if (this.special[fn])
-				return this.special[fn](clause,context);
+			if (this.special[fn]) {
+				let res=this.special[fn](clause,context);
+
+				if (context.isReturned())
+					return context.getReturnValue();
+
+				return res;
+			}
 
 			if (this.functions[fn]) {
 				this.assertValidKeys(clause,[fn]);
-				let arg=clause[fn];
-				let res=this.functions[fn](this.eval(arg,context));
+				let argClause=clause[fn];
+				let arg=await this.evalAsync(argClause,context);
+				let res=await this.functions[fn](arg);
 
 				if (context.isReturned())
 					return context.getReturnValue();
@@ -189,7 +199,21 @@ export default class YaMachine {
 		throw new Error("Unknown form: "+JSON.stringify(clause));
 	}
 
-	preprocessAndEval(clause) {
-		return this.eval(this.preprocess(clause));
+	eval(clause, context) {
+		let res,resolved;
+		let p=this.evalAsync(clause);
+		p.then((promised)=>{
+			res=promised;
+			resolved=true;
+		});
+
+		if (!resolved)
+			throw new Error("Async can't be used here");
+
+		return res;
 	}
+
+	/*preprocessAndEval(clause) {
+		return this.eval(this.preprocess(clause));
+	}*/
 }

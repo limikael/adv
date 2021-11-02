@@ -19,6 +19,7 @@
     "jasmine": "^3.9.0"
   },
   "dependencies": {
+    "events": "^3.3.0",
     "preact": "^10.5.14",
     "yaml": "^1.10.2"
   }

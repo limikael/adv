@@ -55,6 +55,10 @@ export default class Story {
 			state: (stateId)=>{
 				return this.getObjectById(stateId,"state").getValue();
 			},
+
+/*			message: (message)=>{
+
+			}*/
 		};
 
 		this.yaMachine=new YaMachine();

@@ -34,11 +34,14 @@
 
 - thing: lamp
   lookat:
-    The sleek silver angle-poise lamp is simple and elegant - minimalist
-    perhaps. You find it satisfyingly heavy too, a justification for the huge
-    price tag. A device for giving light, either one consisting of an electric 
-    bulb together with its holder and shade or cover, or one burning gas or a 
-    liquid fuel and consisting of a wick or mantle and a glass shade.
+#  - message:
+      The sleek silver angle-poise lamp is simple and elegant - minimalist
+      perhaps. You find it satisfyingly heavy too, a justification for the huge
+      price tag. 
+#  - message:
+#      A device for giving light, either one consisting of an electric 
+#      bulb together with its holder and shade or cover, or one burning gas or a 
+#      liquid fuel and consisting of a wick or mantle and a glass shade.
   use:
     - set: room lit
     - Igniting the world anew with such brilliance! You can suddenly see where

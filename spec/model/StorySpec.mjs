@@ -3,7 +3,7 @@ import yaml from "yaml";
 import fs from "fs";
 
 describe("story",()=>{
-	it("works",()=>{
+/*	it("works",()=>{
 		let story=new Story(yaml.parse(fs.readFileSync("./res/spec/morning_story.yaml","utf-8")));
 
 		let bathroom=story.getObjectById("bathroom");
@@ -40,5 +40,5 @@ describe("story",()=>{
 
 		story.execute("lookat","lamp");
 		expect(story.getMessage()).toContain("lamp is simple and elegant");
-	});
+	});*/
 })

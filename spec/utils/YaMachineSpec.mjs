@@ -1,9 +1,30 @@
 import YaMachine from "../../src/utils/YaMachine.mjs";
 import yaml from "yaml";
 import fs from "fs";
+import {delay} from "../../src/utils/promise-util.mjs";
 
 describe("YaMachine",()=>{
-	it("works",()=>{
+	it("testp",()=>{
+		Promise.resolve=(v)=>{
+			return {
+				then: (r)=>{
+					r(v);
+				}
+			}
+		}
+
+		async function f() {
+			return 123;
+		}
+
+		f().then(()=>{
+			console.log("resolved");
+		});
+
+		console.log("after");
+	});
+
+/*	it("works",()=>{
 		let y=new YaMachine();
 
 		y.addFunction("having",(s)=>{
@@ -29,9 +50,9 @@ describe("YaMachine",()=>{
 
 //		console.log(JSON.stringify(y.preprocess(p)));
 //		console.log(JSON.stringify(y.preprocess([{"not-having": "test"}])));
-	});
+	});*/
 
-	it("can handle return",()=>{
+	/*it("can handle return",()=>{
 		let y=new YaMachine();
 
 		let calls=0;
@@ -90,5 +111,35 @@ return: 123
 
 		let a=y.preprocessAndEval(p);
 		expect(a).toEqual(["a","b","c"]);
-	});
+	});*/
+
+/*	it("can run async functions",async ()=>{
+		let y=new YaMachine();
+		let resolver;
+		let calls=0;
+
+		y.addFunction("hello",(s)=>{
+			calls++;
+			return new Promise((resolve, reject)=>{
+				resolver=resolve;
+			});
+		});
+
+		let p=[
+			{hello: 1},
+			{hello: 2}
+		];
+
+		let ret=y.evalAsync(p);
+		await delay(100);
+		expect(calls).toEqual(1);
+
+		resolver(123);
+		await delay(100);
+
+		expect(calls).toEqual(2);
+		resolver(123);
+
+		expect(await ret).toEqual(123);
+	});*/
 })
