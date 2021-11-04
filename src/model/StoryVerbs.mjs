@@ -1,9 +1,19 @@
+import StoryException from "./StoryException.mjs";
+
 class StoryVerb {
 	constructor() {
 	}
 
 	setStory(story) {
 		this.story=story;
+	}
+
+	async evalAndCheck(clause) {
+		let res=await this.story.yaMachine.evalAsync(clause);
+		if (res instanceof StoryException)
+			return false;
+
+		return true;
 	}
 }
 
@@ -32,7 +42,7 @@ class GotoVerb extends StoryVerb {
 	async execute(object) {
 		let current=this.story.getCurrentLocation();
 
-		if (!(await this.story.yaMachine.evalAsync(current.leave)))
+		if (!await this.evalAndCheck(current.leave))
 			return;
 
 		if (object.type=="thing") {
@@ -40,8 +50,10 @@ class GotoVerb extends StoryVerb {
 		}
 
 		else {
-			if (await this.story.yaMachine.evalAsync(object.enter))
-				this.story.currentLocationId=object.id;
+			if (!await this.evalAndCheck(object.enter))
+				return;
+
+			this.story.currentLocationId=object.id;
 		}
 	}
 }
@@ -59,8 +71,10 @@ class PickupVerb extends StoryVerb {
 			return;
 		}
 
-		if (await this.story.yaMachine.evalAsync(object.pickup))
-			object.location="inventory";
+		if (!await this.evalAndCheck(object.pickup))
+			return;
+
+		object.location="inventory";
 	}
 }
 
@@ -77,8 +91,10 @@ class DropVerb extends StoryVerb {
 			return;
 		}
 
-		if (await this.story.yaMachine.evalAsync(object.drop))
-			object.location=this.story.currentLocationId;
+		if (!await this.evalAndCheck(object.drop))
+			return;
+
+		object.location=this.story.currentLocationId;
 	}
 }
 

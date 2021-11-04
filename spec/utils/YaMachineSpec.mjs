@@ -208,4 +208,30 @@ return: 123
 
 		expect(await ret).toEqual(123);
 	});
+
+	it("has macros",async ()=>{
+		let y=new YaMachine();
+		let calls=0;
+
+		y.addFunction("hello",(s)=>{
+			calls++;
+			return s;
+		});
+
+		y.addMacro("helloify",(o)=>{
+			let res=[];
+
+			for (p of o.helloify)
+				res.push({hello: p})
+
+			return res;
+		});
+
+		let p=[
+			{helloify: [1,2,"bla"]},
+		];
+
+		expect(y.evalSync(p)).toEqual("bla");
+		expect(calls).toEqual(3);
+	});
 })

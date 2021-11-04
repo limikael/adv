@@ -60,15 +60,26 @@ export default class Story extends EventDispatcher {
 				return true;
 			},
 
-			fail: async (message)=>{
-				await this.message(message)
-				return false;
+			exception: (message)=>{
+				return new StoryException(message);
 			},
 		};
+
+		let macros={
+			fail: (clause)=>{
+				return [
+					{message: clause.fail},
+					{return: {exception: "ex"}}
+				];
+			}
+		}
 
 		this.yaMachine=new YaMachine();
 		for (let f in functions)
 			this.yaMachine.addFunction(f,functions[f].bind(this));
+
+		for (let m in macros)
+			this.yaMachine.addMacro(m,macros[m].bind(this));
 
 		this.verbsById={};
 		for (let verb of createVerbs()) {

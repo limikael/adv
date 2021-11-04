@@ -20,19 +20,17 @@
       There is another door leading to the [kitchen].
   leave:
     - if-not-state: room lit
-      then-return-fail:
+      then-fail:
         The dark room is like a place out of time, a place to rest without
         consequence. Yet the darkness makes you fumble and lose your sense of
         direction.
 
     - if-not-state: using slippers
-      then-return-fail:
+      then-fail:
         The cold from the floor moves in only to meet the warmth of your blood.
         You feel it wash over your skin, again and again, only to be met by the
         beat of your heart, again and again. You quickly pull your feet back in
         under the cover, the floor is way too cold.
-
-    - return: true
 
 - thing: lamp
   lookat:

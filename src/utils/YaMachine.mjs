@@ -32,6 +32,7 @@ export default class YaMachine {
 		}
 
 		this.functions={};
+		this.macros={};
 		this.addFunction("not",(s)=>!this.castToBool(s));
 	}
 
@@ -109,6 +110,10 @@ export default class YaMachine {
 
 	addFunction(name, fn) {
 		this.functions[name]=fn;
+	}
+
+	addMacro(name, fn) {
+		this.macros[name]=fn;
 	}
 
 	and(clause, context) {
@@ -256,6 +261,16 @@ export default class YaMachine {
 
 					if (this.special[fn]) {
 						ret.value=this.special[fn](clause,context);
+						if (context.isAsync())
+							ret.value=await ret.value;
+
+						if (context.isReturned())
+							ret.value=context.getReturnValue();
+					}
+
+					else if (this.macros[fn]) {
+						let form=this.macros[fn](clause);
+						ret.value=this.evalWithContext(form,context);
 						if (context.isAsync())
 							ret.value=await ret.value;
 
