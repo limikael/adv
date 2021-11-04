@@ -3,3 +3,17 @@ export function delay(ms) {
 		setTimeout(resolve,ms);
 	});
 }
+
+export function isPromise(p) {
+	if (p.then)
+		return true;
+}
+
+export function promisify(p) {
+	if (isPromise(p))
+		return p;
+
+	return {
+		then: (f)=>f(p)
+	}
+}

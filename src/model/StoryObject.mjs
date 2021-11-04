@@ -73,7 +73,7 @@ export default class StoryObject {
 	}
 
 	getName() {
-		return this.story.yaMachine.preprocessAndEval(this.name);
+		return this.story.yaMachine.evalSync(this.name);
 	}
 
 	getAlternatives() {

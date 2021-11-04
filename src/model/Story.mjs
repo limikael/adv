@@ -56,9 +56,9 @@ export default class Story {
 				return this.getObjectById(stateId,"state").getValue();
 			},
 
-/*			message: (message)=>{
-
-			}*/
+			message: async (message)=>{
+				return await this.message(message)
+			}
 		};
 
 		this.yaMachine=new YaMachine();
@@ -249,7 +249,7 @@ export default class Story {
 	}
 
 	runClause(clause) {
-		let v=this.yaMachine.preprocessAndEval(clause);
+		let v=this.yaMachine.evalSync(clause);
 
 		if (v instanceof StoryException) {
 			this.currentMessage=v.getMessage();
@@ -267,7 +267,7 @@ export default class Story {
 	}
 
 	evalClause(clause) {
-		return this.yaMachine.preprocessAndEval(clause);
+		return this.yaMachine.evalSync(clause);
 	}
 
 	evalClauseArray(clauseArray) {
@@ -300,7 +300,7 @@ export default class Story {
 
 		let complete=0;
 		for (let objectiveClause of this.objectives) {
-			let v=this.yaMachine.preprocessAndEval(objectiveClause);
+			let v=this.evalClause(objectiveClause);
 
 //			if (!(v instanceof StoryException))
 			if (v && !(v instanceof StoryException))
