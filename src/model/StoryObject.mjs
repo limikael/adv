@@ -18,6 +18,8 @@ export default class StoryObject {
 					exists: true,
 					goto: {fail: "Can't do that"}
 				});
+
+				this.appliedVerbs=[];
 				break;
 
 			case "location":

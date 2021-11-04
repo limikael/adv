@@ -1,7 +1,4 @@
-- state: teeth clean
 - state: using slippers
-- state: room lit
-- state: seen gnome
 
 - verbs:
   - goto
@@ -19,7 +16,7 @@
     - There is a [lamp] next to the bed, and a door leading to the [bathroom].
       There is another door leading to the [kitchen].
   leave:
-    - if-not-state: room lit
+    - if-not-did-use: lamp
       then-fail:
         The dark room is like a place out of time, a place to rest without
         consequence. Yet the darkness makes you fumble and lose your sense of
@@ -43,7 +40,6 @@
       bulb together with its holder and shade or cover, or one burning gas or a 
       liquid fuel and consisting of a wick or mantle and a glass shade.
   use:
-  - set: room lit
   - message: >
       Igniting the world anew with such brilliance! You can suddenly see where
       you are going.
@@ -80,7 +76,7 @@
     - The front door of your house leads directly to the [kitchen]. In front
       of the door sits yur [garden gnome].
   enter:
-    if-not-state: teeth clean
+    if-not-did-use: toothbrush
     then-fail:
       Good teeth can impact so many areas of life, including how you feel about
       yourself. The health of the brain impacts body health and social mobility,
@@ -90,16 +86,13 @@
 - thing: toothbrush
   description: There is a [toothbrush] here.
   location: bathroom
-  lookat:
+  lookat-message:
     It is an Oral-B Pro-Health All-In-One Soft Bristle Toothbrush. One of the
     top 10 market leading toothbrushes for 2020.
   use:
     if-have: toothbrush
-    then:
-      - set: teeth clean
-      - message: Swrrr... swwwrr.... Brushing sound... Your teeth are now clean...
-    else-fail: >
-      Doesn't really work, are you going to move your teeth to the toothbrush?
+    then-message: Swrrr... swwwrr.... Brushing sound... Your teeth are now clean...
+    else-fail: Doesn''t really work, are you going to move your teeth to the toothbrush?
 
 - thing: slippers
   description:
@@ -114,11 +107,10 @@
   - a pair of slippers
 
   use:
-    if-have: slippers
-    then: 
-    - set: using slippers
-    - message: You put the slippers on your feet
-    else-fail: In order to wear your slippers, you first need to pick them up.
+  - if-not-have: slippers
+    then-fail: In order to wear your slippers, you first need to pick them up.
+  - set: using slippers
+  - message: You put the slippers on your feet
 
   pickup:
   - message: Taken
@@ -130,32 +122,31 @@
 - thing: shower
   lookat: A quite ordinary shower.
   use:
-    if-have: slippers
+  - if-have: slippers
     then-fail: Your slippers would get all wet and soggy if you shower with them on.
-    else-message: Aaahhh... Nice!!!
+  - message: Aaahhh... Nice!!!
 
   pickup:
     fail: It is too heavy to carry around.
 
 - thing: garden gnome
   lookat:
-    - set: seen gnome
-    - message:
-        You would sit in the garden, feeling joy from how the sunny rays warmed your
-        skin, and listen to the tales of the gnome. For they talk, the gnomes, if
-        you can listen with your heart while your ears enjoy the birdsong. The
-        gnome's hat has gotten too old. It had been fraying for the best part of a
-        century but now the stitching around the brim was coming away and even magic
-        couldn't repair it. The once midnight blue fabric was almost an embarrassing
-        navy and the pointed top drooped worse than a well used sock.
+  - message:
+      You would sit in the garden, feeling joy from how the sunny rays warmed your
+      skin, and listen to the tales of the gnome. For they talk, the gnomes, if
+      you can listen with your heart while your ears enjoy the birdsong. The
+      gnome's hat has gotten too old. It had been fraying for the best part of a
+      century but now the stitching around the brim was coming away and even magic
+      couldn't repair it. The once midnight blue fabric was almost an embarrassing
+      navy and the pointed top drooped worse than a well used sock.
   location: garden
   pickup:
     fail: It is too heavy to carry around.
 
 - objectives:
-  - state: room lit
-  - state: teeth clean
-  - state: seen gnome
+  - did-use: lamp
+  - did-use: toothbrush
+  - did-lookat: garden gnome
 
   name: The Morning Game
   complete-message:

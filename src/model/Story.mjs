@@ -63,6 +63,11 @@ export default class Story extends EventDispatcher {
 			exception: (message)=>{
 				return new StoryException(message);
 			},
+
+			applied: (o)=>{
+				let thing=this.getObjectById(o.thing,"thing");
+				return thing.appliedVerbs.includes(o.verb)
+			}
 		};
 
 		let macros={
@@ -71,6 +76,20 @@ export default class Story extends EventDispatcher {
 					{message: clause.fail},
 					{return: {exception: "ex"}}
 				];
+			},
+
+			did: (clause)=>{
+				let verb=Object.keys(clause.did)[0];
+				let thing=clause.did[verb];
+
+				return {
+					applied: {
+						obj: {
+							verb: verb,
+							thing: thing
+						}
+					}
+				}
 			}
 		}
 

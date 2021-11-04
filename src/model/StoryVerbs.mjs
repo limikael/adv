@@ -28,7 +28,10 @@ class SimpleClauseVerb extends StoryVerb {
 			return;
 		}
 
-		return await this.story.yaMachine.evalAsync(object[this.id]);
+		if (await this.evalAndCheck(object[this.id])) {
+			if (!object.appliedVerbs.includes(this.id))
+				object.appliedVerbs.push(this.id);
+		}
 	}
 }
 
