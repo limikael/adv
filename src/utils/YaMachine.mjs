@@ -189,7 +189,7 @@ export default class YaMachine {
 
 				let v=this.evalWithContext(clause.return,context);
 				if (context.isAsync())
-					v=await w;
+					v=await v;
 
 				context.setReturnValue(v);
 				ret.value=context.getReturnValue();

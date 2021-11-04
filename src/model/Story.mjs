@@ -1,10 +1,13 @@
 import StoryObject from "./StoryObject.mjs";
 import StoryException from "./StoryException.mjs";
 import YaMachine from "../utils/YaMachine.mjs";
+import {createMethodPromise} from "../utils/promise-util.mjs";
 import {createVerbs} from "./StoryVerbs.mjs";
+import EventDispatcher from "events";
 
-export default class Story {
+export default class Story extends EventDispatcher {
 	constructor(spec) {
+		super();
 		this.spec=spec;
 		this.name="Interactive Fiction Game";
 		this.completeMessage="Thanks for playing!";
@@ -33,10 +36,6 @@ export default class Story {
 					this.currentLocationId=id;
 			},
 
-			fail: (message)=>{
-				return new StoryException(message)
-			},
-
 			die: (message)=>{
 				let e=new StoryException(message);
 				e.type="die";
@@ -57,8 +56,14 @@ export default class Story {
 			},
 
 			message: async (message)=>{
-				return await this.message(message)
-			}
+				await this.message(message)
+				return true;
+			},
+
+			fail: async (message)=>{
+				await this.message(message)
+				return false;
+			},
 		};
 
 		this.yaMachine=new YaMachine();
@@ -143,7 +148,7 @@ export default class Story {
 		this.currentChoiceId=null;
 		this.currentMessage=null;
 
-		this.runClause(this.getCurrentLocation().enter);
+		this.yaMachine.evalAsync(this.getCurrentLocation().enter);
 	}
 
 	getStartLocation() {
@@ -177,10 +182,12 @@ export default class Story {
 			return this.getObjectById(this.currentChoiceId);
 	}
 
-	execute(verbId, objectId) {
+	async execute(verbId, objectId) {
 		let o=this.getObjectById(objectId);
 
-		this.verbsById[verbId].execute(o);
+		await this.verbsById[verbId].execute(o);
+
+		this.emit("change");
 	}
 
 	chooseAlternative(alternativeIndex) {
@@ -192,7 +199,14 @@ export default class Story {
 	}
 
 	message(message) {
+		if (this.currentMessage)
+			throw new Error("there is already a message");
+
 		this.currentMessage=message;
+		this.messagePromise=createMethodPromise();
+		this.emit("change");
+
+		return this.messagePromise;
 	}
 
 	getMessage() {
@@ -203,13 +217,15 @@ export default class Story {
 	}
 
 	dismissMessage() {
-		if (this.currentMessage instanceof Array) {
-			this.currentMessage.shift();
-			if (this.currentMessage.length)
-				return;
-		}
+		let p=this.messagePromise;
 
 		this.currentMessage=null;
+		this.messagePromise=null;
+
+		if (p)
+			p.resolve();
+
+		this.emit("change");
 	}
 
 	getThingsByCurrentLocation() {
@@ -248,7 +264,7 @@ export default class Story {
 		return res;
 	}
 
-	runClause(clause) {
+	/*runClause(clause) {
 		let v=this.yaMachine.evalSync(clause);
 
 		if (v instanceof StoryException) {
@@ -264,7 +280,7 @@ export default class Story {
 			this.currentMessage=v;
 
 		return true;
-	}
+	}*/
 
 	evalClause(clause) {
 		return this.yaMachine.evalSync(clause);

@@ -32,23 +32,26 @@
         beat of your heart, again and again. You quickly pull your feet back in
         under the cover, the floor is way too cold.
 
+    - return: true
+
 - thing: lamp
-  lookat-obj:
-  - >
+  lookat:
+  - message: >
       The sleek silver angle-poise lamp is simple and elegant - minimalist
       perhaps. You find it satisfyingly heavy too, a justification for the huge
       price tag. 
-  - >
+  - message: >
       A device for giving light, either one consisting of an electric 
       bulb together with its holder and shade or cover, or one burning gas or a 
       liquid fuel and consisting of a wick or mantle and a glass shade.
   use:
-    - set: room lit
-    - Igniting the world anew with such brilliance! You can suddenly see where
+  - set: room lit
+  - message: >
+      Igniting the world anew with such brilliance! You can suddenly see where
       you are going.
 
   pickup:
-    fail: It is too heavy to carry around.
+  - fail: It is too heavy to carry around.
 
 - location: bathroom
   description:
@@ -96,9 +99,9 @@
     if-have: toothbrush
     then:
       - set: teeth clean
-      - Swrrr... swwwrr.... Brushing sound... Your teeth are now clean...
-    else-fail:
-      Doesn''t really work, are you going to move your teeth to the toothbrush?
+      - message: Swrrr... swwwrr.... Brushing sound... Your teeth are now clean...
+    else-fail: >
+      Doesn't really work, are you going to move your teeth to the toothbrush?
 
 - thing: slippers
   description:
@@ -116,22 +119,22 @@
     if-have: slippers
     then: 
     - set: using slippers
-    - You put the slippers on your feet
+    - message: You put the slippers on your feet
     else-fail: In order to wear your slippers, you first need to pick them up.
 
   pickup:
-    Taken
+  - message: Taken
 
   drop:
     - reset: using slippers
-    - You put the slippers on the floor.
+    - message: You put the slippers on the floor.
 
 - thing: shower
   lookat: A quite ordinary shower.
   use:
     if-have: slippers
     then-fail: Your slippers would get all wet and soggy if you shower with them on.
-    else: Aaahhh... Nice!!!
+    else-message: Aaahhh... Nice!!!
 
   pickup:
     fail: It is too heavy to carry around.
@@ -139,24 +142,22 @@
 - thing: garden gnome
   lookat:
     - set: seen gnome
-    - You would sit in the garden, feeling joy from how the sunny rays warmed your
-      skin, and listen to the tales of the gnome. For they talk, the gnomes, if
-      you can listen with your heart while your ears enjoy the birdsong. The
-      gnome's hat has gotten too old. It had been fraying for the best part of a
-      century but now the stitching around the brim was coming away and even magic
-      couldn't repair it. The once midnight blue fabric was almost an embarrassing
-      navy and the pointed top drooped worse than a well used sock.
+    - message:
+        You would sit in the garden, feeling joy from how the sunny rays warmed your
+        skin, and listen to the tales of the gnome. For they talk, the gnomes, if
+        you can listen with your heart while your ears enjoy the birdsong. The
+        gnome's hat has gotten too old. It had been fraying for the best part of a
+        century but now the stitching around the brim was coming away and even magic
+        couldn't repair it. The once midnight blue fabric was almost an embarrassing
+        navy and the pointed top drooped worse than a well used sock.
   location: garden
   pickup:
     fail: It is too heavy to carry around.
 
 - objectives:
-  - if-not-state: room lit
-    then-fail: You need to use the lamp to see where you are going
-  - if-not-state: teeth clean
-    then-fail: You need to brush your teeth.
-  - if-not-state: seen gnome
-    then-fail: Find and look at the gnome
+  - state: room lit
+  - state: teeth clean
+  - state: seen gnome
 
   name: The Morning Game
   complete-message:

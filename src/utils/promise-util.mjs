@@ -4,16 +4,16 @@ export function delay(ms) {
 	});
 }
 
-export function isPromise(p) {
-	if (p.then)
-		return true;
-}
+export function createMethodPromise() {
+	let resolve,reject;
 
-export function promisify(p) {
-	if (isPromise(p))
-		return p;
+	let p=new Promise((argResolve,argReject)=>{
+		resolve=argResolve;
+		reject=argReject;
+	});
 
-	return {
-		then: (f)=>f(p)
-	}
+	p.resolve=resolve;
+	p.reject=reject;
+
+	return p;
 }

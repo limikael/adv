@@ -12,13 +12,13 @@ class SimpleClauseVerb extends StoryVerb {
 		super();
 	}
 
-	execute(object) {
+	async execute(object) {
 		if (object.type!="thing") {
 			this.story.message("Can't do that");
 			return;
 		}
 
-		this.story.runClause(object[this.id]);
+		return await this.story.yaMachine.evalAsync(object[this.id]);
 	}
 }
 
@@ -29,18 +29,18 @@ class GotoVerb extends StoryVerb {
 		this.label="GO TO";
 	}
 
-	execute(object) {
+	async execute(object) {
 		let current=this.story.getCurrentLocation();
 
-		if (!this.story.runClause(current.leave))
+		if (!(await this.story.yaMachine.evalAsync(current.leave)))
 			return;
 
 		if (object.type=="thing") {
-			this.story.runClause(object.goto);
+			await this.story.yaMachine.evalAsync(object.goto);
 		}
 
 		else {
-			if (this.story.runClause(object.enter))
+			if (await this.story.yaMachine.evalAsync(object.enter))
 				this.story.currentLocationId=object.id;
 		}
 	}
@@ -53,13 +53,13 @@ class PickupVerb extends StoryVerb {
 		this.label="PICK UP";
 	}
 
-	execute(object) {
+	async execute(object) {
 		if (object.type!="thing") {
-			this.story.message("Can't pick that up");
+			await this.story.message("Can't pick that up");
 			return;
 		}
 
-		if (this.story.runClause(object.pickup))
+		if (await this.story.yaMachine.evalAsync(object.pickup))
 			object.location="inventory";
 	}
 }
@@ -71,13 +71,13 @@ class DropVerb extends StoryVerb {
 		this.label="DROP";
 	}
 
-	execute(object) {
+	async execute(object) {
 		if (object.type!="thing") {
-			this.story.message("Can't drop that.");
+			await this.story.message("Can't drop that.");
 			return;
 		}
 
-		if (this.story.runClause(object.drop))
+		if (await this.story.yaMachine.evalAsync(object.drop))
 			object.location=this.story.currentLocationId;
 	}
 }

@@ -25,8 +25,8 @@ export default class StoryObject {
 					name: spec.location,
 					location: null,
 					description: undefined,
-					enter: undefined,
-					leave: undefined
+					enter: true,
+					leave: true
 				});
 				break;
 

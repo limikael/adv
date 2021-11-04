@@ -56,6 +56,9 @@ export default class AdvModel extends EventDispatcher {
 		let storyContent=yaml.parse(storySource);
 
 		this.story=new Story(storyContent);
+		this.story.on("change",()=>{
+			this.emit("change");
+		});
 		this.emit("change");
 	}
 
