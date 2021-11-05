@@ -54,21 +54,19 @@ export default function LocationView(props) {
 	}
 
 
-	if (!props.model.story.getCurrentChoice()) {
-		let descs=props.model.story.getCurrentLocationDescriptions();
+	let descs=props.model.story.getCurrentLocationDescriptions();
 
-		for (let desc of descs) {
-			desc=desc.toString();//console.log("linkify: "+desc);
+	for (let desc of descs) {
+		desc=desc.toString();
+		text.push(<p>{linkify(desc,storyLink)}</p>);
+	}
+
+	let things=props.model.story.getThingsByCurrentLocation();
+	for (let thing of things) {
+		let desc=props.model.story.evalClause(thing.description);
+
+		if (desc)
 			text.push(<p>{linkify(desc,storyLink)}</p>);
-		}
-
-		let things=props.model.story.getThingsByCurrentLocation();
-		for (let thing of things) {
-			let desc=props.model.story.evalClause(thing.description);
-
-			if (desc)
-				text.push(<p>{linkify(desc,storyLink)}</p>);
-		}
 	}
 
 	let cls="adv-bx bg-white text-black adv-location-description ";

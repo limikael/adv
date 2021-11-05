@@ -234,4 +234,10 @@ return: 123
 		expect(y.evalSync(p)).toEqual("bla");
 		expect(calls).toEqual(3);
 	});
+
+	it("can quote",()=>{
+		let y=new YaMachine();
+
+		y.evalSync({quote: {if: "blupp", bla: [1,2,3]}})
+	});
 })

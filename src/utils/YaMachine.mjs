@@ -28,7 +28,8 @@ export default class YaMachine {
 			and: this.and.bind(this),
 			or: this.or.bind(this),
 			return: this.return.bind(this),
-			obj: this.obj.bind(this)
+			obj: this.obj.bind(this),
+			quote: this.quote.bind(this)
 		}
 
 		this.functions={};
@@ -216,8 +217,14 @@ export default class YaMachine {
 				else if ((typeof clause.obj)=="object")
 					ret.value={};
 
-				else
-					throw new Error("obj needs an object array");
+				else {
+					let v=this.evalWithContext(clause.obj,context);
+					if (context.isAsync())
+						v=await v;
+
+					ret.value=v;
+					return;
+				}
 
 				for (let c in clause.obj) {
 					let v=this.evalWithContext(clause.obj[c],context);
@@ -226,6 +233,17 @@ export default class YaMachine {
 
 					ret.value[c]=v;
 				}
+			}
+
+			catch (e) { ret.error=e; }
+		});
+	}
+
+	quote(clause, context) {
+		return this.maybeAsync(context.isAsync(),async(ret)=>{
+			try {
+				this.assertValidKeys(clause,["quote"]);
+				ret.value=clause.quote;
 			}
 
 			catch (e) { ret.error=e; }

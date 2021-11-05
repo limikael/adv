@@ -32,13 +32,15 @@ export default class StoryObject {
 				});
 				break;
 
-			case "choice":
-				this.description=spec.description;
-				this.alternatives=spec.alternatives;
-				break;
-
 			case "state":
 				this.value=spec.value;
+				break;
+
+			case "def":
+				this.applySpec(spec,{
+					def: null,
+					do: null
+				});
 				break;
 
 			default:
@@ -107,6 +109,12 @@ export default class StoryObject {
 	}
 
 	getValue() {
+		this.assertType("state");
 		return this.story.evalClause(this.value);
+	}
+
+	async run() {
+		this.assertType("def");
+		return await this.story.yaMachine.evalAsync(this.do);
 	}
 }

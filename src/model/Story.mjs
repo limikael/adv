@@ -1,5 +1,6 @@
 import StoryObject from "./StoryObject.mjs";
 import StoryException from "./StoryException.mjs";
+import StoryAlternative from "./StoryAlternative.mjs";
 import YaMachine from "../utils/YaMachine.mjs";
 import {createMethodPromise} from "../utils/promise-util.mjs";
 import {createVerbs} from "./StoryVerbs.mjs";
@@ -21,19 +22,9 @@ export default class Story extends EventDispatcher {
 				return (this.getCurrentLocation().id==id)
 			},
 
-			spawn: (id)=>{
-				if (!id) {
-					this.currentLocationId=null;
-					return;
-				}
-
-				let o=this.getObjectById(id);
-
-				if (o.type=="choice")
-					this.currentChoiceId=id;
-
-				else if (o.type=="location")
-					this.currentLocationId=id;
+			spawn: async (id)=>{
+				let o=this.getObjectById(id,"def");
+				return await o.run();
 			},
 
 			setdead: (none)=>{
@@ -52,9 +43,8 @@ export default class Story extends EventDispatcher {
 				return this.getObjectById(stateId,"state").getValue();
 			},
 
-			message: async (message)=>{
-				await this.message(message)
-				return true;
+			_message: async (message)=>{
+				return await this.message(message);
 			},
 
 			exception: (message)=>{
@@ -64,10 +54,23 @@ export default class Story extends EventDispatcher {
 			applied: (o)=>{
 				let thing=this.getObjectById(o.thing,"thing");
 				return thing.appliedVerbs.includes(o.verb)
+			},
+
+			_alternative: (o)=>{
+				return new StoryAlternative(o.label,o.do);
 			}
 		};
 
 		let macros={
+			alternative: (clause)=>{
+				return {_alternative: {obj: {
+					label: clause.alternative,
+					do: {
+						quote: clause.do
+					}
+				}}}
+			},
+
 			fail: (clause)=>{
 				return [
 					{message: clause.fail},
@@ -93,6 +96,14 @@ export default class Story extends EventDispatcher {
 							verb: verb,
 							thing: thing
 						}
+					}
+				}
+			},
+
+			message: (clause)=>{
+				return {
+					_message: {
+						obj: clause.message
 					}
 				}
 			}
@@ -180,7 +191,6 @@ export default class Story extends EventDispatcher {
 			startId=this.getStartLocation().id;
 
 		this.currentLocationId=startId;
-		this.currentChoiceId=null;
 		this.currentMessage=null;
 
 		this.yaMachine.evalAsync(this.getCurrentLocation().enter);
@@ -212,11 +222,6 @@ export default class Story extends EventDispatcher {
 		return this.evalClauseArray(this.getCurrentLocation().description);
 	}
 
-	getCurrentChoice() {
-		if (this.currentChoiceId)
-			return this.getObjectById(this.currentChoiceId);
-	}
-
 	async execute(verbId, objectId) {
 		let o=this.getObjectById(objectId);
 
@@ -230,19 +235,16 @@ export default class Story extends EventDispatcher {
 		}
 	}
 
-	chooseAlternative(alternativeIndex) {
-		let choice=this.getCurrentChoice();
-		this.currentChoiceId=null;
-
-		let alternative=choice.getAlternative(alternativeIndex);
-		this.runClause(alternative.do);
-	}
-
 	message(message) {
 		if (this.currentMessage)
 			throw new Error("there is already a message");
 
-		this.currentMessage=message;
+		if (message instanceof Array)
+			this.currentMessage=message;
+
+		else
+			this.currentMessage=[message];
+
 		this.messagePromise=createMethodPromise();
 		this.emit("change");
 
@@ -250,10 +252,22 @@ export default class Story extends EventDispatcher {
 	}
 
 	getMessage() {
-		if (this.currentMessage instanceof Array)
-			return this.currentMessage[0];
-
 		return this.currentMessage;
+	}
+
+	getAlternatives() {
+		if (!this.currentMessage)
+			return null;
+
+		let alternatives=[];
+		for (let a of this.currentMessage)
+			if (a instanceof StoryAlternative)
+				alternatives.push(a);
+
+		if (!alternatives.length)
+			return null;
+
+		return alternatives;
 	}
 
 	dismissMessage() {
@@ -264,6 +278,21 @@ export default class Story extends EventDispatcher {
 
 		if (p)
 			p.resolve();
+
+		this.emit("change");
+	}
+
+	async chooseAlternative(todo) {
+		let p=this.messagePromise;
+
+		this.currentMessage=null;
+		this.messagePromise=null;
+		this.emit("change");
+
+		let v=await this.yaMachine.evalAsync(todo);
+
+		if (p)
+			p.resolve(v);
 
 		this.emit("change");
 	}

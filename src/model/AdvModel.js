@@ -29,8 +29,8 @@ export default class AdvModel extends EventDispatcher {
 		this.currentVerb=null;
 	}
 
-	alternativeClick(index) {
-		this.story.chooseAlternative(index);
+	alternativeClick(todo) {
+		this.story.chooseAlternative(todo);
 	}
 
 	dismissMessage() {

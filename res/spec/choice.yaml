@@ -11,10 +11,7 @@
 - location: test
   description:
     You are in the test place...
-    There is a door leading to the back room...
-
-  destinations:
-  - back room
+    There is a door leading to the [back room]...
 
   leave:
   - if-not-state: door open
@@ -28,10 +25,7 @@
 
 - location: back room
   description:
-    You are in the back room...
-
-  destinations:
-  - test
+    You are in the back room, you can to to [test]...
 
 - thing: lever
   description:
@@ -40,38 +34,26 @@
     else: There is a mysterious *lever* on the wall.
 
   location: test
-  use:
-  - spawn: what
-
-  talkto:
-  - spawn: lever convo
-
-  lookat: It looks like a lever
+  use-spawn: lever choice
+  talkto-use: lever
+  lookat-message: It looks like a lever
 
   pickup:
   - fail: Can't pick it up
 
 - thing: ball
+  description: There is a [ball] here.
   location: test
-  stage_name: a ball
-  lookat:
-    it is a ball
+  lookat: it is a ball
+  pickup: You pick it up
 
-- choice: lever convo
-  description:
-    Hello says the lever
-  alternatives:
-  - label: Hello to you too
-  - label: Wassup
-
-- choice: what
-  description: what do you want to do
-  alternatives:
-  - label: pull lever up
+- def: lever choice
+  do-message: 
+  - this is the choice
+  - what do you want to do with the lever
+  - alternative: pull lever up
     do:
     - set: door open
-    - The door clicks with a satisfying click..
-
-  - label: pull lever down
-    do:
-      Nothing interesting happens...
+    - message: The door clicks with a satisfying click..
+  - alternative: pull lever down
+    do: Nothing interesting happens...

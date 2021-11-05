@@ -10,10 +10,14 @@ export default function AlertView(props) {
 			ref.current.scrollTop=0;
 	});
 
-	if (!props.model.story.getMessage())
+	if (!props.model.story.getMessage() ||
+			props.model.story.getAlternatives())
 		return null;
 
-	message=props.model.story.getMessage();
+	let messages=[];
+	for (let message of props.model.story.getMessage())
+		messages.push(<p>{message}</p>);
+
 	fn=props.model.dispatcher("dismissMessage");
 	text="OK";
 
@@ -22,7 +26,7 @@ export default function AlertView(props) {
 			<div class="adv-modal-cover bg-body"/>
 			<div style={emStyle(1,3,17,17)} class="bg-white adv-bx border-dark">
 				<div style={emStyle(0,0,16,13)} class="text-black adv-location-description" ref={ref}>
-					<p>{message}</p>
+					{messages}
 				</div>
 
 				<button style={emStyle(3,13,10,2)} class="adv-btn bg-info text-white adv-bx"

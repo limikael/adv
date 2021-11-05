@@ -13,6 +13,9 @@ class StoryVerb {
 		if (res instanceof StoryException)
 			return false;
 
+		if (typeof res=="string")
+			await this.story.message(res);
+
 		return true;
 	}
 }
