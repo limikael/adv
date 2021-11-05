@@ -28,7 +28,8 @@ export default class StoryObject {
 					location: null,
 					description: undefined,
 					enter: true,
-					leave: true
+					leave: true,
+					header: null
 				});
 				break;
 
@@ -46,6 +47,10 @@ export default class StoryObject {
 			default:
 				throw new Error("Unknown story object type: "+this.type);
 		}
+	}
+
+	getHeader() {
+		return this.story.evalClause(this.header);
 	}
 
 	applySpec(spec, defaults) {

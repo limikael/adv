@@ -22,9 +22,23 @@
 
 .adv-bx p {
 	margin-top: 0;
+	margin-left: 2px;
 	margin-bottom: 1em;
 	position: static;
 	line-height: 1.5em;
+}
+
+.adv-bx p.adv-location-top {
+	margin-left: 0px;
+	line-height: 10px;
+	font-size: 8px;
+	margin-bottom: 5px;
+	padding-left: 5px;
+	border-radius: 5px;
+	position: relative;
+	font-weight: bold;
+	text-align: center;
+	text-transform: uppercase;
 }
 
 .adv-bx p a {
@@ -33,6 +47,7 @@
 }
 
 .adv-location-description {
+	overflow-x: hidden;
 	overflow-y: scroll;
 }
 

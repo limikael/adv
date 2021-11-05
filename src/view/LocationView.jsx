@@ -28,7 +28,6 @@ function enumerate(strings) {
 export default function LocationView(props) {
 	let ref=useRef();
 	let changed=useIsValueChanged(props.model.story.currentLocationId);
-	let text=[];
 
 	useLayoutEffect(()=>{
 		if (changed)
@@ -55,6 +54,11 @@ export default function LocationView(props) {
 
 
 	let descs=props.model.story.getCurrentLocationDescriptions();
+	let text=[];
+
+	let loc=props.model.story.getCurrentLocation();
+	if (loc.getHeader())
+		text.push(<p class="adv-location-top bg-primary">{loc.getHeader()}</p>);
 
 	for (let desc of descs) {
 		desc=desc.toString();
@@ -77,7 +81,7 @@ export default function LocationView(props) {
 		<Fragment>
 			<div style={emStyle(0,2,19,16)} class="adv-bx bg-white"/>
 
-			<div style={emStyle(0.25,2,18.5,16)} class={cls} ref={ref}>
+			<div style={emStyle(0,2,18.75,16)} class={cls} ref={ref}>
 				{text}
 			</div>
 		</Fragment>
