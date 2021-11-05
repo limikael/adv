@@ -36,11 +36,8 @@ export default class Story extends EventDispatcher {
 					this.currentLocationId=id;
 			},
 
-			die: (message)=>{
-				let e=new StoryException(message);
-				e.type="die";
-
-				return e;
+			setdead: (none)=>{
+				this.dead=true;
 			},
 
 			set: (stateId)=>{
@@ -74,7 +71,15 @@ export default class Story extends EventDispatcher {
 			fail: (clause)=>{
 				return [
 					{message: clause.fail},
-					{return: {exception: "ex"}}
+					{return: {exception: null}}
+				];
+			},
+
+			die: (clause)=>{
+				return [
+					{message: clause.die},
+					{setdead: null},
+					{return: {exception: null}}
 				];
 			},
 
@@ -216,8 +221,13 @@ export default class Story extends EventDispatcher {
 		let o=this.getObjectById(objectId);
 
 		await this.verbsById[verbId].execute(o);
-
 		this.emit("change");
+
+		if (this.dead || this.getCompletePercentage()==100) {
+			await this.message("Thanks for playing!");
+			this.restart();
+			this.emit("change");
+		}
 	}
 
 	chooseAlternative(alternativeIndex) {
@@ -294,24 +304,6 @@ export default class Story extends EventDispatcher {
 		return res;
 	}
 
-	/*runClause(clause) {
-		let v=this.yaMachine.evalSync(clause);
-
-		if (v instanceof StoryException) {
-			this.currentMessage=v.getMessage();
-			if (v.type=="die")
-				this.dead=true;
-
-			return false;
-		}
-
-		if ((typeof v=="string") ||
-				(v instanceof Array))
-			this.currentMessage=v;
-
-		return true;
-	}*/
-
 	evalClause(clause) {
 		return this.yaMachine.evalSync(clause);
 	}
@@ -336,10 +328,6 @@ export default class Story extends EventDispatcher {
 		return res;
 	}
 
-	isAlertShowing() {
-		return (this.getMessage() || this.isComplete());
-	}
-
 	getCompletePercentage() {
 		if (!this.objectives.length)
 			return 0;
@@ -348,7 +336,6 @@ export default class Story extends EventDispatcher {
 		for (let objectiveClause of this.objectives) {
 			let v=this.evalClause(objectiveClause);
 
-//			if (!(v instanceof StoryException))
 			if (v && !(v instanceof StoryException))
 				complete++;
 		}
@@ -357,15 +344,7 @@ export default class Story extends EventDispatcher {
 		return percentage;
 	}
 
-	isComplete() {
-		return (this.dead || this.getCompletePercentage()==100)
-	}
-
 	getName() {
 		return this.name;
-	}
-
-	getCompleteMessage() {
-		return this.completeMessage;
 	}
 }

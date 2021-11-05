@@ -10,20 +10,12 @@ export default function AlertView(props) {
 			ref.current.scrollTop=0;
 	});
 
-	if (props.model.story.getMessage()) {
-		message=props.model.story.getMessage();
-		fn=props.model.dispatcher("dismissMessage");
-		text="OK";
-	}
-
-	else if (props.model.story.isComplete()) {
-		message=props.model.story.getCompleteMessage();
-		fn=props.model.dispatcher("restart");
-		text="PLAY AGAIN";
-	}
-
-	else
+	if (!props.model.story.getMessage())
 		return null;
+
+	message=props.model.story.getMessage();
+	fn=props.model.dispatcher("dismissMessage");
+	text="OK";
 
 	return (
 		<Fragment>

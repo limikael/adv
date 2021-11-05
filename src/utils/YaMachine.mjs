@@ -52,7 +52,8 @@ export default class YaMachine {
 		if (typeof clause=="string" ||
 				typeof clause=="boolean" ||
 				typeof clause=="number" ||
-				typeof clause=="undefined")
+				typeof clause=="undefined" ||
+				clause===null)
 			return clause;
 
 		else if (clause instanceof Array) {
@@ -240,7 +241,8 @@ export default class YaMachine {
 				else if (typeof clause=="string" ||
 						typeof clause=="boolean" ||
 						typeof clause=="number" ||
-						typeof clause=="undefined")
+						typeof clause=="undefined" ||
+						clause===null)
 					ret.value=clause;
 
 				else if (clause instanceof Array) {

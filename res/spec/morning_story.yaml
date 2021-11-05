@@ -95,10 +95,10 @@
     else-fail: Doesn''t really work, are you going to move your teeth to the toothbrush?
 
 - thing: slippers
+  location: bedroom
   description:
     There is [slippers] on the floor.
-  lookat: A pair of slippers with rabbit ears.
-  location: bedroom
+  lookat-message: A pair of slippers with rabbit ears.
   name:
   - if-state: using slippers
     then-return: slippers (on your feet)
@@ -116,8 +116,8 @@
   - message: Taken
 
   drop:
-    - reset: using slippers
-    - message: You put the slippers on the floor.
+  - reset: using slippers
+  - message: You put the slippers on the floor.
 
 - thing: shower
   lookat: A quite ordinary shower.
@@ -149,5 +149,3 @@
   - did-lookat: garden gnome
 
   name: The Morning Game
-  complete-message:
-    Thanks for playing! You have now revealed the secret of the garden gnome...

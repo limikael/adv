@@ -3,7 +3,10 @@ import {emStyle} from "../utils/react-util.js";
 export default function VerbListView(props) {
 	let verbButtons=[];
 	let i=0;
-	let disabled=props.model.story.isAlertShowing();
+	let disabled=false;
+
+	if (props.model.story.getMessage())
+		disabled=true;
 
 	for (let verb of props.model.story.getVerbs()) {
 		let cls="bg-info adv-bx text-center text-white adv-btn ";
