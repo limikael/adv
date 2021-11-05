@@ -36,7 +36,10 @@
   location: test
   use-spawn: lever choice
   talkto-use: lever
-  lookat-message: It looks like a lever
+  lookat-message:
+  - It looks like a lever
+  - if-state: door open
+    then: it is pulled up
 
   pickup:
   - fail: Can't pick it up
@@ -52,8 +55,11 @@
   - this is the choice
   - what do you want to do with the lever
   - alternative: pull lever up
+    exists-not-state: door open
     do:
     - set: door open
     - message: The door clicks with a satisfying click..
   - alternative: pull lever down
-    do: Nothing interesting happens...
+    do:
+    - reset: door open
+    - Nothing interesting happens...

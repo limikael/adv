@@ -57,18 +57,28 @@ export default class Story extends EventDispatcher {
 			},
 
 			_alternative: (o)=>{
+				if (o.hasOwnProperty("exists")) {
+					if (!this.evalClause(o.exists))
+						return null;
+				}
+
 				return new StoryAlternative(o.label,o.do);
 			}
 		};
 
 		let macros={
 			alternative: (clause)=>{
-				return {_alternative: {obj: {
+				let v={_alternative: {obj: {
 					label: clause.alternative,
 					do: {
 						quote: clause.do
 					}
-				}}}
+				}}};
+
+				if (clause.hasOwnProperty("exists"))
+					v._alternative.obj.exists=clause.exists;
+
+				return v;
 			},
 
 			fail: (clause)=>{
