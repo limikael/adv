@@ -5,7 +5,9 @@ import InventoryView from "./InventoryView.jsx";
 import HeaderView from "./HeaderView.jsx";
 import ChoiceView from "./ChoiceView.jsx";
 import MenuView from "./MenuView.jsx";
-import {emStyle} from "../utils/react-util.js";
+import ErrorView from "./ErrorView.jsx";
+import {emStyle, useIsValueChanged} from "../utils/react-util.js";
+import {useErrorBoundary} from "preact/hooks";
 
 export default function AdvView(props) {
 	let storyContent;
@@ -27,6 +29,5 @@ export default function AdvView(props) {
 		<div style={emStyle(0,0,20,30)} class="bg-dark adv-bx">
 			{storyContent}
 		</div>
-
 	);
 }

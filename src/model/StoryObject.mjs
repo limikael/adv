@@ -7,7 +7,7 @@ export default class StoryObject {
 			case "thing":
 				this.applySpec(spec,{
 					thing: null,
-					description: undefined,
+					description: "There is a ["+spec.thing+"] here.",
 					use: {fail: "Can't do that"},
 					talkto: {fail: "Can't do that"},
 					location: null,
@@ -26,7 +26,7 @@ export default class StoryObject {
 				this.applySpec(spec,{
 					name: spec.location,
 					location: null,
-					description: undefined,
+					description: "you are in "+spec.location,
 					enter: true,
 					leave: true,
 					header: null

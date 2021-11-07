@@ -27,6 +27,9 @@
 }
 
 /* src/game/AdvGame.css */
+.border-black {
+  border-color: #000 !important;
+}
 .adv-main {
   font-size: 10px;
   width: 100%;
@@ -93,4 +96,16 @@
 }
 .adv-main .text-black {
   color: black !important;
+}
+.adv-menu-button {
+  z-index: 1000;
+}
+.adv-menu-item {
+  text-decoration: none;
+  cursor: pointer;
+}
+.adv-menu-item:hover,
+.adv-menu-item:active {
+  color: var(--bs-white) !important;
+  background-color: #000;
 }

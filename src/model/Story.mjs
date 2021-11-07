@@ -2,7 +2,7 @@ import StoryObject from "./StoryObject.mjs";
 import StoryException from "./StoryException.mjs";
 import StoryAlternative from "./StoryAlternative.mjs";
 import YaMachine from "../utils/YaMachine.mjs";
-import {createMethodPromise} from "../utils/promise-util.mjs";
+import {createMethodPromise, delay} from "../utils/promise-util.mjs";
 import {createVerbs} from "./StoryVerbs.mjs";
 import EventDispatcher from "events";
 
@@ -12,6 +12,7 @@ export default class Story extends EventDispatcher {
 		this.spec=spec;
 		this.name="Interactive Fiction Game";
 		this.completeMessage="Thanks for playing!";
+		this.actions=[];
 
 		let functions={
 			have: (id)=>{
@@ -131,8 +132,8 @@ export default class Story extends EventDispatcher {
 			this.verbsById[verb.id]=verb;
 			verb.setStory(this);
 
-			this.yaMachine.addFunction(verb.id,(arg)=>{
-				this.execute(verb.id,arg);
+			this.yaMachine.addFunction(verb.id,async (arg)=>{
+				await this.execute(verb.id,arg);
 			});
 		}
 
@@ -237,20 +238,19 @@ export default class Story extends EventDispatcher {
 		return this.evalClauseArray(this.getCurrentLocation().description);
 	}
 
+	async actionExecute(verbId, objectId) {
+		this.actions.push({
+			action: verbId,
+			objectId: objectId
+		});
+
+		await this.execute(verbId, objectId);
+	}
+
 	async execute(verbId, objectId) {
 		let o=this.getObjectById(objectId);
 
-		try {
-			await this.verbsById[verbId].execute(o);
-		}
-
-		catch (e) {
-			if (e==="restarted") {
-				console.log("restarted, this is not an error..");
-			}
-
-			else throw e;
-		}
+		await this.verbsById[verbId].execute(o);
 		this.emit("change");
 
 		if (this.dead || this.getCompletePercentage()==100) {
@@ -260,7 +260,7 @@ export default class Story extends EventDispatcher {
 		}
 	}
 
-	message(message) {
+	async message(message) {
 		if (this.currentMessage)
 			throw new Error("there is already a message");
 
@@ -270,10 +270,37 @@ export default class Story extends EventDispatcher {
 		else
 			this.currentMessage=[message];
 
-		this.messagePromise=createMethodPromise();
+		let m=createMethodPromise();
+		this.messagePromise=m;
 		this.emit("change");
 
-		return this.messagePromise;
+		if (this.applyingActions && this.applyingActions.length) {
+			let action=this.applyingActions.shift();
+
+			if (action.action=="dismissMessage") {
+				if (this.getAlternatives())
+					m.reject("Bad story structure");
+
+				else
+					this.dismissMessage();
+			}
+
+			else if (action.action=="chooseAlternative") {
+				if (!this.getAlternatives())
+					m.reject("Bad story structure");
+
+				else {
+					await this.chooseAlternative(action.index);
+					m.resolve();
+				}
+			}
+
+			else {
+				m.reject("Bad story structure");
+			}
+		}
+
+		return await m;
 	}
 
 	getMessage() {
@@ -296,6 +323,10 @@ export default class Story extends EventDispatcher {
 	}
 
 	dismissMessage() {
+		this.actions.push({
+			action: "dismissMessage"
+		});
+
 		let p=this.messagePromise;
 
 		this.currentMessage=null;
@@ -307,8 +338,14 @@ export default class Story extends EventDispatcher {
 		this.emit("change");
 	}
 
-	async chooseAlternative(todo) {
+	async chooseAlternative(index) {
+		this.actions.push({
+			action: "chooseAlternative",
+			index: index
+		});
+
 		let p=this.messagePromise;
+		let todo=this.getAlternatives()[index].do;
 
 		this.currentMessage=null;
 		this.messagePromise=null;
@@ -400,5 +437,43 @@ export default class Story extends EventDispatcher {
 
 	getName() {
 		return this.name;
+	}
+
+	getActions() {
+		return this.actions;
+	}
+
+	isMessageAction(action) {
+		if (action.action=="dismissMessage" ||
+				action.action=="chooseAlternative")
+			return true;
+
+		return false;
+	}
+
+	haveMoreActionsToApply() {
+		for (let action in this.applyingActions)
+			if (!this.isMessageAction(action))
+				return true;
+
+		return false;
+	}
+
+	async applyActions(actions) {
+		this.applyingActions=actions;
+
+		while (this.applyingActions.length) {
+			let action=this.applyingActions.shift();
+			if (this.isMessageAction(action))
+				throw new Error("Unexpected message action");
+
+			if (this.haveMoreActionsToApply())
+				await this.actionExecute(action.action,action.objectId);
+
+			else
+				this.actionExecute(action.action,action.objectId);
+		}
+
+		this.applyingActions=null;
 	}
 }

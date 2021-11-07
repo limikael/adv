@@ -9,7 +9,7 @@ export default class AdvModel extends EventDispatcher {
 
 		this.props=props;
 
-		this.loadStory();
+		this.safeLoadStory();
 	}
 
 	toggleCurrentVerb(verb) {
@@ -24,50 +24,92 @@ export default class AdvModel extends EventDispatcher {
 		if (!this.currentVerb)
 			return;
 
-		this.story.execute(this.currentVerb,id);
+		this.story.actionExecute(this.currentVerb,id).catch((e)=>{
+			this.error=e;
+			this.emit("change");
+		});
 
 		this.currentVerb=null;
 	}
 
-	alternativeClick(todo) {
-		this.story.chooseAlternative(todo);
+	alternativeClick(index) {
+		this.story.chooseAlternative(index);
 	}
 
 	dismissMessage() {
 		this.story.dismissMessage();
 	}
 
+	async refresh() {
+		if (!this.story)
+			return await this.safeLoadStory();
+
+		try {
+			this.error=null;
+			let actions=this.story.getActions();
+			await this.loadStory();
+			await this.story.applyActions(actions);
+			this.emit("change");
+		}
+
+		catch (e) {
+			this.error=e;
+			this.emit("change");
+		}
+	}
+
+	async undo() {
+		let actions=this.story.getActions();
+		actions.pop();
+		await this.loadStory();
+		await this.story.applyActions(actions);
+		this.emit("change");
+	}
+
 	async restart() {
-		this.loadStory();
+		await this.loadStory();
 	}
 
 	async loadStory() {
-		let storySource;
-
 		if (this.props.storyUrl)
-			storySource=await fetchEx(this.props.storyUrl);
+			this.storySource=await fetchEx(this.props.storyUrl);
 
 		else if (this.props.storyStorageKey)
-			storySource=window.localStorage.getItem(this.props.storyStorageKey);
+			this.storySource=window.localStorage.getItem(this.props.storyStorageKey);
 
 		else if (this.props.storySessionKey)
-			storySource=window.sessionStorage.getItem(this.props.storySessionKey);
+			this.storySource=window.sessionStorage.getItem(this.props.storySessionKey);
 
-		else
+		else {
+			this.storySource=null;
 			throw new Error("No story to load...");
+		}
 
 		if (this.story) {
 			this.story.removeAllListeners();
 			this.story=null;
 		}
 
-		let storyContent=yaml.parse(storySource);
+		//console.log(storySource);
+		let storyContent=yaml.parse(this.storySource);
 
 		this.story=new Story(storyContent);
 		this.story.on("change",()=>{
 			this.emit("change");
 		});
 		this.emit("change");
+	}
+
+	async safeLoadStory() {
+		try {
+			this.error=null;
+			await this.loadStory();
+		}
+
+		catch (e) {
+			this.error=e;
+			this.emit("change");
+		}
 	}
 
 	toggleMenu() {
@@ -79,5 +121,9 @@ export default class AdvModel extends EventDispatcher {
 			this[fn](...args);
 			this.emit("change");
 		}
+	}
+
+	getError() {
+		return this.error;
 	}
 }

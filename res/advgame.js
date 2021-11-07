@@ -6620,6 +6620,14 @@ ${cbNode.commentBefore}` : cb;
     var r3 = u3.context[n2.__c], o4 = m2(t2++, 9);
     return o4.c = n2, r3 ? (o4.__ == null && (o4.__ = true, r3.sub(u3)), r3.props.value) : n2.__;
   }
+  function q(n2) {
+    var r3 = m2(t2++, 10), o4 = l3();
+    return r3.__ = n2, u3.componentDidCatch || (u3.componentDidCatch = function(n3) {
+      r3.__ && r3.__(n3), o4[1](n3);
+    }), [o4[0], function() {
+      o4[1](void 0);
+    }];
+  }
   function x2() {
     i3.forEach(function(t3) {
       if (t3.__P)
@@ -6834,7 +6842,7 @@ ${cbNode.commentBefore}` : cb;
   l.event = function(n2) {
     return H2 && (n2 = H2(n2)), n2.persist = Z, n2.isPropagationStopped = Y, n2.isDefaultPrevented = $2, n2.nativeEvent = n2;
   };
-  var q2;
+  var q3;
   var G = { configurable: true, get: function() {
     return this.class;
   } };
@@ -6856,7 +6864,7 @@ ${cbNode.commentBefore}` : cb;
   };
   var K = l.__r;
   l.__r = function(n2) {
-    K && K(n2), q2 = n2.__c;
+    K && K(n2), q3 = n2.__c;
   };
 
   // src/utils/ContentScaler.jsx
@@ -6958,19 +6966,20 @@ ${cbNode.commentBefore}` : cb;
   }
   function useFactory(factory) {
     let ref = s3();
-    if (!ref.current)
+    if (!ref.current) {
       ref.current = factory();
+    }
     return ref.current;
   }
-  function useEventUpdate(target, event) {
+  function useEventUpdate(target, event2) {
     let forceUpdate = useForceUpdate();
     h3(() => {
       let updater = forceUpdate;
-      target.on(event, updater);
+      target.on(event2, updater);
       return () => {
-        target.off(event, updater);
+        target.off(event2, updater);
       };
-    }, [target, event]);
+    }, [target, event2]);
   }
   function useModel(cls, config) {
     let model = useFactory(() => new cls(config));
@@ -7020,18 +7029,18 @@ ${cbNode.commentBefore}` : cb;
       onkeydown: onKeyDown
     };
   }
-  function useInterval(callback, delay) {
+  function useInterval(callback, delay2) {
     const savedCallback = s3(callback);
     y3(() => {
       savedCallback.current = callback;
     }, [callback]);
     y3(() => {
-      if (delay === null) {
+      if (delay2 === null) {
         return;
       }
-      const id = setInterval(() => savedCallback.current(), delay);
+      const id = setInterval(() => savedCallback.current(), delay2);
       return () => clearInterval(id);
-    }, [delay]);
+    }, [delay2]);
   }
   function useCountUp(value, enable) {
     let [currentValue, setCurrentValue] = l3(value);
@@ -7047,13 +7056,24 @@ ${cbNode.commentBefore}` : cb;
         setCurrentValue(currentValue);
       }
     }
-    let delay = null;
+    let delay2 = null;
     if (value != currentValue && enable)
-      delay = 50;
-    useInterval(count, delay);
+      delay2 = 50;
+    useInterval(count, delay2);
     if (!enable)
       return value;
     return currentValue;
+  }
+  function useWindowEventListener(message, callback) {
+    y3(() => {
+      function onEvent(e3) {
+        callback(e3);
+      }
+      window.addEventListener(message, onEvent);
+      return () => {
+        window.removeEventListener(message, onEvent);
+      };
+    }, [event, callback]);
   }
 
   // src/view/VerbListView.jsx
@@ -7235,9 +7255,10 @@ ${cbNode.commentBefore}` : cb;
     }), /* @__PURE__ */ v("div", {
       style: emStyle(0, 0, 19, 2),
       class: "adv-bx adv-btn bg-black text-white text-center"
-    }, props.model.story.getName()), /* @__PURE__ */ v("div", {
+    }, props.model.story.getName()), /* @__PURE__ */ v("a", {
       style: emStyle(0, 0, 2, 2),
-      class: "adv-bx text-center text-white adv-btn"
+      class: "adv-bx text-center text-white adv-btn adv-menu-button",
+      onclick: props.model.dispatcher("toggleMenu")
     }, /* @__PURE__ */ v("div", {
       class: "bi bi-three-dots-vertical"
     })), /* @__PURE__ */ v("div", {
@@ -7279,7 +7300,7 @@ ${cbNode.commentBefore}` : cb;
       alternativeButtons.push(/* @__PURE__ */ v("button", {
         style: emStyle(1, top + 3 * i4, 14, 3),
         class: "adv-btn bg-info text-white adv-bx",
-        onclick: props.model.dispatcher("alternativeClick", alternative.do)
+        onclick: props.model.dispatcher("alternativeClick", i4)
       }, alternative.label));
       i4++;
     }
@@ -7293,6 +7314,58 @@ ${cbNode.commentBefore}` : cb;
       class: "text-black adv-location-description",
       ref
     }, descriptions), alternativeButtons));
+  }
+
+  // src/view/MenuView.jsx
+  init_preact_shim();
+  function MenuView(props) {
+    if (!props.model.menuVisible)
+      return null;
+    menuItems = {
+      restart: "Restart",
+      refresh: "Refresh",
+      undo: "Undo"
+    };
+    let menuButtons = [];
+    let i4 = 0;
+    for (let k3 in menuItems) {
+      let dispatcher = function() {
+        props.model.dispatcher("toggleMenu")();
+        props.model.dispatcher(k3)();
+      };
+      menuButtons.push(/* @__PURE__ */ v("a", {
+        style: emStyle(0, i4 * 2, 9, 2),
+        class: "adv-bx text-black adv-menu-item",
+        onclick: dispatcher
+      }, menuItems[k3]));
+      i4++;
+    }
+    return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
+      class: "adv-modal-cover bg-body",
+      onclick: props.model.dispatcher("toggleMenu")
+    }), /* @__PURE__ */ v("div", {
+      style: emStyle(0, 1, 10, i4 * 2 + 1),
+      class: "adv-bx bg-white border-black"
+    }, menuButtons));
+  }
+
+  // src/view/ErrorView.jsx
+  init_preact_shim();
+  function ErrorView(props) {
+    let error = props.error;
+    return /* @__PURE__ */ v("div", {
+      style: emStyle(0, 0, 20, 30),
+      class: "bg-dark adv-bx"
+    }, /* @__PURE__ */ v("div", {
+      style: emStyle(0, 6, 19, 16),
+      class: "adv-bx bg-body"
+    }), /* @__PURE__ */ v("div", {
+      style: emStyle(0, 4, 19, 2),
+      class: "text-warning"
+    }, error.name), /* @__PURE__ */ v("div", {
+      style: emStyle(0, 6, 19, 16),
+      class: "text-white"
+    }, error.message));
   }
 
   // src/view/AdvView.jsx
@@ -7310,6 +7383,8 @@ ${cbNode.commentBefore}` : cb;
       }), /* @__PURE__ */ v(ChoiceView, {
         model: props.model
       }), /* @__PURE__ */ v(AlertView, {
+        model: props.model
+      }), /* @__PURE__ */ v(MenuView, {
         model: props.model
       }));
     }
@@ -7336,7 +7411,7 @@ ${cbNode.commentBefore}` : cb;
         case "thing":
           this.applySpec(spec, {
             thing: null,
-            description: void 0,
+            description: "There is a [" + spec.thing + "] here.",
             use: { fail: "Can't do that" },
             talkto: { fail: "Can't do that" },
             location: null,
@@ -7353,7 +7428,7 @@ ${cbNode.commentBefore}` : cb;
           this.applySpec(spec, {
             name: spec.location,
             location: null,
-            description: void 0,
+            description: "you are in " + spec.location,
             enter: true,
             leave: true,
             header: null
@@ -7850,6 +7925,10 @@ ${cbNode.commentBefore}` : cb;
     constructor(spec) {
       super();
       __publicField(this, "restart", () => {
+        if (this.messagePromise) {
+          this.messagePromise.reject("restarted");
+          this.messagePromise = null;
+        }
         let spec = this.yaMachine.preprocess(JSON.parse(JSON.stringify(this.spec)));
         this.dead = false;
         this.objectives = [];
@@ -7894,6 +7973,7 @@ ${cbNode.commentBefore}` : cb;
       this.spec = spec;
       this.name = "Interactive Fiction Game";
       this.completeMessage = "Thanks for playing!";
+      this.actions = [];
       let functions = {
         have: (id) => {
           return this.getObjectById(id, "thing").location == "inventory";
@@ -7989,8 +8069,8 @@ ${cbNode.commentBefore}` : cb;
       for (let verb of createVerbs()) {
         this.verbsById[verb.id] = verb;
         verb.setStory(this);
-        this.yaMachine.addFunction(verb.id, (arg) => {
-          this.execute(verb.id, arg);
+        this.yaMachine.addFunction(verb.id, async (arg) => {
+          await this.execute(verb.id, arg);
         });
       }
       this.restart();
@@ -8022,6 +8102,13 @@ ${cbNode.commentBefore}` : cb;
     getCurrentLocationDescriptions() {
       return this.evalClauseArray(this.getCurrentLocation().description);
     }
+    async actionExecute(verbId, objectId) {
+      this.actions.push({
+        action: verbId,
+        objectId
+      });
+      await this.execute(verbId, objectId);
+    }
     async execute(verbId, objectId) {
       let o4 = this.getObjectById(objectId);
       await this.verbsById[verbId].execute(o4);
@@ -8032,16 +8119,35 @@ ${cbNode.commentBefore}` : cb;
         this.emit("change");
       }
     }
-    message(message) {
+    async message(message) {
       if (this.currentMessage)
         throw new Error("there is already a message");
       if (message instanceof Array)
         this.currentMessage = message;
       else
         this.currentMessage = [message];
-      this.messagePromise = createMethodPromise();
+      let m3 = createMethodPromise();
+      this.messagePromise = m3;
       this.emit("change");
-      return this.messagePromise;
+      if (this.applyingActions && this.applyingActions.length) {
+        let action = this.applyingActions.shift();
+        if (action.action == "dismissMessage") {
+          if (this.getAlternatives())
+            m3.reject("Bad story structure");
+          else
+            this.dismissMessage();
+        } else if (action.action == "chooseAlternative") {
+          if (!this.getAlternatives())
+            m3.reject("Bad story structure");
+          else {
+            await this.chooseAlternative(action.index);
+            m3.resolve();
+          }
+        } else {
+          m3.reject("Bad story structure");
+        }
+      }
+      return await m3;
     }
     getMessage() {
       return this.currentMessage;
@@ -8058,6 +8164,9 @@ ${cbNode.commentBefore}` : cb;
       return alternatives;
     }
     dismissMessage() {
+      this.actions.push({
+        action: "dismissMessage"
+      });
       let p4 = this.messagePromise;
       this.currentMessage = null;
       this.messagePromise = null;
@@ -8065,8 +8174,13 @@ ${cbNode.commentBefore}` : cb;
         p4.resolve();
       this.emit("change");
     }
-    async chooseAlternative(todo) {
+    async chooseAlternative(index) {
+      this.actions.push({
+        action: "chooseAlternative",
+        index
+      });
       let p4 = this.messagePromise;
+      let todo = this.getAlternatives()[index].do;
       this.currentMessage = null;
       this.messagePromise = null;
       this.emit("change");
@@ -8132,6 +8246,33 @@ ${cbNode.commentBefore}` : cb;
     getName() {
       return this.name;
     }
+    getActions() {
+      return this.actions;
+    }
+    isMessageAction(action) {
+      if (action.action == "dismissMessage" || action.action == "chooseAlternative")
+        return true;
+      return false;
+    }
+    haveMoreActionsToApply() {
+      for (let action in this.applyingActions)
+        if (!this.isMessageAction(action))
+          return true;
+      return false;
+    }
+    async applyActions(actions) {
+      this.applyingActions = actions;
+      while (this.applyingActions.length) {
+        let action = this.applyingActions.shift();
+        if (this.isMessageAction(action))
+          throw new Error("Unexpected message action");
+        if (this.haveMoreActionsToApply())
+          await this.actionExecute(action.action, action.objectId);
+        else
+          this.actionExecute(action.action, action.objectId);
+      }
+      this.applyingActions = null;
+    }
   };
 
   // src/model/AdvModel.js
@@ -8146,7 +8287,7 @@ ${cbNode.commentBefore}` : cb;
         };
       });
       this.props = props;
-      this.loadStory();
+      this.safeLoadStory();
     }
     toggleCurrentVerb(verb) {
       if (this.currentVerb == verb)
@@ -8157,40 +8298,109 @@ ${cbNode.commentBefore}` : cb;
     objectClick(id) {
       if (!this.currentVerb)
         return;
-      this.story.execute(this.currentVerb, id);
+      this.story.actionExecute(this.currentVerb, id).catch((e3) => {
+        this.error = e3;
+        this.emit("change");
+      });
       this.currentVerb = null;
     }
-    alternativeClick(todo) {
-      this.story.chooseAlternative(todo);
+    alternativeClick(index) {
+      this.story.chooseAlternative(index);
     }
     dismissMessage() {
       this.story.dismissMessage();
     }
-    restart() {
-      this.story.restart();
+    async refresh() {
+      if (!this.story)
+        return await this.safeLoadStory();
+      try {
+        this.error = null;
+        let actions = this.story.getActions();
+        await this.loadStory();
+        await this.story.applyActions(actions);
+        this.emit("change");
+      } catch (e3) {
+        this.error = e3;
+        this.emit("change");
+      }
+    }
+    async undo() {
+      let actions = this.story.getActions();
+      actions.pop();
+      await this.loadStory();
+      await this.story.applyActions(actions);
+      this.emit("change");
+    }
+    async restart() {
+      await this.loadStory();
     }
     async loadStory() {
-      let storySource;
       if (this.props.storyUrl)
-        storySource = await fetchEx(this.props.storyUrl);
+        this.storySource = await fetchEx(this.props.storyUrl);
       else if (this.props.storyStorageKey)
-        storySource = window.localStorage.getItem(this.props.storyStorageKey);
+        this.storySource = window.localStorage.getItem(this.props.storyStorageKey);
       else if (this.props.storySessionKey)
-        storySource = window.sessionStorage.getItem(this.props.storySessionKey);
-      else
+        this.storySource = window.sessionStorage.getItem(this.props.storySessionKey);
+      else {
+        this.storySource = null;
         throw new Error("No story to load...");
-      let storyContent = import_yaml2.default.parse(storySource);
+      }
+      if (this.story) {
+        this.story.removeAllListeners();
+        this.story = null;
+      }
+      let storyContent = import_yaml2.default.parse(this.storySource);
       this.story = new Story(storyContent);
       this.story.on("change", () => {
         this.emit("change");
       });
       this.emit("change");
     }
+    async safeLoadStory() {
+      try {
+        this.error = null;
+        await this.loadStory();
+      } catch (e3) {
+        this.error = e3;
+        this.emit("change");
+      }
+    }
+    toggleMenu() {
+      this.menuVisible = !this.menuVisible;
+    }
+    getError() {
+      return this.error;
+    }
   };
 
   // src/game/AdvGame.jsx
   function AdvGame(props) {
     let model = useModel(AdvModel, props);
+    let [error, resetError] = q();
+    useWindowEventListener("message", (ev) => {
+      switch (ev.data) {
+        case "refresh":
+          try {
+            model.refresh();
+            resetError();
+          } catch (e3) {
+            console.log("can't refresh,,");
+          }
+          break;
+      }
+    });
+    if (model.getError())
+      error = model.getError();
+    let gameContent;
+    if (error) {
+      gameContent = /* @__PURE__ */ v(ErrorView, {
+        error
+      });
+    } else {
+      gameContent = /* @__PURE__ */ v(AdvView, {
+        model
+      });
+    }
     return /* @__PURE__ */ v(ContentScaler, {
       width: "200",
       height: "300"
@@ -8198,9 +8408,7 @@ ${cbNode.commentBefore}` : cb;
       class: "adv-main"
     }, /* @__PURE__ */ v("div", {
       style: emAppStyle()
-    }, /* @__PURE__ */ v(AdvView, {
-      model
-    }))));
+    }, gameContent)));
   }
 
   // src/advgame.jsx

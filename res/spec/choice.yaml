@@ -11,9 +11,7 @@
 - location: test
   header: In a test place
   description:
-  - You are in the test place...
-  - There is a door leading to the [back room]...
-  - And here is a loooong descriptin of several lines hopefully just to see what it looks like
+    You are in the test place, you can go to the [back room]
 
   leave:
   - if-not-state: door open

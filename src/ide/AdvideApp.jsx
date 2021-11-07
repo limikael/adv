@@ -14,7 +14,7 @@ export default function AdvideApp(props) {
 
 	function onChange(newValue) {
 		window.sessionStorage.setItem("advsource",newValue);
-		iframeRef.current.src=iframeRef.current.src;
+		iframeRef.current.contentWindow.postMessage("refresh");
 	}
 
 	return (

@@ -9,8 +9,11 @@ export function useForceUpdate() {
 export function useFactory(factory) {
 	let ref=useRef();
 
-	if (!ref.current)
+	if (!ref.current) {
+		//console.log("facory: creating new..");
 		ref.current=factory();
+		//console.log("facory: done creating...");
+	}
 
 	return ref.current;
 }
@@ -137,4 +140,17 @@ export function useCountUp(value, enable) {
 		return value;
 
 	return currentValue;
+}
+
+export function useWindowEventListener(message, callback) {
+	useEffect(() => {
+		function onEvent(e) {
+			callback(e);
+		}
+
+		window.addEventListener(message,onEvent);
+		return (()=>{
+			window.removeEventListener(message,onEvent);
+		});
+	},[event,callback]);
 }

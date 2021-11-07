@@ -25,7 +25,7 @@ export default function ChoiceView(props) {
 	for (let alternative of props.model.story.getAlternatives()) {
 		alternativeButtons.push(
 			<button style={emStyle(1,top+3*i,14,3)} class="adv-btn bg-info text-white adv-bx"
-					onclick={props.model.dispatcher("alternativeClick",alternative.do)}>
+					onclick={props.model.dispatcher("alternativeClick",i)}>
 				{alternative.label}
 			</button>
 		);

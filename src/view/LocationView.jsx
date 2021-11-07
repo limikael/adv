@@ -52,7 +52,6 @@ export default function LocationView(props) {
 		);
 	}
 
-
 	let descs=props.model.story.getCurrentLocationDescriptions();
 	let text=[];
 

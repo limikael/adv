@@ -24834,7 +24834,7 @@
     window.sessionStorage.setItem("advsource", "");
     function onChange(newValue) {
       window.sessionStorage.setItem("advsource", newValue);
-      iframeRef.current.src = iframeRef.current.src;
+      iframeRef.current.contentWindow.postMessage("refresh");
     }
     return /* @__PURE__ */ v(react_split_es_default, {
       class: "advide-split",
