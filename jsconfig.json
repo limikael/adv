@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"paths": {
-			"react": ["./src/utils/preact-shim.js"]
+			"react": ["./node_modules/preact/compat"]
 		}
 	}
 }

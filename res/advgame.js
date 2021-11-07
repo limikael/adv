@@ -26,11 +26,6 @@
   var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
-  var __export = (target, all) => {
-    __markAsModule(target);
-    for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
-  };
   var __reExport = (target, module, desc) => {
     if (module && typeof module === "object" || typeof module === "function") {
       for (let key of __getOwnPropNames(module))
@@ -349,308 +344,10 @@
     }
   });
 
-  // node_modules/preact/hooks/dist/hooks.module.js
-  function m2(t3, r3) {
-    l.__h && l.__h(u2, t3, o2 || r3), o2 = 0;
-    var i4 = u2.__H || (u2.__H = { __: [], __h: [] });
-    return t3 >= i4.__.length && i4.__.push({}), i4.__[t3];
-  }
-  function l2(n2) {
-    return o2 = 1, p(w2, n2);
-  }
-  function p(n2, r3, o4) {
-    var i4 = m2(t2++, 2);
-    return i4.t = n2, i4.__c || (i4.__ = [o4 ? o4(r3) : w2(void 0, r3), function(n3) {
-      var t3 = i4.t(i4.__[0], n3);
-      i4.__[0] !== t3 && (i4.__ = [t3, i4.__[1]], i4.__c.setState({}));
-    }], i4.__c = u2), i4.__;
-  }
-  function y2(r3, o4) {
-    var i4 = m2(t2++, 3);
-    !l.__s && k2(i4.__H, o4) && (i4.__ = r3, i4.__H = o4, u2.__H.__h.push(i4));
-  }
-  function h2(r3, o4) {
-    var i4 = m2(t2++, 4);
-    !l.__s && k2(i4.__H, o4) && (i4.__ = r3, i4.__H = o4, u2.__h.push(i4));
-  }
-  function s2(n2) {
-    return o2 = 5, d2(function() {
-      return { current: n2 };
-    }, []);
-  }
-  function d2(n2, u4) {
-    var r3 = m2(t2++, 7);
-    return k2(r3.__H, u4) && (r3.__ = n2(), r3.__H = u4, r3.__h = n2), r3.__;
-  }
-  function F(n2) {
-    var r3 = u2.context[n2.__c], o4 = m2(t2++, 9);
-    return o4.c = n2, r3 ? (o4.__ == null && (o4.__ = true, r3.sub(u2)), r3.props.value) : n2.__;
-  }
-  function x2() {
-    i2.forEach(function(t3) {
-      if (t3.__P)
-        try {
-          t3.__H.__h.forEach(g2), t3.__H.__h.forEach(j2), t3.__H.__h = [];
-        } catch (u4) {
-          t3.__H.__h = [], l.__e(u4, t3.__v);
-        }
-    }), i2 = [];
-  }
-  function g2(n2) {
-    var t3 = u2;
-    typeof n2.__c == "function" && n2.__c(), u2 = t3;
-  }
-  function j2(n2) {
-    var t3 = u2;
-    n2.__c = n2.__(), u2 = t3;
-  }
-  function k2(n2, t3) {
-    return !n2 || n2.length !== t3.length || t3.some(function(t4, u4) {
-      return t4 !== n2[u4];
-    });
-  }
-  function w2(n2, t3) {
-    return typeof t3 == "function" ? t3(n2) : t3;
-  }
-  var t2, u2, r2, o2, i2, c2, f2, e2, a2, v2, b2;
-  var init_hooks_module = __esm({
-    "node_modules/preact/hooks/dist/hooks.module.js"() {
-      init_preact_shim();
-      init_preact_module();
-      o2 = 0;
-      i2 = [];
-      c2 = l.__b;
-      f2 = l.__r;
-      e2 = l.diffed;
-      a2 = l.__c;
-      v2 = l.unmount;
-      l.__b = function(n2) {
-        u2 = null, c2 && c2(n2);
-      }, l.__r = function(n2) {
-        f2 && f2(n2), t2 = 0;
-        var r3 = (u2 = n2.__c).__H;
-        r3 && (r3.__h.forEach(g2), r3.__h.forEach(j2), r3.__h = []);
-      }, l.diffed = function(t3) {
-        e2 && e2(t3);
-        var o4 = t3.__c;
-        o4 && o4.__H && o4.__H.__h.length && (i2.push(o4) !== 1 && r2 === l.requestAnimationFrame || ((r2 = l.requestAnimationFrame) || function(n2) {
-          var t4, u4 = function() {
-            clearTimeout(r3), b2 && cancelAnimationFrame(t4), setTimeout(n2);
-          }, r3 = setTimeout(u4, 100);
-          b2 && (t4 = requestAnimationFrame(u4));
-        })(x2)), u2 = void 0;
-      }, l.__c = function(t3, u4) {
-        u4.some(function(t4) {
-          try {
-            t4.__h.forEach(g2), t4.__h = t4.__h.filter(function(n2) {
-              return !n2.__ || j2(n2);
-            });
-          } catch (r3) {
-            u4.some(function(n2) {
-              n2.__h && (n2.__h = []);
-            }), u4 = [], l.__e(r3, t4.__v);
-          }
-        }), a2 && a2(t3, u4);
-      }, l.unmount = function(t3) {
-        v2 && v2(t3);
-        var u4 = t3.__c;
-        if (u4 && u4.__H)
-          try {
-            u4.__H.__.forEach(g2);
-          } catch (t4) {
-            l.__e(t4, u4.__v);
-          }
-      };
-      b2 = typeof requestAnimationFrame == "function";
-    }
-  });
-
-  // node_modules/preact/compat/dist/compat.module.js
-  function S2(n2, t3) {
-    for (var e3 in t3)
-      n2[e3] = t3[e3];
-    return n2;
-  }
-  function C2(n2, t3) {
-    for (var e3 in n2)
-      if (e3 !== "__source" && !(e3 in t3))
-        return true;
-    for (var r3 in t3)
-      if (r3 !== "__source" && n2[r3] !== t3[r3])
-        return true;
-    return false;
-  }
-  function E(n2) {
-    this.props = n2;
-  }
-  function L2() {
-    this.__u = 0, this.t = null, this.__b = null;
-  }
-  function U(n2) {
-    var t3 = n2.__.__c;
-    return t3 && t3.__e && t3.__e(n2);
-  }
-  function M2() {
-    this.u = null, this.o = null;
-  }
-  function Z() {
-  }
-  function Y() {
-    return this.cancelBubble;
-  }
-  function $2() {
-    return this.defaultPrevented;
-  }
-  var w3, R, A3, O2, T3, j3, P2, V, H2, q2, G, J, K;
-  var init_compat_module = __esm({
-    "node_modules/preact/compat/dist/compat.module.js"() {
-      init_preact_shim();
-      init_hooks_module();
-      init_hooks_module();
-      init_preact_module();
-      init_preact_module();
-      (E.prototype = new _()).isPureReactComponent = true, E.prototype.shouldComponentUpdate = function(n2, t3) {
-        return C2(this.props, n2) || C2(this.state, t3);
-      };
-      w3 = l.__b;
-      l.__b = function(n2) {
-        n2.type && n2.type.__f && n2.ref && (n2.props.ref = n2.ref, n2.ref = null), w3 && w3(n2);
-      };
-      R = typeof Symbol != "undefined" && Symbol.for && Symbol.for("react.forward_ref") || 3911;
-      A3 = l.__e;
-      l.__e = function(n2, t3, e3) {
-        if (n2.then) {
-          for (var r3, u4 = t3; u4 = u4.__; )
-            if ((r3 = u4.__c) && r3.__c)
-              return t3.__e == null && (t3.__e = e3.__e, t3.__k = e3.__k), r3.__c(n2, t3);
-        }
-        A3(n2, t3, e3);
-      };
-      O2 = l.unmount;
-      l.unmount = function(n2) {
-        var t3 = n2.__c;
-        t3 && t3.__R && t3.__R(), t3 && n2.__h === true && (n2.type = null), O2 && O2(n2);
-      }, (L2.prototype = new _()).__c = function(n2, t3) {
-        var e3 = t3.__c, r3 = this;
-        r3.t == null && (r3.t = []), r3.t.push(e3);
-        var u4 = U(r3.__v), o4 = false, i4 = function() {
-          o4 || (o4 = true, e3.__R = null, u4 ? u4(l4) : l4());
-        };
-        e3.__R = i4;
-        var l4 = function() {
-          if (!--r3.__u) {
-            if (r3.state.__e) {
-              var n3 = r3.state.__e;
-              r3.__v.__k[0] = function n4(t5, e4, r4) {
-                return t5 && (t5.__v = null, t5.__k = t5.__k && t5.__k.map(function(t6) {
-                  return n4(t6, e4, r4);
-                }), t5.__c && t5.__c.__P === e4 && (t5.__e && r4.insertBefore(t5.__e, t5.__d), t5.__c.__e = true, t5.__c.__P = r4)), t5;
-              }(n3, n3.__c.__P, n3.__c.__O);
-            }
-            var t4;
-            for (r3.setState({ __e: r3.__b = null }); t4 = r3.t.pop(); )
-              t4.forceUpdate();
-          }
-        }, f4 = t3.__h === true;
-        r3.__u++ || f4 || r3.setState({ __e: r3.__b = r3.__v.__k[0] }), n2.then(i4, i4);
-      }, L2.prototype.componentWillUnmount = function() {
-        this.t = [];
-      }, L2.prototype.render = function(n2, t3) {
-        if (this.__b) {
-          if (this.__v.__k) {
-            var e3 = document.createElement("div"), r3 = this.__v.__k[0].__c;
-            this.__v.__k[0] = function n3(t4, e4, r4) {
-              return t4 && (t4.__c && t4.__c.__H && (t4.__c.__H.__.forEach(function(n4) {
-                typeof n4.__c == "function" && n4.__c();
-              }), t4.__c.__H = null), (t4 = S2({}, t4)).__c != null && (t4.__c.__P === r4 && (t4.__c.__P = e4), t4.__c = null), t4.__k = t4.__k && t4.__k.map(function(t5) {
-                return n3(t5, e4, r4);
-              })), t4;
-            }(this.__b, e3, r3.__O = r3.__P);
-          }
-          this.__b = null;
-        }
-        var u4 = t3.__e && v(d, null, n2.fallback);
-        return u4 && (u4.__h = null), [v(d, null, t3.__e ? null : n2.children), u4];
-      };
-      T3 = function(n2, t3, e3) {
-        if (++e3[1] === e3[0] && n2.o.delete(t3), n2.props.revealOrder && (n2.props.revealOrder[0] !== "t" || !n2.o.size))
-          for (e3 = n2.u; e3; ) {
-            for (; e3.length > 3; )
-              e3.pop()();
-            if (e3[1] < e3[0])
-              break;
-            n2.u = e3 = e3[2];
-          }
-      };
-      (M2.prototype = new _()).__e = function(n2) {
-        var t3 = this, e3 = U(t3.__v), r3 = t3.o.get(n2);
-        return r3[0]++, function(u4) {
-          var o4 = function() {
-            t3.props.revealOrder ? (r3.push(u4), T3(t3, n2, r3)) : u4();
-          };
-          e3 ? e3(o4) : o4();
-        };
-      }, M2.prototype.render = function(n2) {
-        this.u = null, this.o = new Map();
-        var t3 = A(n2.children);
-        n2.revealOrder && n2.revealOrder[0] === "b" && t3.reverse();
-        for (var e3 = t3.length; e3--; )
-          this.o.set(t3[e3], this.u = [1, 0, this.u]);
-        return n2.children;
-      }, M2.prototype.componentDidUpdate = M2.prototype.componentDidMount = function() {
-        var n2 = this;
-        this.o.forEach(function(t3, e3) {
-          T3(n2, e3, t3);
-        });
-      };
-      j3 = typeof Symbol != "undefined" && Symbol.for && Symbol.for("react.element") || 60103;
-      P2 = /^(?:accent|alignment|arabic|baseline|cap|clip(?!PathU)|color|fill|flood|font|glyph(?!R)|horiz|marker(?!H|W|U)|overline|paint|stop|strikethrough|stroke|text(?!L)|underline|unicode|units|v|vector|vert|word|writing|x(?!C))[A-Z]/;
-      V = function(n2) {
-        return (typeof Symbol != "undefined" && typeof Symbol() == "symbol" ? /fil|che|rad/i : /fil|che|ra/i).test(n2);
-      };
-      _.prototype.isReactComponent = {}, ["componentWillMount", "componentWillReceiveProps", "componentWillUpdate"].forEach(function(n2) {
-        Object.defineProperty(_.prototype, n2, { configurable: true, get: function() {
-          return this["UNSAFE_" + n2];
-        }, set: function(t3) {
-          Object.defineProperty(this, n2, { configurable: true, writable: true, value: t3 });
-        } });
-      });
-      H2 = l.event;
-      l.event = function(n2) {
-        return H2 && (n2 = H2(n2)), n2.persist = Z, n2.isPropagationStopped = Y, n2.isDefaultPrevented = $2, n2.nativeEvent = n2;
-      };
-      G = { configurable: true, get: function() {
-        return this.class;
-      } };
-      J = l.vnode;
-      l.vnode = function(n2) {
-        var t3 = n2.type, e3 = n2.props, r3 = e3;
-        if (typeof t3 == "string") {
-          for (var u4 in r3 = {}, e3) {
-            var o4 = e3[u4];
-            u4 === "value" && "defaultValue" in e3 && o4 == null || (u4 === "defaultValue" && "value" in e3 && e3.value == null ? u4 = "value" : u4 === "download" && o4 === true ? o4 = "" : /ondoubleclick/i.test(u4) ? u4 = "ondblclick" : /^onchange(textarea|input)/i.test(u4 + t3) && !V(e3.type) ? u4 = "oninput" : /^on(Ani|Tra|Tou|BeforeInp)/.test(u4) ? u4 = u4.toLowerCase() : P2.test(u4) ? u4 = u4.replace(/[A-Z0-9]/, "-$&").toLowerCase() : o4 === null && (o4 = void 0), r3[u4] = o4);
-          }
-          t3 == "select" && r3.multiple && Array.isArray(r3.value) && (r3.value = A(e3.children).forEach(function(n3) {
-            n3.props.selected = r3.value.indexOf(n3.props.value) != -1;
-          })), t3 == "select" && r3.defaultValue != null && (r3.value = A(e3.children).forEach(function(n3) {
-            n3.props.selected = r3.multiple ? r3.defaultValue.indexOf(n3.props.value) != -1 : r3.defaultValue == n3.props.value;
-          })), n2.props = r3;
-        }
-        t3 && e3.class != e3.className && (G.enumerable = "className" in e3, e3.className != null && (r3.class = e3.className), Object.defineProperty(r3, "className", G)), n2.$$typeof = j3, J && J(n2);
-      };
-      K = l.__r;
-      l.__r = function(n2) {
-        K && K(n2), q2 = n2.__c;
-      };
-    }
-  });
-
   // src/utils/preact-shim.js
   var init_preact_shim = __esm({
     "src/utils/preact-shim.js"() {
-      init_compat_module();
       init_preact_module();
-      init_compat_module();
     }
   });
 
@@ -6294,10 +5991,372 @@ ${cbNode.commentBefore}` : cb;
     }
   });
 
-  // src/app/AdvComputers.js
-  var require_AdvComputers = __commonJS({
-    "src/app/AdvComputers.js"() {
+  // node_modules/events/events.js
+  var require_events = __commonJS({
+    "node_modules/events/events.js"(exports, module) {
       init_preact_shim();
+      "use strict";
+      var R2 = typeof Reflect === "object" ? Reflect : null;
+      var ReflectApply = R2 && typeof R2.apply === "function" ? R2.apply : function ReflectApply2(target, receiver, args) {
+        return Function.prototype.apply.call(target, receiver, args);
+      };
+      var ReflectOwnKeys;
+      if (R2 && typeof R2.ownKeys === "function") {
+        ReflectOwnKeys = R2.ownKeys;
+      } else if (Object.getOwnPropertySymbols) {
+        ReflectOwnKeys = function ReflectOwnKeys2(target) {
+          return Object.getOwnPropertyNames(target).concat(Object.getOwnPropertySymbols(target));
+        };
+      } else {
+        ReflectOwnKeys = function ReflectOwnKeys2(target) {
+          return Object.getOwnPropertyNames(target);
+        };
+      }
+      function ProcessEmitWarning(warning) {
+        if (console && console.warn)
+          console.warn(warning);
+      }
+      var NumberIsNaN = Number.isNaN || function NumberIsNaN2(value) {
+        return value !== value;
+      };
+      function EventEmitter() {
+        EventEmitter.init.call(this);
+      }
+      module.exports = EventEmitter;
+      module.exports.once = once;
+      EventEmitter.EventEmitter = EventEmitter;
+      EventEmitter.prototype._events = void 0;
+      EventEmitter.prototype._eventsCount = 0;
+      EventEmitter.prototype._maxListeners = void 0;
+      var defaultMaxListeners = 10;
+      function checkListener(listener) {
+        if (typeof listener !== "function") {
+          throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+        }
+      }
+      Object.defineProperty(EventEmitter, "defaultMaxListeners", {
+        enumerable: true,
+        get: function() {
+          return defaultMaxListeners;
+        },
+        set: function(arg) {
+          if (typeof arg !== "number" || arg < 0 || NumberIsNaN(arg)) {
+            throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + arg + ".");
+          }
+          defaultMaxListeners = arg;
+        }
+      });
+      EventEmitter.init = function() {
+        if (this._events === void 0 || this._events === Object.getPrototypeOf(this)._events) {
+          this._events = Object.create(null);
+          this._eventsCount = 0;
+        }
+        this._maxListeners = this._maxListeners || void 0;
+      };
+      EventEmitter.prototype.setMaxListeners = function setMaxListeners(n2) {
+        if (typeof n2 !== "number" || n2 < 0 || NumberIsNaN(n2)) {
+          throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + n2 + ".");
+        }
+        this._maxListeners = n2;
+        return this;
+      };
+      function _getMaxListeners(that) {
+        if (that._maxListeners === void 0)
+          return EventEmitter.defaultMaxListeners;
+        return that._maxListeners;
+      }
+      EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
+        return _getMaxListeners(this);
+      };
+      EventEmitter.prototype.emit = function emit(type) {
+        var args = [];
+        for (var i4 = 1; i4 < arguments.length; i4++)
+          args.push(arguments[i4]);
+        var doError = type === "error";
+        var events = this._events;
+        if (events !== void 0)
+          doError = doError && events.error === void 0;
+        else if (!doError)
+          return false;
+        if (doError) {
+          var er;
+          if (args.length > 0)
+            er = args[0];
+          if (er instanceof Error) {
+            throw er;
+          }
+          var err = new Error("Unhandled error." + (er ? " (" + er.message + ")" : ""));
+          err.context = er;
+          throw err;
+        }
+        var handler = events[type];
+        if (handler === void 0)
+          return false;
+        if (typeof handler === "function") {
+          ReflectApply(handler, this, args);
+        } else {
+          var len = handler.length;
+          var listeners = arrayClone(handler, len);
+          for (var i4 = 0; i4 < len; ++i4)
+            ReflectApply(listeners[i4], this, args);
+        }
+        return true;
+      };
+      function _addListener(target, type, listener, prepend) {
+        var m3;
+        var events;
+        var existing;
+        checkListener(listener);
+        events = target._events;
+        if (events === void 0) {
+          events = target._events = Object.create(null);
+          target._eventsCount = 0;
+        } else {
+          if (events.newListener !== void 0) {
+            target.emit("newListener", type, listener.listener ? listener.listener : listener);
+            events = target._events;
+          }
+          existing = events[type];
+        }
+        if (existing === void 0) {
+          existing = events[type] = listener;
+          ++target._eventsCount;
+        } else {
+          if (typeof existing === "function") {
+            existing = events[type] = prepend ? [listener, existing] : [existing, listener];
+          } else if (prepend) {
+            existing.unshift(listener);
+          } else {
+            existing.push(listener);
+          }
+          m3 = _getMaxListeners(target);
+          if (m3 > 0 && existing.length > m3 && !existing.warned) {
+            existing.warned = true;
+            var w4 = new Error("Possible EventEmitter memory leak detected. " + existing.length + " " + String(type) + " listeners added. Use emitter.setMaxListeners() to increase limit");
+            w4.name = "MaxListenersExceededWarning";
+            w4.emitter = target;
+            w4.type = type;
+            w4.count = existing.length;
+            ProcessEmitWarning(w4);
+          }
+        }
+        return target;
+      }
+      EventEmitter.prototype.addListener = function addListener(type, listener) {
+        return _addListener(this, type, listener, false);
+      };
+      EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+      EventEmitter.prototype.prependListener = function prependListener(type, listener) {
+        return _addListener(this, type, listener, true);
+      };
+      function onceWrapper() {
+        if (!this.fired) {
+          this.target.removeListener(this.type, this.wrapFn);
+          this.fired = true;
+          if (arguments.length === 0)
+            return this.listener.call(this.target);
+          return this.listener.apply(this.target, arguments);
+        }
+      }
+      function _onceWrap(target, type, listener) {
+        var state = { fired: false, wrapFn: void 0, target, type, listener };
+        var wrapped = onceWrapper.bind(state);
+        wrapped.listener = listener;
+        state.wrapFn = wrapped;
+        return wrapped;
+      }
+      EventEmitter.prototype.once = function once2(type, listener) {
+        checkListener(listener);
+        this.on(type, _onceWrap(this, type, listener));
+        return this;
+      };
+      EventEmitter.prototype.prependOnceListener = function prependOnceListener(type, listener) {
+        checkListener(listener);
+        this.prependListener(type, _onceWrap(this, type, listener));
+        return this;
+      };
+      EventEmitter.prototype.removeListener = function removeListener(type, listener) {
+        var list, events, position, i4, originalListener;
+        checkListener(listener);
+        events = this._events;
+        if (events === void 0)
+          return this;
+        list = events[type];
+        if (list === void 0)
+          return this;
+        if (list === listener || list.listener === listener) {
+          if (--this._eventsCount === 0)
+            this._events = Object.create(null);
+          else {
+            delete events[type];
+            if (events.removeListener)
+              this.emit("removeListener", type, list.listener || listener);
+          }
+        } else if (typeof list !== "function") {
+          position = -1;
+          for (i4 = list.length - 1; i4 >= 0; i4--) {
+            if (list[i4] === listener || list[i4].listener === listener) {
+              originalListener = list[i4].listener;
+              position = i4;
+              break;
+            }
+          }
+          if (position < 0)
+            return this;
+          if (position === 0)
+            list.shift();
+          else {
+            spliceOne(list, position);
+          }
+          if (list.length === 1)
+            events[type] = list[0];
+          if (events.removeListener !== void 0)
+            this.emit("removeListener", type, originalListener || listener);
+        }
+        return this;
+      };
+      EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
+      EventEmitter.prototype.removeAllListeners = function removeAllListeners(type) {
+        var listeners, events, i4;
+        events = this._events;
+        if (events === void 0)
+          return this;
+        if (events.removeListener === void 0) {
+          if (arguments.length === 0) {
+            this._events = Object.create(null);
+            this._eventsCount = 0;
+          } else if (events[type] !== void 0) {
+            if (--this._eventsCount === 0)
+              this._events = Object.create(null);
+            else
+              delete events[type];
+          }
+          return this;
+        }
+        if (arguments.length === 0) {
+          var keys = Object.keys(events);
+          var key;
+          for (i4 = 0; i4 < keys.length; ++i4) {
+            key = keys[i4];
+            if (key === "removeListener")
+              continue;
+            this.removeAllListeners(key);
+          }
+          this.removeAllListeners("removeListener");
+          this._events = Object.create(null);
+          this._eventsCount = 0;
+          return this;
+        }
+        listeners = events[type];
+        if (typeof listeners === "function") {
+          this.removeListener(type, listeners);
+        } else if (listeners !== void 0) {
+          for (i4 = listeners.length - 1; i4 >= 0; i4--) {
+            this.removeListener(type, listeners[i4]);
+          }
+        }
+        return this;
+      };
+      function _listeners(target, type, unwrap) {
+        var events = target._events;
+        if (events === void 0)
+          return [];
+        var evlistener = events[type];
+        if (evlistener === void 0)
+          return [];
+        if (typeof evlistener === "function")
+          return unwrap ? [evlistener.listener || evlistener] : [evlistener];
+        return unwrap ? unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
+      }
+      EventEmitter.prototype.listeners = function listeners(type) {
+        return _listeners(this, type, true);
+      };
+      EventEmitter.prototype.rawListeners = function rawListeners(type) {
+        return _listeners(this, type, false);
+      };
+      EventEmitter.listenerCount = function(emitter, type) {
+        if (typeof emitter.listenerCount === "function") {
+          return emitter.listenerCount(type);
+        } else {
+          return listenerCount.call(emitter, type);
+        }
+      };
+      EventEmitter.prototype.listenerCount = listenerCount;
+      function listenerCount(type) {
+        var events = this._events;
+        if (events !== void 0) {
+          var evlistener = events[type];
+          if (typeof evlistener === "function") {
+            return 1;
+          } else if (evlistener !== void 0) {
+            return evlistener.length;
+          }
+        }
+        return 0;
+      }
+      EventEmitter.prototype.eventNames = function eventNames() {
+        return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
+      };
+      function arrayClone(arr, n2) {
+        var copy = new Array(n2);
+        for (var i4 = 0; i4 < n2; ++i4)
+          copy[i4] = arr[i4];
+        return copy;
+      }
+      function spliceOne(list, index) {
+        for (; index + 1 < list.length; index++)
+          list[index] = list[index + 1];
+        list.pop();
+      }
+      function unwrapListeners(arr) {
+        var ret = new Array(arr.length);
+        for (var i4 = 0; i4 < ret.length; ++i4) {
+          ret[i4] = arr[i4].listener || arr[i4];
+        }
+        return ret;
+      }
+      function once(emitter, name) {
+        return new Promise(function(resolve, reject) {
+          function errorListener(err) {
+            emitter.removeListener(name, resolver);
+            reject(err);
+          }
+          function resolver() {
+            if (typeof emitter.removeListener === "function") {
+              emitter.removeListener("error", errorListener);
+            }
+            resolve([].slice.call(arguments));
+          }
+          ;
+          eventTargetAgnosticAddListener(emitter, name, resolver, { once: true });
+          if (name !== "error") {
+            addErrorHandlerIfEventEmitter(emitter, errorListener, { once: true });
+          }
+        });
+      }
+      function addErrorHandlerIfEventEmitter(emitter, handler, flags) {
+        if (typeof emitter.on === "function") {
+          eventTargetAgnosticAddListener(emitter, "error", handler, flags);
+        }
+      }
+      function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
+        if (typeof emitter.on === "function") {
+          if (flags.once) {
+            emitter.once(name, listener);
+          } else {
+            emitter.on(name, listener);
+          }
+        } else if (typeof emitter.addEventListener === "function") {
+          emitter.addEventListener(name, function wrapListener(arg) {
+            if (flags.once) {
+              emitter.removeEventListener(name, wrapListener);
+            }
+            listener(arg);
+          });
+        } else {
+          throw new TypeError('The "emitter" argument must be of type EventEmitter. Received type ' + typeof emitter);
+        }
+      }
     }
   });
 
@@ -6314,38 +6373,38 @@ ${cbNode.commentBefore}` : cb;
   typeof window != "undefined" && window.__PREACT_DEVTOOLS__ && window.__PREACT_DEVTOOLS__.attachPreact("10.5.14", l, { Fragment: d, Component: _ });
 
   // node_modules/preact/debug/dist/debug.module.js
-  var o3 = {};
-  function a3(n2) {
+  var o2 = {};
+  function a2(n2) {
     return n2.type === d ? "Fragment" : typeof n2.type == "function" ? n2.type.displayName || n2.type.name : typeof n2.type == "string" ? n2.type : "#text";
   }
-  var i3 = [];
-  var s3 = [];
-  function c3() {
-    return i3.length > 0 ? i3[i3.length - 1] : null;
+  var i2 = [];
+  var s2 = [];
+  function c2() {
+    return i2.length > 0 ? i2[i2.length - 1] : null;
   }
-  var l3 = false;
-  function u3(n2) {
+  var l2 = false;
+  function u2(n2) {
     return typeof n2.type == "function" && n2.type != d;
   }
-  function f3(n2) {
+  function f2(n2) {
     for (var t3 = [n2], e3 = n2; e3.__o != null; )
       t3.push(e3.__o), e3 = e3.__o;
     return t3.reduce(function(n3, t4) {
-      n3 += "  in " + a3(t4);
+      n3 += "  in " + a2(t4);
       var e4 = t4.__source;
-      return e4 ? n3 += " (at " + e4.fileName + ":" + e4.lineNumber + ")" : l3 || (l3 = true, console.warn("Add @babel/plugin-transform-react-jsx-source to get a more detailed component stack. Note that you should not add it to production builds of your App for bundle size reasons.")), n3 + "\n";
+      return e4 ? n3 += " (at " + e4.fileName + ":" + e4.lineNumber + ")" : l2 || (l2 = true, console.warn("Add @babel/plugin-transform-react-jsx-source to get a more detailed component stack. Note that you should not add it to production builds of your App for bundle size reasons.")), n3 + "\n";
     }, "");
   }
-  var p3 = typeof WeakMap == "function";
-  var d3 = _.prototype.setState;
+  var p = typeof WeakMap == "function";
+  var d2 = _.prototype.setState;
   _.prototype.setState = function(n2, t3) {
-    return this.__v == null ? this.state == null && console.warn('Calling "this.setState" inside the constructor of a component is a no-op and might be a bug in your application. Instead, set "this.state = {}" directly.\n\n' + f3(c3())) : this.__P == null && console.warn(`Can't call "this.setState" on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method.
+    return this.__v == null ? this.state == null && console.warn('Calling "this.setState" inside the constructor of a component is a no-op and might be a bug in your application. Instead, set "this.state = {}" directly.\n\n' + f2(c2())) : this.__P == null && console.warn(`Can't call "this.setState" on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method.
 
-` + f3(this.__v)), d3.call(this, n2, t3);
+` + f2(this.__v)), d2.call(this, n2, t3);
   };
-  var h3 = _.prototype.forceUpdate;
-  function y3(n2) {
-    var t3 = n2.props, e3 = a3(n2), o4 = "";
+  var h2 = _.prototype.forceUpdate;
+  function y2(n2) {
+    var t3 = n2.props, e3 = a2(n2), o4 = "";
     for (var r3 in t3)
       if (t3.hasOwnProperty(r3) && r3 !== "children") {
         var i4 = t3[r3];
@@ -6355,29 +6414,29 @@ ${cbNode.commentBefore}` : cb;
     return "<" + e3 + o4 + (s4 && s4.length ? ">..</" + e3 + ">" : " />");
   }
   _.prototype.forceUpdate = function(n2) {
-    return this.__v == null ? console.warn('Calling "this.forceUpdate" inside the constructor of a component is a no-op and might be a bug in your application.\n\n' + f3(c3())) : this.__P == null && console.warn(`Can't call "this.forceUpdate" on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method.
+    return this.__v == null ? console.warn('Calling "this.forceUpdate" inside the constructor of a component is a no-op and might be a bug in your application.\n\n' + f2(c2())) : this.__P == null && console.warn(`Can't call "this.forceUpdate" on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method.
 
-` + f3(this.__v)), h3.call(this, n2);
+` + f2(this.__v)), h2.call(this, n2);
   }, function() {
     !function() {
       var t4 = l.__b, e4 = l.diffed, o4 = l.__, r4 = l.vnode, a4 = l.__r;
       l.diffed = function(n2) {
-        u3(n2) && s3.pop(), i3.pop(), e4 && e4(n2);
+        u2(n2) && s2.pop(), i2.pop(), e4 && e4(n2);
       }, l.__b = function(n2) {
-        u3(n2) && i3.push(n2), t4 && t4(n2);
+        u2(n2) && i2.push(n2), t4 && t4(n2);
       }, l.__ = function(n2, t5) {
-        s3 = [], o4 && o4(n2, t5);
+        s2 = [], o4 && o4(n2, t5);
       }, l.vnode = function(n2) {
-        n2.__o = s3.length > 0 ? s3[s3.length - 1] : null, r4 && r4(n2);
+        n2.__o = s2.length > 0 ? s2[s2.length - 1] : null, r4 && r4(n2);
       }, l.__r = function(n2) {
-        u3(n2) && s3.push(n2), a4 && a4(n2);
+        u2(n2) && s2.push(n2), a4 && a4(n2);
       };
     }();
-    var t3 = false, e3 = l.__b, r3 = l.diffed, c4 = l.vnode, l4 = l.__e, d4 = l.__, h4 = l.__h, m3 = p3 ? { useEffect: new WeakMap(), useLayoutEffect: new WeakMap(), lazyPropTypes: new WeakMap() } : null, v3 = [];
+    var t3 = false, e3 = l.__b, r3 = l.diffed, c4 = l.vnode, l4 = l.__e, d4 = l.__, h4 = l.__h, m3 = p ? { useEffect: new WeakMap(), useLayoutEffect: new WeakMap(), lazyPropTypes: new WeakMap() } : null, v3 = [];
     l.__e = function(n2, t4, e4) {
       if (t4 && t4.__c && typeof n2.then == "function") {
         var o4 = n2;
-        n2 = new Error("Missing Suspense. The throwing component was: " + a3(t4));
+        n2 = new Error("Missing Suspense. The throwing component was: " + a2(t4));
         for (var r4 = t4; r4; r4 = r4.__)
           if (r4.__c && r4.__c.__c) {
             n2 = o4;
@@ -6407,7 +6466,7 @@ ${cbNode.commentBefore}` : cb;
           e4 = false;
       }
       if (!e4) {
-        var o4 = a3(n2);
+        var o4 = a2(n2);
         throw new Error("Expected a valid HTML node as a second argument to render.	Received " + t4 + " instead: render(<" + o4 + " />, " + t4 + ");");
       }
       d4 && d4(n2, t4);
@@ -6416,25 +6475,25 @@ ${cbNode.commentBefore}` : cb;
         return t4 ? typeof t4.type == "function" ? n3(t4.__) : t4 : {};
       }(n2.__);
       if (t3 = true, r4 === void 0)
-        throw new Error("Undefined component passed to createElement()\n\nYou likely forgot to export your component or might have mixed up default and named imports" + y3(n2) + "\n\n" + f3(n2));
+        throw new Error("Undefined component passed to createElement()\n\nYou likely forgot to export your component or might have mixed up default and named imports" + y2(n2) + "\n\n" + f2(n2));
       if (r4 != null && typeof r4 == "object") {
         if (r4.__k !== void 0 && r4.__e !== void 0)
-          throw new Error("Invalid type passed to createElement(): " + r4 + "\n\nDid you accidentally pass a JSX literal as JSX twice?\n\n  let My" + a3(n2) + " = " + y3(r4) + ";\n  let vnode = <My" + a3(n2) + " />;\n\nThis usually happens when you export a JSX literal and not the component.\n\n" + f3(n2));
+          throw new Error("Invalid type passed to createElement(): " + r4 + "\n\nDid you accidentally pass a JSX literal as JSX twice?\n\n  let My" + a2(n2) + " = " + y2(r4) + ";\n  let vnode = <My" + a2(n2) + " />;\n\nThis usually happens when you export a JSX literal and not the component.\n\n" + f2(n2));
         throw new Error("Invalid type passed to createElement(): " + (Array.isArray(r4) ? "array" : r4));
       }
-      if (r4 !== "thead" && r4 !== "tfoot" && r4 !== "tbody" || i4.type === "table" ? r4 === "tr" && i4.type !== "thead" && i4.type !== "tfoot" && i4.type !== "tbody" && i4.type !== "table" ? console.error("Improper nesting of table. Your <tr> should have a <thead/tbody/tfoot/table> parent." + y3(n2) + "\n\n" + f3(n2)) : r4 === "td" && i4.type !== "tr" ? console.error("Improper nesting of table. Your <td> should have a <tr> parent." + y3(n2) + "\n\n" + f3(n2)) : r4 === "th" && i4.type !== "tr" && console.error("Improper nesting of table. Your <th> should have a <tr>." + y3(n2) + "\n\n" + f3(n2)) : console.error("Improper nesting of table. Your <thead/tbody/tfoot> should have a <table> parent." + y3(n2) + "\n\n" + f3(n2)), n2.ref !== void 0 && typeof n2.ref != "function" && typeof n2.ref != "object" && !("$$typeof" in n2))
-        throw new Error(`Component's "ref" property should be a function, or an object created by createRef(), but got [` + typeof n2.ref + "] instead\n" + y3(n2) + "\n\n" + f3(n2));
+      if (r4 !== "thead" && r4 !== "tfoot" && r4 !== "tbody" || i4.type === "table" ? r4 === "tr" && i4.type !== "thead" && i4.type !== "tfoot" && i4.type !== "tbody" && i4.type !== "table" ? console.error("Improper nesting of table. Your <tr> should have a <thead/tbody/tfoot/table> parent." + y2(n2) + "\n\n" + f2(n2)) : r4 === "td" && i4.type !== "tr" ? console.error("Improper nesting of table. Your <td> should have a <tr> parent." + y2(n2) + "\n\n" + f2(n2)) : r4 === "th" && i4.type !== "tr" && console.error("Improper nesting of table. Your <th> should have a <tr>." + y2(n2) + "\n\n" + f2(n2)) : console.error("Improper nesting of table. Your <thead/tbody/tfoot> should have a <table> parent." + y2(n2) + "\n\n" + f2(n2)), n2.ref !== void 0 && typeof n2.ref != "function" && typeof n2.ref != "object" && !("$$typeof" in n2))
+        throw new Error(`Component's "ref" property should be a function, or an object created by createRef(), but got [` + typeof n2.ref + "] instead\n" + y2(n2) + "\n\n" + f2(n2));
       if (typeof n2.type == "string") {
         for (var s4 in n2.props)
           if (s4[0] === "o" && s4[1] === "n" && typeof n2.props[s4] != "function" && n2.props[s4] != null)
-            throw new Error(`Component's "` + s4 + '" property should be a function, but got [' + typeof n2.props[s4] + "] instead\n" + y3(n2) + "\n\n" + f3(n2));
+            throw new Error(`Component's "` + s4 + '" property should be a function, but got [' + typeof n2.props[s4] + "] instead\n" + y2(n2) + "\n\n" + f2(n2));
       }
       if (typeof n2.type == "function" && n2.type.propTypes) {
         if (n2.type.displayName === "Lazy" && m3 && !m3.lazyPropTypes.has(n2.type)) {
           var c5 = "PropTypes are not supported on lazy(). Use propTypes on the wrapped component itself. ";
           try {
             var l5 = n2.type();
-            m3.lazyPropTypes.set(n2.type, true), console.warn(c5 + "Component wrapped in lazy() is " + a3(l5));
+            m3.lazyPropTypes.set(n2.type, true), console.warn(c5 + "Component wrapped in lazy() is " + a2(l5));
           } catch (n3) {
             console.warn(c5 + "We will log the wrapped component's name once it is loaded.");
           }
@@ -6452,10 +6511,10 @@ ${cbNode.commentBefore}` : cb;
             } catch (n4) {
               i5 = n4;
             }
-            !i5 || i5.message in o3 || (o3[i5.message] = true, console.error("Failed prop type: " + i5.message + (a4 && "\n" + a4() || "")));
+            !i5 || i5.message in o2 || (o2[i5.message] = true, console.error("Failed prop type: " + i5.message + (a4 && "\n" + a4() || "")));
           });
-        }(n2.type.propTypes, u4, 0, a3(n2), function() {
-          return f3(n2);
+        }(n2.type.propTypes, u4, 0, a2(n2), function() {
+          return f2(n2);
         });
       }
       e3 && e3(n2);
@@ -6488,7 +6547,7 @@ ${cbNode.commentBefore}` : cb;
         if (t4 && t4.type === void 0) {
           delete t4.__, delete t4.__b;
           var e5 = Object.keys(t4).join(",");
-          throw new Error("Objects are not valid as a child. Encountered an object with the keys {" + e5 + "}.\n\n" + f3(n2));
+          throw new Error("Objects are not valid as a child. Encountered an object with the keys {" + e5 + "}.\n\n" + f2(n2));
         }
       }), t3 = false, r3 && r3(n2), n2.__k != null)
         for (var e4 = [], o4 = 0; o4 < n2.__k.length; o4++) {
@@ -6496,7 +6555,7 @@ ${cbNode.commentBefore}` : cb;
           if (a4 && a4.key != null) {
             var i4 = a4.key;
             if (e4.indexOf(i4) !== -1) {
-              console.error('Following component has two or more children with the same key attribute: "' + i4 + '". This may cause glitches and misbehavior in rendering process. Component: \n\n' + y3(n2) + "\n\n" + f3(n2));
+              console.error('Following component has two or more children with the same key attribute: "' + i4 + '". This may cause glitches and misbehavior in rendering process. Component: \n\n' + y2(n2) + "\n\n" + f2(n2));
               break;
             }
             e4.push(i4);
@@ -6505,18 +6564,306 @@ ${cbNode.commentBefore}` : cb;
     };
   }();
 
-  // src/app/AdvGame.jsx
+  // src/game/AdvGame.jsx
   init_preact_shim();
 
   // src/utils/ContentScaler.jsx
   init_preact_shim();
   init_preact_module();
-  init_hooks_module();
+
+  // node_modules/preact/hooks/dist/hooks.module.js
   init_preact_shim();
+  init_preact_module();
+  var t2;
+  var u3;
+  var r2;
+  var o3 = 0;
+  var i3 = [];
+  var c3 = l.__b;
+  var f3 = l.__r;
+  var e2 = l.diffed;
+  var a3 = l.__c;
+  var v2 = l.unmount;
+  function m2(t3, r3) {
+    l.__h && l.__h(u3, t3, o3 || r3), o3 = 0;
+    var i4 = u3.__H || (u3.__H = { __: [], __h: [] });
+    return t3 >= i4.__.length && i4.__.push({}), i4.__[t3];
+  }
+  function l3(n2) {
+    return o3 = 1, p2(w2, n2);
+  }
+  function p2(n2, r3, o4) {
+    var i4 = m2(t2++, 2);
+    return i4.t = n2, i4.__c || (i4.__ = [o4 ? o4(r3) : w2(void 0, r3), function(n3) {
+      var t3 = i4.t(i4.__[0], n3);
+      i4.__[0] !== t3 && (i4.__ = [t3, i4.__[1]], i4.__c.setState({}));
+    }], i4.__c = u3), i4.__;
+  }
+  function y3(r3, o4) {
+    var i4 = m2(t2++, 3);
+    !l.__s && k2(i4.__H, o4) && (i4.__ = r3, i4.__H = o4, u3.__H.__h.push(i4));
+  }
+  function h3(r3, o4) {
+    var i4 = m2(t2++, 4);
+    !l.__s && k2(i4.__H, o4) && (i4.__ = r3, i4.__H = o4, u3.__h.push(i4));
+  }
+  function s3(n2) {
+    return o3 = 5, d3(function() {
+      return { current: n2 };
+    }, []);
+  }
+  function d3(n2, u4) {
+    var r3 = m2(t2++, 7);
+    return k2(r3.__H, u4) && (r3.__ = n2(), r3.__H = u4, r3.__h = n2), r3.__;
+  }
+  function F(n2) {
+    var r3 = u3.context[n2.__c], o4 = m2(t2++, 9);
+    return o4.c = n2, r3 ? (o4.__ == null && (o4.__ = true, r3.sub(u3)), r3.props.value) : n2.__;
+  }
+  function x2() {
+    i3.forEach(function(t3) {
+      if (t3.__P)
+        try {
+          t3.__H.__h.forEach(g2), t3.__H.__h.forEach(j2), t3.__H.__h = [];
+        } catch (u4) {
+          t3.__H.__h = [], l.__e(u4, t3.__v);
+        }
+    }), i3 = [];
+  }
+  l.__b = function(n2) {
+    u3 = null, c3 && c3(n2);
+  }, l.__r = function(n2) {
+    f3 && f3(n2), t2 = 0;
+    var r3 = (u3 = n2.__c).__H;
+    r3 && (r3.__h.forEach(g2), r3.__h.forEach(j2), r3.__h = []);
+  }, l.diffed = function(t3) {
+    e2 && e2(t3);
+    var o4 = t3.__c;
+    o4 && o4.__H && o4.__H.__h.length && (i3.push(o4) !== 1 && r2 === l.requestAnimationFrame || ((r2 = l.requestAnimationFrame) || function(n2) {
+      var t4, u4 = function() {
+        clearTimeout(r3), b2 && cancelAnimationFrame(t4), setTimeout(n2);
+      }, r3 = setTimeout(u4, 100);
+      b2 && (t4 = requestAnimationFrame(u4));
+    })(x2)), u3 = void 0;
+  }, l.__c = function(t3, u4) {
+    u4.some(function(t4) {
+      try {
+        t4.__h.forEach(g2), t4.__h = t4.__h.filter(function(n2) {
+          return !n2.__ || j2(n2);
+        });
+      } catch (r3) {
+        u4.some(function(n2) {
+          n2.__h && (n2.__h = []);
+        }), u4 = [], l.__e(r3, t4.__v);
+      }
+    }), a3 && a3(t3, u4);
+  }, l.unmount = function(t3) {
+    v2 && v2(t3);
+    var u4 = t3.__c;
+    if (u4 && u4.__H)
+      try {
+        u4.__H.__.forEach(g2);
+      } catch (t4) {
+        l.__e(t4, u4.__v);
+      }
+  };
+  var b2 = typeof requestAnimationFrame == "function";
+  function g2(n2) {
+    var t3 = u3;
+    typeof n2.__c == "function" && n2.__c(), u3 = t3;
+  }
+  function j2(n2) {
+    var t3 = u3;
+    n2.__c = n2.__(), u3 = t3;
+  }
+  function k2(n2, t3) {
+    return !n2 || n2.length !== t3.length || t3.some(function(t4, u4) {
+      return t4 !== n2[u4];
+    });
+  }
+  function w2(n2, t3) {
+    return typeof t3 == "function" ? t3(n2) : t3;
+  }
+
+  // node_modules/preact/compat/dist/compat.module.js
+  init_preact_shim();
+  init_preact_module();
+  init_preact_module();
+  function S2(n2, t3) {
+    for (var e3 in t3)
+      n2[e3] = t3[e3];
+    return n2;
+  }
+  function C2(n2, t3) {
+    for (var e3 in n2)
+      if (e3 !== "__source" && !(e3 in t3))
+        return true;
+    for (var r3 in t3)
+      if (r3 !== "__source" && n2[r3] !== t3[r3])
+        return true;
+    return false;
+  }
+  function E(n2) {
+    this.props = n2;
+  }
+  (E.prototype = new _()).isPureReactComponent = true, E.prototype.shouldComponentUpdate = function(n2, t3) {
+    return C2(this.props, n2) || C2(this.state, t3);
+  };
+  var w3 = l.__b;
+  l.__b = function(n2) {
+    n2.type && n2.type.__f && n2.ref && (n2.props.ref = n2.ref, n2.ref = null), w3 && w3(n2);
+  };
+  var R = typeof Symbol != "undefined" && Symbol.for && Symbol.for("react.forward_ref") || 3911;
+  var A3 = l.__e;
+  l.__e = function(n2, t3, e3) {
+    if (n2.then) {
+      for (var r3, u4 = t3; u4 = u4.__; )
+        if ((r3 = u4.__c) && r3.__c)
+          return t3.__e == null && (t3.__e = e3.__e, t3.__k = e3.__k), r3.__c(n2, t3);
+    }
+    A3(n2, t3, e3);
+  };
+  var O2 = l.unmount;
+  function L2() {
+    this.__u = 0, this.t = null, this.__b = null;
+  }
+  function U(n2) {
+    var t3 = n2.__.__c;
+    return t3 && t3.__e && t3.__e(n2);
+  }
+  function M2() {
+    this.u = null, this.o = null;
+  }
+  l.unmount = function(n2) {
+    var t3 = n2.__c;
+    t3 && t3.__R && t3.__R(), t3 && n2.__h === true && (n2.type = null), O2 && O2(n2);
+  }, (L2.prototype = new _()).__c = function(n2, t3) {
+    var e3 = t3.__c, r3 = this;
+    r3.t == null && (r3.t = []), r3.t.push(e3);
+    var u4 = U(r3.__v), o4 = false, i4 = function() {
+      o4 || (o4 = true, e3.__R = null, u4 ? u4(l4) : l4());
+    };
+    e3.__R = i4;
+    var l4 = function() {
+      if (!--r3.__u) {
+        if (r3.state.__e) {
+          var n3 = r3.state.__e;
+          r3.__v.__k[0] = function n4(t5, e4, r4) {
+            return t5 && (t5.__v = null, t5.__k = t5.__k && t5.__k.map(function(t6) {
+              return n4(t6, e4, r4);
+            }), t5.__c && t5.__c.__P === e4 && (t5.__e && r4.insertBefore(t5.__e, t5.__d), t5.__c.__e = true, t5.__c.__P = r4)), t5;
+          }(n3, n3.__c.__P, n3.__c.__O);
+        }
+        var t4;
+        for (r3.setState({ __e: r3.__b = null }); t4 = r3.t.pop(); )
+          t4.forceUpdate();
+      }
+    }, f4 = t3.__h === true;
+    r3.__u++ || f4 || r3.setState({ __e: r3.__b = r3.__v.__k[0] }), n2.then(i4, i4);
+  }, L2.prototype.componentWillUnmount = function() {
+    this.t = [];
+  }, L2.prototype.render = function(n2, t3) {
+    if (this.__b) {
+      if (this.__v.__k) {
+        var e3 = document.createElement("div"), r3 = this.__v.__k[0].__c;
+        this.__v.__k[0] = function n3(t4, e4, r4) {
+          return t4 && (t4.__c && t4.__c.__H && (t4.__c.__H.__.forEach(function(n4) {
+            typeof n4.__c == "function" && n4.__c();
+          }), t4.__c.__H = null), (t4 = S2({}, t4)).__c != null && (t4.__c.__P === r4 && (t4.__c.__P = e4), t4.__c = null), t4.__k = t4.__k && t4.__k.map(function(t5) {
+            return n3(t5, e4, r4);
+          })), t4;
+        }(this.__b, e3, r3.__O = r3.__P);
+      }
+      this.__b = null;
+    }
+    var u4 = t3.__e && v(d, null, n2.fallback);
+    return u4 && (u4.__h = null), [v(d, null, t3.__e ? null : n2.children), u4];
+  };
+  var T3 = function(n2, t3, e3) {
+    if (++e3[1] === e3[0] && n2.o.delete(t3), n2.props.revealOrder && (n2.props.revealOrder[0] !== "t" || !n2.o.size))
+      for (e3 = n2.u; e3; ) {
+        for (; e3.length > 3; )
+          e3.pop()();
+        if (e3[1] < e3[0])
+          break;
+        n2.u = e3 = e3[2];
+      }
+  };
+  (M2.prototype = new _()).__e = function(n2) {
+    var t3 = this, e3 = U(t3.__v), r3 = t3.o.get(n2);
+    return r3[0]++, function(u4) {
+      var o4 = function() {
+        t3.props.revealOrder ? (r3.push(u4), T3(t3, n2, r3)) : u4();
+      };
+      e3 ? e3(o4) : o4();
+    };
+  }, M2.prototype.render = function(n2) {
+    this.u = null, this.o = new Map();
+    var t3 = A(n2.children);
+    n2.revealOrder && n2.revealOrder[0] === "b" && t3.reverse();
+    for (var e3 = t3.length; e3--; )
+      this.o.set(t3[e3], this.u = [1, 0, this.u]);
+    return n2.children;
+  }, M2.prototype.componentDidUpdate = M2.prototype.componentDidMount = function() {
+    var n2 = this;
+    this.o.forEach(function(t3, e3) {
+      T3(n2, e3, t3);
+    });
+  };
+  var j3 = typeof Symbol != "undefined" && Symbol.for && Symbol.for("react.element") || 60103;
+  var P2 = /^(?:accent|alignment|arabic|baseline|cap|clip(?!PathU)|color|fill|flood|font|glyph(?!R)|horiz|marker(?!H|W|U)|overline|paint|stop|strikethrough|stroke|text(?!L)|underline|unicode|units|v|vector|vert|word|writing|x(?!C))[A-Z]/;
+  var V = function(n2) {
+    return (typeof Symbol != "undefined" && typeof Symbol() == "symbol" ? /fil|che|rad/i : /fil|che|ra/i).test(n2);
+  };
+  _.prototype.isReactComponent = {}, ["componentWillMount", "componentWillReceiveProps", "componentWillUpdate"].forEach(function(n2) {
+    Object.defineProperty(_.prototype, n2, { configurable: true, get: function() {
+      return this["UNSAFE_" + n2];
+    }, set: function(t3) {
+      Object.defineProperty(this, n2, { configurable: true, writable: true, value: t3 });
+    } });
+  });
+  var H2 = l.event;
+  function Z() {
+  }
+  function Y() {
+    return this.cancelBubble;
+  }
+  function $2() {
+    return this.defaultPrevented;
+  }
+  l.event = function(n2) {
+    return H2 && (n2 = H2(n2)), n2.persist = Z, n2.isPropagationStopped = Y, n2.isDefaultPrevented = $2, n2.nativeEvent = n2;
+  };
+  var q2;
+  var G = { configurable: true, get: function() {
+    return this.class;
+  } };
+  var J = l.vnode;
+  l.vnode = function(n2) {
+    var t3 = n2.type, e3 = n2.props, r3 = e3;
+    if (typeof t3 == "string") {
+      for (var u4 in r3 = {}, e3) {
+        var o4 = e3[u4];
+        u4 === "value" && "defaultValue" in e3 && o4 == null || (u4 === "defaultValue" && "value" in e3 && e3.value == null ? u4 = "value" : u4 === "download" && o4 === true ? o4 = "" : /ondoubleclick/i.test(u4) ? u4 = "ondblclick" : /^onchange(textarea|input)/i.test(u4 + t3) && !V(e3.type) ? u4 = "oninput" : /^on(Ani|Tra|Tou|BeforeInp)/.test(u4) ? u4 = u4.toLowerCase() : P2.test(u4) ? u4 = u4.replace(/[A-Z0-9]/, "-$&").toLowerCase() : o4 === null && (o4 = void 0), r3[u4] = o4);
+      }
+      t3 == "select" && r3.multiple && Array.isArray(r3.value) && (r3.value = A(e3.children).forEach(function(n3) {
+        n3.props.selected = r3.value.indexOf(n3.props.value) != -1;
+      })), t3 == "select" && r3.defaultValue != null && (r3.value = A(e3.children).forEach(function(n3) {
+        n3.props.selected = r3.multiple ? r3.defaultValue.indexOf(n3.props.value) != -1 : r3.defaultValue == n3.props.value;
+      })), n2.props = r3;
+    }
+    t3 && e3.class != e3.className && (G.enumerable = "className" in e3, e3.className != null && (r3.class = e3.className), Object.defineProperty(r3, "className", G)), n2.$$typeof = j3, J && J(n2);
+  };
+  var K = l.__r;
+  l.__r = function(n2) {
+    K && K(n2), q2 = n2.__c;
+  };
+
+  // src/utils/ContentScaler.jsx
   function ContentScaler(props) {
-    const [windowSize, setWindowSize] = l2({ width: 0, height: 0 });
-    let ref = s2();
-    y2(() => {
+    const [windowSize, setWindowSize] = l3({ width: 0, height: 0 });
+    let ref = s3();
+    y3(() => {
       let oldWidth = null;
       function updateSize() {
         let tagName = null;
@@ -6603,53 +6950,35 @@ ${cbNode.commentBefore}` : cb;
   // src/view/VerbListView.jsx
   init_preact_shim();
 
-  // src/utils/ReactUtil.jsx
-  init_preact_shim();
+  // src/utils/react-util.js
   init_preact_shim();
   function useForceUpdate() {
-    const [_3, forceUpdate] = p((x3) => x3 + 1, 0);
+    const [_3, forceUpdate] = p2((x3) => x3 + 1, 0);
     return forceUpdate;
   }
-  function useReducibleState(options) {
-    if (!options.reducers)
-      options.reducers = {};
-    if (!options.computers)
-      options.computers = {};
-    if (!options.workers)
-      options.workers = {};
+  function useFactory(factory) {
+    let ref = s3();
+    if (!ref.current)
+      ref.current = factory();
+    return ref.current;
+  }
+  function useEventUpdate(target, event) {
     let forceUpdate = useForceUpdate();
-    let ref = s2(options.initial);
-    let state = ref.current;
-    for (let reducerName in options.reducers) {
-      let f4 = (...args) => {
-        ref.current = options.reducers[reducerName](state, ...args);
-        forceUpdate();
+    h3(() => {
+      let updater = forceUpdate;
+      target.on(event, updater);
+      return () => {
+        target.off(event, updater);
       };
-      f4.bindArgs = (...args) => {
-        return f4.bind(this, ...args);
-      };
-      state[reducerName] = f4;
-    }
-    for (let computerName in options.computers) {
-      state[computerName] = function(...args) {
-        return options.computers[computerName](state, ...args);
-      };
-    }
-    for (let workerName in options.workers) {
-      state[workerName] = function(...args) {
-        function update(newState) {
-          if (!newState)
-            return ref.current;
-          ref.current = newState;
-          forceUpdate();
-        }
-        options.workers[workerName](update, ...args);
-      };
-    }
-    return state;
+    }, [target, event]);
+  }
+  function useModel(cls, config) {
+    let model = useFactory(() => new cls(config));
+    useEventUpdate(model, "change");
+    return model;
   }
   function useIsValueChanged(value) {
-    let ref = s2();
+    let ref = s3();
     let change = false;
     if (value != ref.current)
       change = true;
@@ -6692,11 +7021,11 @@ ${cbNode.commentBefore}` : cb;
     };
   }
   function useInterval(callback, delay) {
-    const savedCallback = s2(callback);
-    y2(() => {
+    const savedCallback = s3(callback);
+    y3(() => {
       savedCallback.current = callback;
     }, [callback]);
-    y2(() => {
+    y3(() => {
       if (delay === null) {
         return;
       }
@@ -6705,7 +7034,7 @@ ${cbNode.commentBefore}` : cb;
     }, [delay]);
   }
   function useCountUp(value, enable) {
-    let [currentValue, setCurrentValue] = l2(value);
+    let [currentValue, setCurrentValue] = l3(value);
     if (value < currentValue)
       setCurrentValue(value);
     function count() {
@@ -6731,15 +7060,17 @@ ${cbNode.commentBefore}` : cb;
   function VerbListView(props) {
     let verbButtons = [];
     let i4 = 0;
-    let disabled = props.state.story.isAlertShowing();
-    for (let verb of props.state.story.getVerbs()) {
+    let disabled = false;
+    if (props.model.story.getMessage())
+      disabled = true;
+    for (let verb of props.model.story.getVerbs()) {
       let cls = "bg-info adv-bx text-center text-white adv-btn ";
-      if (props.state.currentVerb == verb.id)
+      if (props.model.currentVerb == verb.id)
         cls += " active";
       verbButtons.push(/* @__PURE__ */ v("button", {
         style: emStyle(0, i4 * 2, 7, 2),
         class: cls,
-        onclick: props.state.toggleCurrentVerb.bindArgs(verb.id),
+        onclick: props.model.dispatcher("toggleCurrentVerb", verb.id),
         disabled
       }, verb.label));
       i4++;
@@ -6751,7 +7082,6 @@ ${cbNode.commentBefore}` : cb;
   }
 
   // src/view/LocationView.jsx
-  init_preact_shim();
   init_preact_shim();
 
   // src/utils/WebUtil.mjs
@@ -6794,45 +7124,48 @@ ${cbNode.commentBefore}` : cb;
 
   // src/view/LocationView.jsx
   function LocationView(props) {
-    let ref = s2();
-    let changed = useIsValueChanged(props.state.story.currentLocationId);
-    let text = [];
-    h2(() => {
+    let ref = s3();
+    let changed = useIsValueChanged(props.model.story.currentLocationId);
+    h3(() => {
       if (changed)
         ref.current.scrollTop = 0;
     });
     function storyLink(objectId) {
-      let object = props.state.story.getObjectById(objectId);
+      let object = props.model.story.getObjectById(objectId);
       if (!object)
         throw new Error("Unknown object: " + objectId);
       let accessible = null;
-      if (props.state.currentVerb)
+      if (props.model.currentVerb)
         accessible = accessibleLinkProps();
       return /* @__PURE__ */ v("a", __spreadValues({
-        onclick: props.state.objectClick.bindArgs(object.id)
+        onclick: props.model.dispatcher("objectClick", object.id)
       }, accessible), object.getName());
     }
-    if (!props.state.story.getCurrentChoice()) {
-      let descs = props.state.story.getCurrentLocationDescriptions();
-      for (let desc of descs) {
-        desc = desc.toString();
+    let descs = props.model.story.getCurrentLocationDescriptions();
+    let text = [];
+    let loc = props.model.story.getCurrentLocation();
+    if (loc.getHeader())
+      text.push(/* @__PURE__ */ v("p", {
+        class: "adv-location-top bg-primary"
+      }, loc.getHeader()));
+    for (let desc of descs) {
+      desc = desc.toString();
+      text.push(/* @__PURE__ */ v("p", null, linkify(desc, storyLink)));
+    }
+    let things = props.model.story.getThingsByCurrentLocation();
+    for (let thing of things) {
+      let desc = props.model.story.evalClause(thing.description);
+      if (desc)
         text.push(/* @__PURE__ */ v("p", null, linkify(desc, storyLink)));
-      }
-      let things = props.state.story.getThingsByCurrentLocation();
-      for (let thing of things) {
-        let desc = props.state.story.evalClause(thing.description);
-        if (desc)
-          text.push(/* @__PURE__ */ v("p", null, linkify(desc, storyLink)));
-      }
     }
     let cls = "adv-bx bg-white text-black adv-location-description ";
-    if (props.state.currentVerb)
+    if (props.model.currentVerb)
       cls += "adv-verb-selected";
     return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
       style: emStyle(0, 2, 19, 16),
       class: "adv-bx bg-white"
     }), /* @__PURE__ */ v("div", {
-      style: emStyle(0.25, 2, 18.5, 16),
+      style: emStyle(0, 2, 18.75, 16),
       class: cls,
       ref
     }, text));
@@ -6840,24 +7173,20 @@ ${cbNode.commentBefore}` : cb;
 
   // src/view/AlertView.jsx
   init_preact_shim();
-  init_preact_shim();
   function AlertView(props) {
-    let ref = s2();
+    let ref = s3();
     let message, fn, text;
-    h2(() => {
+    h3(() => {
       if (ref.current)
         ref.current.scrollTop = 0;
     });
-    if (props.state.story.getMessage()) {
-      message = props.state.story.getMessage();
-      fn = props.state.dismissMessage;
-      text = "OK";
-    } else if (props.state.story.isComplete()) {
-      message = props.state.story.getCompleteMessage();
-      fn = props.state.restart;
-      text = "PLAY AGAIN";
-    } else
+    if (!props.model.story.getMessage() || props.model.story.getAlternatives())
       return null;
+    let messages = [];
+    for (let message2 of props.model.story.getMessage())
+      messages.push(/* @__PURE__ */ v("p", null, message2));
+    fn = props.model.dispatcher("dismissMessage");
+    text = "OK";
     return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
       class: "adv-modal-cover bg-body"
     }), /* @__PURE__ */ v("div", {
@@ -6867,7 +7196,7 @@ ${cbNode.commentBefore}` : cb;
       style: emStyle(0, 0, 16, 13),
       class: "text-black adv-location-description",
       ref
-    }, /* @__PURE__ */ v("p", null, message)), /* @__PURE__ */ v("button", {
+    }, messages), /* @__PURE__ */ v("button", {
       style: emStyle(3, 13, 10, 2),
       class: "adv-btn bg-info text-white adv-bx",
       onclick: fn
@@ -6877,18 +7206,18 @@ ${cbNode.commentBefore}` : cb;
   // src/view/InventoryView.jsx
   init_preact_shim();
   function InventoryView(props) {
-    let things = props.state.story.getInventoryThings();
+    let things = props.model.story.getInventoryThings();
     let thingList = [];
     let accessible = null;
-    if (props.state.currentVerb)
+    if (props.model.currentVerb)
       accessible = accessibleLinkProps();
     for (let thing of things) {
       thingList.push(/* @__PURE__ */ v("a", __spreadValues({
-        onclick: props.state.objectClick.bindArgs(thing.id)
+        onclick: props.model.dispatcher("objectClick", thing.id)
       }, accessible), thing.getName()));
     }
     let cls = "adv-bx bg-body text-warning adv-inventory";
-    if (props.state.currentVerb)
+    if (props.model.currentVerb)
       cls += " adv-verb-selected";
     return /* @__PURE__ */ v("div", {
       style: emStyle(8, 18, 11, 11),
@@ -6899,14 +7228,14 @@ ${cbNode.commentBefore}` : cb;
   // src/view/HeaderView.jsx
   init_preact_shim();
   function HeaderView(props) {
-    let countScore = Math.round(useCountUp(props.state.story.getCompletePercentage(), true));
+    let countScore = Math.round(useCountUp(props.model.story.getCompletePercentage(), true));
     return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
       style: emStyle(0, 0, 19, 2),
       class: "adv-bx bg-black"
     }), /* @__PURE__ */ v("div", {
       style: emStyle(0, 0, 19, 2),
       class: "adv-bx adv-btn bg-black text-white text-center"
-    }, props.state.story.getName()), /* @__PURE__ */ v("div", {
+    }, props.model.story.getName()), /* @__PURE__ */ v("div", {
       style: emStyle(0, 0, 2, 2),
       class: "adv-bx text-center text-white adv-btn"
     }, /* @__PURE__ */ v("div", {
@@ -6919,25 +7248,38 @@ ${cbNode.commentBefore}` : cb;
 
   // src/view/ChoiceView.jsx
   init_preact_shim();
+
+  // src/model/StoryAlternative.mjs
   init_preact_shim();
+  var StoryAlternative = class {
+    constructor(label, todo) {
+      this.label = label;
+      this.do = todo;
+    }
+  };
+
+  // src/view/ChoiceView.jsx
   function ChoiceView(props) {
-    let ref = s2();
+    let ref = s3();
     let message, fn, text;
-    h2(() => {
+    h3(() => {
       if (ref.current)
         ref.current.scrollTop = 0;
     });
-    if (!props.state.story.getCurrentChoice())
+    if (!props.model.story.getAlternatives())
       return null;
-    let choice = props.state.story.getCurrentChoice();
+    let descriptions = [];
+    for (let message2 of props.model.story.getMessage())
+      if (!(message2 instanceof StoryAlternative))
+        descriptions.push(/* @__PURE__ */ v("p", null, message2));
     let alternativeButtons = [];
     let i4 = 0;
-    let top = 23 - choice.getAlternatives().length * 3;
-    for (let alternative of choice.getAlternatives()) {
+    let top = 23 - props.model.story.getAlternatives().length * 3;
+    for (let alternative of props.model.story.getAlternatives()) {
       alternativeButtons.push(/* @__PURE__ */ v("button", {
         style: emStyle(1, top + 3 * i4, 14, 3),
         class: "adv-btn bg-info text-white adv-bx",
-        onclick: props.state.alternativeClick.bindArgs(alternative.index)
+        onclick: props.model.dispatcher("alternativeClick", alternative.do)
       }, alternative.label));
       i4++;
     }
@@ -6950,25 +7292,25 @@ ${cbNode.commentBefore}` : cb;
       style: emStyle(0, 0, 16, top),
       class: "text-black adv-location-description",
       ref
-    }, /* @__PURE__ */ v("p", null, choice.description)), alternativeButtons));
+    }, descriptions), alternativeButtons));
   }
 
   // src/view/AdvView.jsx
   function AdvView(props) {
     let storyContent;
-    if (props.state.story) {
+    if (props.model.story) {
       storyContent = /* @__PURE__ */ v(d, null, /* @__PURE__ */ v(HeaderView, {
-        state: props.state
+        model: props.model
       }), /* @__PURE__ */ v(LocationView, {
-        state: props.state
+        model: props.model
       }), /* @__PURE__ */ v(InventoryView, {
-        state: props.state
+        model: props.model
       }), /* @__PURE__ */ v(VerbListView, {
-        state: props.state
+        model: props.model
       }), /* @__PURE__ */ v(ChoiceView, {
-        state: props.state
+        model: props.model
       }), /* @__PURE__ */ v(AlertView, {
-        state: props.state
+        model: props.model
       }));
     }
     return /* @__PURE__ */ v("div", {
@@ -6977,52 +7319,9 @@ ${cbNode.commentBefore}` : cb;
     }, storyContent);
   }
 
-  // src/app/AdvReducers.js
-  var AdvReducers_exports = {};
-  __export(AdvReducers_exports, {
-    alternativeClick: () => alternativeClick,
-    dismissMessage: () => dismissMessage,
-    objectClick: () => objectClick,
-    restart: () => restart,
-    toggleCurrentVerb: () => toggleCurrentVerb
-  });
+  // src/model/AdvModel.js
   init_preact_shim();
-  function toggleCurrentVerb(state, verb) {
-    if (state.currentVerb == verb)
-      state.currentVerb = null;
-    else
-      state.currentVerb = verb;
-    return state;
-  }
-  function objectClick(state, id) {
-    if (!state.currentVerb)
-      return state;
-    state.story.execute(state.currentVerb, id);
-    state.currentVerb = null;
-    return state;
-  }
-  function alternativeClick(state, index) {
-    state.story.chooseAlternative(index);
-    return state;
-  }
-  function dismissMessage(state) {
-    state.story.dismissMessage();
-    return state;
-  }
-  function restart(state) {
-    state.story.restart();
-    return state;
-  }
-
-  // src/app/AdvGame.jsx
-  var AdvComputers = __toModule(require_AdvComputers());
-
-  // src/app/AdvWorkers.js
-  var AdvWorkers_exports = {};
-  __export(AdvWorkers_exports, {
-    loadStory: () => loadStory
-  });
-  init_preact_shim();
+  var import_events2 = __toModule(require_events());
 
   // src/model/Story.mjs
   init_preact_shim();
@@ -7048,26 +7347,33 @@ ${cbNode.commentBefore}` : cb;
             exists: true,
             goto: { fail: "Can't do that" }
           });
+          this.appliedVerbs = [];
           break;
         case "location":
           this.applySpec(spec, {
             name: spec.location,
             location: null,
             description: void 0,
-            enter: void 0,
-            leave: void 0
+            enter: true,
+            leave: true,
+            header: null
           });
-          break;
-        case "choice":
-          this.description = spec.description;
-          this.alternatives = spec.alternatives;
           break;
         case "state":
           this.value = spec.value;
           break;
+        case "def":
+          this.applySpec(spec, {
+            def: null,
+            do: null
+          });
+          break;
         default:
           throw new Error("Unknown story object type: " + this.type);
       }
+    }
+    getHeader() {
+      return this.story.evalClause(this.header);
     }
     applySpec(spec, defaults) {
       for (let k3 in defaults) {
@@ -7092,7 +7398,7 @@ ${cbNode.commentBefore}` : cb;
         throw new Error(this.id + " is a " + this.type + ", not a " + type);
     }
     getName() {
-      return this.story.yaMachine.preprocessAndEval(this.name);
+      return this.story.yaMachine.evalSync(this.name);
     }
     getAlternatives() {
       let res = [];
@@ -7117,7 +7423,12 @@ ${cbNode.commentBefore}` : cb;
       this.value = value;
     }
     getValue() {
+      this.assertType("state");
       return this.story.evalClause(this.value);
+    }
+    async run() {
+      this.assertType("def");
+      return await this.story.yaMachine.evalAsync(this.do);
     }
   };
 
@@ -7145,6 +7456,12 @@ ${cbNode.commentBefore}` : cb;
     getReturnValue(v3) {
       return this.returnValue;
     }
+    isAsync() {
+      return this.async;
+    }
+    setAsync(async) {
+      this.async = async;
+    }
   };
   var YaMachine = class {
     constructor() {
@@ -7153,9 +7470,11 @@ ${cbNode.commentBefore}` : cb;
         and: this.and.bind(this),
         or: this.or.bind(this),
         return: this.return.bind(this),
-        seq: this.seq.bind(this)
+        obj: this.obj.bind(this),
+        quote: this.quote.bind(this)
       };
       this.functions = {};
+      this.macros = {};
       this.addFunction("not", (s4) => !this.castToBool(s4));
     }
     castToBool(value) {
@@ -7168,7 +7487,7 @@ ${cbNode.commentBefore}` : cb;
           throw new Error("Unknown key " + key + " for call to " + fn);
     }
     preprocess(clause) {
-      if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number" || typeof clause == "undefined")
+      if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number" || typeof clause == "undefined" || clause === null)
         return clause;
       else if (clause instanceof Array) {
         let res = [];
@@ -7191,81 +7510,216 @@ ${cbNode.commentBefore}` : cb;
       } else
         throw new Error("Unknown form: " + JSON.stringify(clause));
     }
+    maybeAsync(isAsync, fn) {
+      let ret = {};
+      let fnRet = fn(ret);
+      if (isAsync) {
+        return new Promise((resolve, reject) => {
+          fnRet.then(() => {
+            if (ret.error)
+              reject(ret.error);
+            else
+              resolve(ret.value);
+          });
+        });
+      }
+      if (ret.error)
+        throw ret.error;
+      return ret.value;
+    }
     addFunction(name, fn) {
       this.functions[name] = fn;
     }
+    addMacro(name, fn) {
+      this.macros[name] = fn;
+    }
     and(clause, context) {
-      this.assertValidKeys(clause, ["and"]);
-      if (!(clause.and instanceof Array))
-        throw new Error("and needs an array");
-      let res = true;
-      for (let argPart of clause.and)
-        res = res && this.castToBool(this.eval(argPart, context));
-      return res;
+      return this.maybeAsync(context.isAsync(), async (ret) => {
+        try {
+          this.assertValidKeys(clause, ["and"]);
+          if (!(clause.and instanceof Array))
+            throw new Error("and needs an array");
+          ret.value = true;
+          for (let argPart of clause.and) {
+            if (ret.value) {
+              let v3 = this.evalWithContext(argPart, context);
+              if (context.isAsync())
+                v3 = await v3;
+              ret.value = ret.value && this.castToBool(v3);
+            }
+          }
+        } catch (e3) {
+          ret.error = e3;
+        }
+      });
     }
     or(clause, context) {
-      this.assertValidKeys(clause, ["or"]);
-      if (!(clause.or instanceof Array))
-        throw new Error("or needs an array");
-      let res = false;
-      for (let argPart of clause.or)
-        res = res || this.castToBool(this.eval(argPart, context));
-      return res;
+      return this.maybeAsync(context.isAsync(), async (ret) => {
+        try {
+          this.assertValidKeys(clause, ["or"]);
+          if (!(clause.or instanceof Array))
+            throw new Error("or needs an array");
+          ret.value = false;
+          for (let argPart of clause.or) {
+            if (!ret.value) {
+              let v3 = this.evalWithContext(argPart, context);
+              if (context.isAsync())
+                v3 = await v3;
+              ret.value = ret.value || this.castToBool(v3);
+            }
+          }
+        } catch (e3) {
+          ret.error = e3;
+        }
+      });
     }
     if(clause, context) {
-      this.assertValidKeys(clause, ["if", "then", "else"]);
-      let res = this.castToBool(this.eval(clause.if, context));
-      if (res && clause.then)
-        return this.eval(clause.then, context);
-      if (!res && clause.else)
-        return this.eval(clause.else, context);
-      return void 0;
+      return this.maybeAsync(context.isAsync(), async (ret) => {
+        try {
+          this.assertValidKeys(clause, ["if", "then", "else"]);
+          let ifRes = this.evalWithContext(clause.if, context);
+          if (context.isAsync())
+            ifRes = await ifRes;
+          ifRes = this.castToBool(ifRes);
+          if (ifRes && clause.then)
+            ret.value = this.evalWithContext(clause.then, context);
+          if (!ifRes && clause.else)
+            ret.value = this.evalWithContext(clause.else, context);
+        } catch (e3) {
+          ret.error = e3;
+        }
+      });
     }
     return(clause, context) {
-      this.assertValidKeys(clause, ["return"]);
-      if (context.isReturned())
-        return context.getReturnValue();
-      context.setReturnValue(this.eval(clause.return, context));
-      return context.getReturnValue();
-    }
-    seq(clause, context) {
-      this.assertValidKeys(clause, ["seq"]);
-      if (!(clause.seq instanceof Array))
-        throw new Error("seq needs an array");
-      let res = [];
-      for (let c4 of clause.seq)
-        res.push(this.eval(c4, context));
-      return res;
-    }
-    eval(clause, context) {
-      if (!context)
-        context = new YaMachineContext();
-      if (context.isReturned())
-        return context.getReturnValue();
-      if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number" || typeof clause == "undefined")
-        return clause;
-      if (clause instanceof Array) {
-        let res;
-        for (let subClause of clause)
-          res = this.eval(subClause, context);
-        return res;
-      }
-      if (typeof clause == "object") {
-        let fn = Object.keys(clause)[0];
-        if (this.special[fn])
-          return this.special[fn](clause, context);
-        if (this.functions[fn]) {
-          this.assertValidKeys(clause, [fn]);
-          let arg = clause[fn];
-          return this.functions[fn](this.eval(arg, context));
+      return this.maybeAsync(context.isAsync(), async (ret) => {
+        try {
+          this.assertValidKeys(clause, ["return"]);
+          if (context.isReturned())
+            ret.value = context.getReturnValue();
+          let v3 = this.evalWithContext(clause.return, context);
+          if (context.isAsync())
+            v3 = await v3;
+          context.setReturnValue(v3);
+          ret.value = context.getReturnValue();
+        } catch (e3) {
+          ret.error = e3;
         }
-      }
-      throw new Error("Unknown form: " + JSON.stringify(clause));
+      });
     }
-    preprocessAndEval(clause) {
-      return this.eval(this.preprocess(clause));
+    obj(clause, context) {
+      return this.maybeAsync(context.isAsync(), async (ret) => {
+        try {
+          this.assertValidKeys(clause, ["obj"]);
+          if (clause.obj instanceof Array)
+            ret.value = [];
+          else if (typeof clause.obj == "object")
+            ret.value = {};
+          else {
+            let v3 = this.evalWithContext(clause.obj, context);
+            if (context.isAsync())
+              v3 = await v3;
+            ret.value = v3;
+            return;
+          }
+          for (let c4 in clause.obj) {
+            let v3 = this.evalWithContext(clause.obj[c4], context);
+            if (context.isAsync())
+              v3 = await v3;
+            ret.value[c4] = v3;
+          }
+        } catch (e3) {
+          ret.error = e3;
+        }
+      });
+    }
+    quote(clause, context) {
+      return this.maybeAsync(context.isAsync(), async (ret) => {
+        try {
+          this.assertValidKeys(clause, ["quote"]);
+          ret.value = clause.quote;
+        } catch (e3) {
+          ret.error = e3;
+        }
+      });
+    }
+    evalWithContext(clause, context) {
+      return this.maybeAsync(context.isAsync(), async (ret) => {
+        try {
+          if (context.isReturned())
+            ret.value = context.getReturnValue();
+          else if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number" || typeof clause == "undefined" || clause === null)
+            ret.value = clause;
+          else if (clause instanceof Array) {
+            for (let subClause of clause) {
+              if (!context.isReturned()) {
+                ret.value = this.evalWithContext(subClause, context);
+                if (context.isAsync())
+                  ret.value = await ret.value;
+              }
+            }
+            if (context.isReturned())
+              ret.value = context.getReturnValue();
+          } else if (typeof clause == "object") {
+            let fn = Object.keys(clause)[0];
+            if (this.special[fn]) {
+              ret.value = this.special[fn](clause, context);
+              if (context.isAsync())
+                ret.value = await ret.value;
+              if (context.isReturned())
+                ret.value = context.getReturnValue();
+            } else if (this.macros[fn]) {
+              let form = this.macros[fn](clause);
+              ret.value = this.evalWithContext(form, context);
+              if (context.isAsync())
+                ret.value = await ret.value;
+              if (context.isReturned())
+                ret.value = context.getReturnValue();
+            } else if (this.functions[fn]) {
+              this.assertValidKeys(clause, [fn]);
+              let argClause = clause[fn];
+              let arg = this.evalWithContext(argClause, context);
+              if (context.isAsync())
+                arg = await arg;
+              ret.value = this.functions[fn](arg);
+              if (context.isAsync())
+                ret.value = await ret.value;
+              if (ret.value instanceof Promise)
+                throw new Error("async not allowed");
+              if (context.isReturned())
+                ret.value = context.getReturnValue();
+            } else
+              throw new Error("Unknown form: " + JSON.stringify(clause));
+          } else
+            throw new Error("Unknown form: " + JSON.stringify(clause));
+        } catch (e3) {
+          ret.error = e3;
+        }
+      });
+    }
+    evalSync(clause) {
+      let context = new YaMachineContext();
+      context.setAsync(false);
+      return this.evalWithContext(clause, context);
+    }
+    evalAsync(clause) {
+      let context = new YaMachineContext();
+      context.setAsync(true);
+      return this.evalWithContext(clause, context);
     }
   };
+
+  // src/utils/promise-util.mjs
+  init_preact_shim();
+  function createMethodPromise() {
+    let resolve, reject;
+    let p4 = new Promise((argResolve, argReject) => {
+      resolve = argResolve;
+      reject = argReject;
+    });
+    p4.resolve = resolve;
+    p4.reject = reject;
+    return p4;
+  }
 
   // src/model/StoryVerbs.mjs
   init_preact_shim();
@@ -7275,17 +7729,28 @@ ${cbNode.commentBefore}` : cb;
     setStory(story) {
       this.story = story;
     }
+    async evalAndCheck(clause) {
+      let res = await this.story.yaMachine.evalAsync(clause);
+      if (res instanceof StoryException)
+        return false;
+      if (typeof res == "string")
+        await this.story.message(res);
+      return true;
+    }
   };
   var SimpleClauseVerb = class extends StoryVerb {
     constructor() {
       super();
     }
-    execute(object) {
+    async execute(object) {
       if (object.type != "thing") {
         this.story.message("Can't do that");
         return;
       }
-      this.story.runClause(object[this.id]);
+      if (await this.evalAndCheck(object[this.id])) {
+        if (!object.appliedVerbs.includes(this.id))
+          object.appliedVerbs.push(this.id);
+      }
     }
   };
   var GotoVerb = class extends StoryVerb {
@@ -7294,15 +7759,16 @@ ${cbNode.commentBefore}` : cb;
       this.id = "goto";
       this.label = "GO TO";
     }
-    execute(object) {
+    async execute(object) {
       let current = this.story.getCurrentLocation();
-      if (!this.story.runClause(current.leave))
+      if (!await this.evalAndCheck(current.leave))
         return;
       if (object.type == "thing") {
-        this.story.runClause(object.goto);
+        await this.story.yaMachine.evalAsync(object.goto);
       } else {
-        if (this.story.runClause(object.enter))
-          this.story.currentLocationId = object.id;
+        if (!await this.evalAndCheck(object.enter))
+          return;
+        this.story.currentLocationId = object.id;
       }
     }
   };
@@ -7312,13 +7778,14 @@ ${cbNode.commentBefore}` : cb;
       this.id = "pickup";
       this.label = "PICK UP";
     }
-    execute(object) {
+    async execute(object) {
       if (object.type != "thing") {
-        this.story.message("Can't pick that up");
+        await this.story.message("Can't pick that up");
         return;
       }
-      if (this.story.runClause(object.pickup))
-        object.location = "inventory";
+      if (!await this.evalAndCheck(object.pickup))
+        return;
+      object.location = "inventory";
     }
   };
   var DropVerb = class extends StoryVerb {
@@ -7327,13 +7794,14 @@ ${cbNode.commentBefore}` : cb;
       this.id = "drop";
       this.label = "DROP";
     }
-    execute(object) {
+    async execute(object) {
       if (object.type != "thing") {
-        this.story.message("Can't drop that.");
+        await this.story.message("Can't drop that.");
         return;
       }
-      if (this.story.runClause(object.drop))
-        object.location = this.story.currentLocationId;
+      if (!await this.evalAndCheck(object.drop))
+        return;
+      object.location = this.story.currentLocationId;
     }
   };
   var LookatVerb = class extends SimpleClauseVerb {
@@ -7377,8 +7845,10 @@ ${cbNode.commentBefore}` : cb;
   }
 
   // src/model/Story.mjs
-  var Story = class {
+  var import_events = __toModule(require_events());
+  var Story = class extends import_events.default {
     constructor(spec) {
+      super();
       __publicField(this, "restart", () => {
         let spec = this.yaMachine.preprocess(JSON.parse(JSON.stringify(this.spec)));
         this.dead = false;
@@ -7418,9 +7888,8 @@ ${cbNode.commentBefore}` : cb;
         if (!startId)
           startId = this.getStartLocation().id;
         this.currentLocationId = startId;
-        this.currentChoiceId = null;
         this.currentMessage = null;
-        this.runClause(this.getCurrentLocation().enter);
+        this.yaMachine.evalAsync(this.getCurrentLocation().enter);
       });
       this.spec = spec;
       this.name = "Interactive Fiction Game";
@@ -7432,24 +7901,12 @@ ${cbNode.commentBefore}` : cb;
         in: (id) => {
           return this.getCurrentLocation().id == id;
         },
-        spawn: (id) => {
-          if (!id) {
-            this.currentLocationId = null;
-            return;
-          }
-          let o4 = this.getObjectById(id);
-          if (o4.type == "choice")
-            this.currentChoiceId = id;
-          else if (o4.type == "location")
-            this.currentLocationId = id;
+        spawn: async (id) => {
+          let o4 = this.getObjectById(id, "def");
+          return await o4.run();
         },
-        fail: (message) => {
-          return new StoryException(message);
-        },
-        die: (message) => {
-          let e3 = new StoryException(message);
-          e3.type = "die";
-          return e3;
+        setdead: (none) => {
+          this.dead = true;
         },
         set: (stateId) => {
           this.getObjectById(stateId, "state").setValue(true);
@@ -7459,11 +7916,75 @@ ${cbNode.commentBefore}` : cb;
         },
         state: (stateId) => {
           return this.getObjectById(stateId, "state").getValue();
+        },
+        _message: async (message) => {
+          return await this.message(message);
+        },
+        exception: (message) => {
+          return new StoryException(message);
+        },
+        applied: (o4) => {
+          let thing = this.getObjectById(o4.thing, "thing");
+          return thing.appliedVerbs.includes(o4.verb);
+        },
+        _alternative: (o4) => {
+          if (o4.hasOwnProperty("exists")) {
+            if (!this.evalClause(o4.exists))
+              return null;
+          }
+          return new StoryAlternative(o4.label, o4.do);
+        }
+      };
+      let macros = {
+        alternative: (clause) => {
+          let v3 = { _alternative: { obj: {
+            label: clause.alternative,
+            do: {
+              quote: clause.do
+            }
+          } } };
+          if (clause.hasOwnProperty("exists"))
+            v3._alternative.obj.exists = clause.exists;
+          return v3;
+        },
+        fail: (clause) => {
+          return [
+            { message: clause.fail },
+            { return: { exception: null } }
+          ];
+        },
+        die: (clause) => {
+          return [
+            { message: clause.die },
+            { setdead: null },
+            { return: { exception: null } }
+          ];
+        },
+        did: (clause) => {
+          let verb = Object.keys(clause.did)[0];
+          let thing = clause.did[verb];
+          return {
+            applied: {
+              obj: {
+                verb,
+                thing
+              }
+            }
+          };
+        },
+        message: (clause) => {
+          return {
+            _message: {
+              obj: clause.message
+            }
+          };
         }
       };
       this.yaMachine = new YaMachine();
       for (let f4 in functions)
         this.yaMachine.addFunction(f4, functions[f4].bind(this));
+      for (let m3 in macros)
+        this.yaMachine.addMacro(m3, macros[m3].bind(this));
       this.verbsById = {};
       for (let verb of createVerbs()) {
         this.verbsById[verb.id] = verb;
@@ -7473,7 +7994,6 @@ ${cbNode.commentBefore}` : cb;
         });
       }
       this.restart();
-      window.story = this;
     }
     getVerbs() {
       let res = [];
@@ -7502,35 +8022,58 @@ ${cbNode.commentBefore}` : cb;
     getCurrentLocationDescriptions() {
       return this.evalClauseArray(this.getCurrentLocation().description);
     }
-    getCurrentChoice() {
-      if (this.currentChoiceId)
-        return this.getObjectById(this.currentChoiceId);
-    }
-    execute(verbId, objectId) {
+    async execute(verbId, objectId) {
       let o4 = this.getObjectById(objectId);
-      this.verbsById[verbId].execute(o4);
-    }
-    chooseAlternative(alternativeIndex) {
-      let choice = this.getCurrentChoice();
-      this.currentChoiceId = null;
-      let alternative = choice.getAlternative(alternativeIndex);
-      this.runClause(alternative.do);
+      await this.verbsById[verbId].execute(o4);
+      this.emit("change");
+      if (this.dead || this.getCompletePercentage() == 100) {
+        await this.message("Thanks for playing!");
+        this.restart();
+        this.emit("change");
+      }
     }
     message(message) {
-      this.currentMessage = message;
+      if (this.currentMessage)
+        throw new Error("there is already a message");
+      if (message instanceof Array)
+        this.currentMessage = message;
+      else
+        this.currentMessage = [message];
+      this.messagePromise = createMethodPromise();
+      this.emit("change");
+      return this.messagePromise;
     }
     getMessage() {
-      if (this.currentMessage instanceof Array)
-        return this.currentMessage[0];
       return this.currentMessage;
     }
+    getAlternatives() {
+      if (!this.currentMessage)
+        return null;
+      let alternatives = [];
+      for (let a4 of this.currentMessage)
+        if (a4 instanceof StoryAlternative)
+          alternatives.push(a4);
+      if (!alternatives.length)
+        return null;
+      return alternatives;
+    }
     dismissMessage() {
-      if (this.currentMessage instanceof Array) {
-        this.currentMessage.shift();
-        if (this.currentMessage.length)
-          return;
-      }
+      let p4 = this.messagePromise;
       this.currentMessage = null;
+      this.messagePromise = null;
+      if (p4)
+        p4.resolve();
+      this.emit("change");
+    }
+    async chooseAlternative(todo) {
+      let p4 = this.messagePromise;
+      this.currentMessage = null;
+      this.messagePromise = null;
+      this.emit("change");
+      let v3 = await this.yaMachine.evalAsync(todo);
+      if (p4)
+        p4.resolve(v3);
+      this.emit("change");
     }
     getThingsByCurrentLocation() {
       let current = this.getCurrentLocation();
@@ -7556,20 +8099,8 @@ ${cbNode.commentBefore}` : cb;
       }
       return res;
     }
-    runClause(clause) {
-      let v3 = this.yaMachine.preprocessAndEval(clause);
-      if (v3 instanceof StoryException) {
-        this.currentMessage = v3.getMessage();
-        if (v3.type == "die")
-          this.dead = true;
-        return false;
-      }
-      if (typeof v3 == "string" || v3 instanceof Array)
-        this.currentMessage = v3;
-      return true;
-    }
     evalClause(clause) {
-      return this.yaMachine.preprocessAndEval(clause);
+      return this.yaMachine.evalSync(clause);
     }
     evalClauseArray(clauseArray) {
       let res = [];
@@ -7586,65 +8117,80 @@ ${cbNode.commentBefore}` : cb;
       }
       return res;
     }
-    isAlertShowing() {
-      return this.getMessage() || this.isComplete();
-    }
     getCompletePercentage() {
       if (!this.objectives.length)
         return 0;
       let complete = 0;
       for (let objectiveClause of this.objectives) {
-        let v3 = this.yaMachine.preprocessAndEval(objectiveClause);
+        let v3 = this.evalClause(objectiveClause);
         if (v3 && !(v3 instanceof StoryException))
           complete++;
       }
       let percentage = Math.round(100 * complete / this.objectives.length);
       return percentage;
     }
-    isComplete() {
-      return this.dead || this.getCompletePercentage() == 100;
-    }
     getName() {
       return this.name;
     }
-    getCompleteMessage() {
-      return this.completeMessage;
+  };
+
+  // src/model/AdvModel.js
+  var import_yaml2 = __toModule(require_yaml());
+  var AdvModel = class extends import_events2.default {
+    constructor(props) {
+      super();
+      __publicField(this, "dispatcher", (fn, ...args) => {
+        return () => {
+          this[fn](...args);
+          this.emit("change");
+        };
+      });
+      this.props = props;
+      this.loadStory();
+    }
+    toggleCurrentVerb(verb) {
+      if (this.currentVerb == verb)
+        this.currentVerb = null;
+      else
+        this.currentVerb = verb;
+    }
+    objectClick(id) {
+      if (!this.currentVerb)
+        return;
+      this.story.execute(this.currentVerb, id);
+      this.currentVerb = null;
+    }
+    alternativeClick(todo) {
+      this.story.chooseAlternative(todo);
+    }
+    dismissMessage() {
+      this.story.dismissMessage();
+    }
+    restart() {
+      this.story.restart();
+    }
+    async loadStory() {
+      let storySource;
+      if (this.props.storyUrl)
+        storySource = await fetchEx(this.props.storyUrl);
+      else if (this.props.storyStorageKey)
+        storySource = window.localStorage.getItem(this.props.storyStorageKey);
+      else if (this.props.storySessionKey)
+        storySource = window.sessionStorage.getItem(this.props.storySessionKey);
+      else
+        throw new Error("No story to load...");
+      let storyContent = import_yaml2.default.parse(storySource);
+      this.story = new Story(storyContent);
+      this.story.on("change", () => {
+        this.emit("change");
+      });
+      this.emit("change");
     }
   };
 
-  // src/app/AdvWorkers.js
-  var import_yaml2 = __toModule(require_yaml());
-  async function loadStory(update) {
-    let state;
-    state = update();
-    state.initialized = true;
-    update(state);
-    let storySource;
-    if (state.storyUrl)
-      storySource = await fetchEx(state.storyUrl);
-    else if (state.storyStorageKey)
-      storySource = window.localStorage.getItem(state.storyStorageKey);
-    else
-      throw new Error("No story to load...");
-    let storyContent = import_yaml2.default.parse(storySource);
-    state = update();
-    state.story = new Story(storyContent);
-    update(state);
-  }
-
-  // src/app/AdvGame.jsx
+  // src/game/AdvGame.jsx
   function AdvGame(props) {
-    let initialState = __spreadValues({
-      currentVerb: null
-    }, props);
-    let state = useReducibleState({
-      workers: AdvWorkers_exports,
-      reducers: AdvReducers_exports,
-      computers: AdvComputers,
-      initial: initialState
-    });
-    if (!state.initialized)
-      state.loadStory();
+    let model = useModel(AdvModel, props);
     return /* @__PURE__ */ v(ContentScaler, {
       width: "200",
       height: "300"
@@ -7653,7 +8199,7 @@ ${cbNode.commentBefore}` : cb;
     }, /* @__PURE__ */ v("div", {
       style: emAppStyle()
     }, /* @__PURE__ */ v(AdvView, {
-      state
+      model
     }))));
   }
 

@@ -50,6 +50,9 @@ export default class AdvModel extends EventDispatcher {
 		else if (this.props.storyStorageKey)
 			storySource=window.localStorage.getItem(this.props.storyStorageKey);
 
+		else if (this.props.storySessionKey)
+			storySource=window.sessionStorage.getItem(this.props.storySessionKey);
+
 		else
 			throw new Error("No story to load...");
 
