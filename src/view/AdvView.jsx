@@ -4,6 +4,7 @@ import AlertView from "./AlertView.jsx";
 import InventoryView from "./InventoryView.jsx";
 import HeaderView from "./HeaderView.jsx";
 import ChoiceView from "./ChoiceView.jsx";
+import MenuView from "./MenuView.jsx";
 import {emStyle} from "../utils/react-util.js";
 
 export default function AdvView(props) {
@@ -17,6 +18,7 @@ export default function AdvView(props) {
 				<VerbListView model={props.model} />
 				<ChoiceView model={props.model} />
 				<AlertView model={props.model} />
+				<MenuView model={props.model} />
 			</Fragment>
 		);
 	}

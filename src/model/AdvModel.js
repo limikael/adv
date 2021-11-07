@@ -37,8 +37,8 @@ export default class AdvModel extends EventDispatcher {
 		this.story.dismissMessage();
 	}
 
-	restart() {
-		this.story.restart();
+	async restart() {
+		this.loadStory();
 	}
 
 	async loadStory() {
@@ -56,6 +56,11 @@ export default class AdvModel extends EventDispatcher {
 		else
 			throw new Error("No story to load...");
 
+		if (this.story) {
+			this.story.removeAllListeners();
+			this.story=null;
+		}
+
 		let storyContent=yaml.parse(storySource);
 
 		this.story=new Story(storyContent);
@@ -63,6 +68,10 @@ export default class AdvModel extends EventDispatcher {
 			this.emit("change");
 		});
 		this.emit("change");
+	}
+
+	toggleMenu() {
+		this.menuVisible=!this.menuVisible;
 	}
 
 	dispatcher=(fn, ...args)=>{

@@ -150,6 +150,11 @@ export default class Story extends EventDispatcher {
 	}
 
 	restart=()=>{
+		if (this.messagePromise) {
+			this.messagePromise.reject("restarted");
+			this.messagePromise=null;
+		}
+
 		let spec=this.yaMachine.preprocess(JSON.parse(JSON.stringify(this.spec)));
 
 		this.dead=false;
@@ -235,7 +240,17 @@ export default class Story extends EventDispatcher {
 	async execute(verbId, objectId) {
 		let o=this.getObjectById(objectId);
 
-		await this.verbsById[verbId].execute(o);
+		try {
+			await this.verbsById[verbId].execute(o);
+		}
+
+		catch (e) {
+			if (e==="restarted") {
+				console.log("restarted, this is not an error..");
+			}
+
+			else throw e;
+		}
 		this.emit("change");
 
 		if (this.dead || this.getCompletePercentage()==100) {
