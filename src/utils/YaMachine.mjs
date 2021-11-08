@@ -1,3 +1,5 @@
+import {maybeAsync, isPromise} from "./promise-util.mjs";
+
 class YaMachineContext {
 	isReturned() {
 		return this.returned;
@@ -10,14 +12,6 @@ class YaMachineContext {
 
 	getReturnValue(v) {
 		return this.returnValue;
-	}
-
-	isAsync() {
-		return this.async;
-	}
-
-	setAsync(async) {
-		this.async=async;
 	}
 }
 
@@ -88,28 +82,6 @@ export default class YaMachine {
 			throw new Error("Unknown form: "+JSON.stringify(clause));
 	}
 
-	maybeAsync(isAsync, fn) {
-		let ret={};
-		let fnRet=fn(ret);
-
-		if (isAsync) {
-			return new Promise((resolve,reject)=>{
-				fnRet.then(()=>{
-					if (ret.error)
-						reject(ret.error)
-
-					else
-						resolve(ret.value);
-				})
-			});
-		}
-
-		if (ret.error)
-			throw ret.error;
-
-		return ret.value;
-	}
-
 	addFunction(name, fn) {
 		this.functions[name]=fn;
 	}
@@ -119,226 +91,240 @@ export default class YaMachine {
 	}
 
 	and(clause, context) {
-		return this.maybeAsync(context.isAsync(),async(ret)=>{
+		return maybeAsync(async(resolve, reject)=>{
 			try {
 				this.assertValidKeys(clause,["and"]);
 
 				if (!(clause.and instanceof Array))
 					throw new Error("and needs an array");
 
-				ret.value=true;
+				let ret=true;
 				for (let argPart of clause.and) {
-					if (ret.value) {
+					if (ret) {
 						let v=this.evalWithContext(argPart,context);
-						if (context.isAsync())
+						if (isPromise(v))
 							v=await v;
 
-						ret.value=(ret.value && this.castToBool(v));
+						ret=(ret && this.castToBool(v));
 					}
 				}
+
+				resolve(ret);
 			}
 
-			catch (e) { ret.error=e; }
+			catch (e) { reject(e); }
 		});
 	}
 
 	or(clause, context) {
-		return this.maybeAsync(context.isAsync(),async(ret)=>{
+		return maybeAsync(async(resolve, reject)=>{
 			try {
 				this.assertValidKeys(clause,["or"]);
 
 				if (!(clause.or instanceof Array))
 					throw new Error("or needs an array");
 
-				ret.value=false;
+				let ret=false;
 				for (let argPart of clause.or) {
-					if (!ret.value) {
+					if (!ret) {
 						let v=this.evalWithContext(argPart,context);
-						if (context.isAsync())
+						if (isPromise(v))
 							v=await v;
 
-						ret.value=(ret.value || this.castToBool(v));
+						ret=(ret || this.castToBool(v));
 					}
 				}
+
+				resolve(ret);
 			}
 
-			catch (e) { ret.error=e; }
+			catch (e) { reject(e); }
 		});
 	}
 
 	if(clause, context) {
-		return this.maybeAsync(context.isAsync(),async(ret)=>{
+		return maybeAsync(async(resolve, reject)=>{
 			try {
 				this.assertValidKeys(clause,["if","then","else"]);
 				let ifRes=this.evalWithContext(clause.if,context);
-				if (context.isAsync())
+				if (isPromise(ifRes))
 					ifRes=await ifRes;
 
 				ifRes=this.castToBool(ifRes);
 				if (ifRes && clause.then)
-					ret.value=this.evalWithContext(clause.then,context);
+					return resolve(this.evalWithContext(clause.then,context));
 
 				if (!ifRes && clause.else)
-					ret.value=this.evalWithContext(clause.else,context);
+					return resolve(this.evalWithContext(clause.else,context));
+
+				return resolve(undefined);
 			}
 
-			catch (e) { ret.error=e; }
+			catch (e) { reject(e); }
 		});
 	}
 
 	return(clause, context) {
-		return this.maybeAsync(context.isAsync(),async(ret)=>{
+		return maybeAsync(async(resolve, reject)=>{
 			try {
 				this.assertValidKeys(clause,["return"]);
 
 				if (context.isReturned())
-					ret.value=context.getReturnValue();
+					return resolve(context.getReturnValue());
 
 				let v=this.evalWithContext(clause.return,context);
-				if (context.isAsync())
+				if (isPromise(v))
 					v=await v;
 
 				context.setReturnValue(v);
-				ret.value=context.getReturnValue();
+				resolve(context.getReturnValue());
 			}
 
-			catch (e) { ret.error=e; }
+			catch (e) { reject(e); }
 		});
 	}
 
 	obj(clause, context) {
-		return this.maybeAsync(context.isAsync(),async(ret)=>{
+		return maybeAsync(async(resolve, reject)=>{
 			try {
 				this.assertValidKeys(clause,["obj"]);
 
+				let ret;
 				if (clause.obj instanceof Array)
-					ret.value=[];
+					ret=[];
 
 				else if ((typeof clause.obj)=="object")
-					ret.value={};
+					ret={};
 
 				else {
 					let v=this.evalWithContext(clause.obj,context);
-					if (context.isAsync())
+					if (isPromise(v))
 						v=await v;
 
-					ret.value=v;
-					return;
+					return resolve(v);
 				}
 
 				for (let c in clause.obj) {
 					let v=this.evalWithContext(clause.obj[c],context);
-					if (context.isAsync())
+					if (isPromise(v))
 						v=await v;
 
-					ret.value[c]=v;
+					ret[c]=v;
 				}
+
+				resolve(ret);
 			}
 
-			catch (e) { ret.error=e; }
+			catch (e) { reject(e); }
 		});
 	}
 
 	quote(clause, context) {
-		return this.maybeAsync(context.isAsync(),async(ret)=>{
+		return maybeAsync(async(resolve, reject)=>{
 			try {
 				this.assertValidKeys(clause,["quote"]);
-				ret.value=clause.quote;
+				return resolve(clause);
 			}
 
-			catch (e) { ret.error=e; }
+			catch (e) { reject(e); }
 		});
 	}
 
 	evalWithContext(clause, context) {
-		return this.maybeAsync(context.isAsync(),async(ret)=>{
+		return maybeAsync(async(resolve, reject)=>{
 			try {
 				if (context.isReturned())
-					ret.value=context.getReturnValue();
+					return resolve(context.getReturnValue());
 
 				else if (typeof clause=="string" ||
 						typeof clause=="boolean" ||
 						typeof clause=="number" ||
 						typeof clause=="undefined" ||
 						clause===null)
-					ret.value=clause;
+					return resolve(clause);
 
 				else if (clause instanceof Array) {
+					let ret;
+
 					for (let subClause of clause) {
 						if (!context.isReturned()) {
-							ret.value=this.evalWithContext(subClause,context);
-							if (context.isAsync())
-								ret.value=await ret.value;
+							ret=this.evalWithContext(subClause,context);
+							if (isPromise(ret))
+								ret=await ret;
 						}
 					}
 
 					if (context.isReturned())
-						ret.value=context.getReturnValue();
+						return resolve(context.getReturnValue());
+
+					resolve(ret);
 				}
 
 				else if (typeof clause=="object") {
+					let ret;
 					let fn=Object.keys(clause)[0];
 
 					if (this.special[fn]) {
-						ret.value=this.special[fn](clause,context);
-						if (context.isAsync())
-							ret.value=await ret.value;
+						ret=this.special[fn](clause,context);
+						if (isPromise(ret))
+							ret=await ret;
 
 						if (context.isReturned())
-							ret.value=context.getReturnValue();
+							ret=context.getReturnValue();
 					}
 
 					else if (this.macros[fn]) {
 						let form=this.macros[fn](clause);
-						ret.value=this.evalWithContext(form,context);
-						if (context.isAsync())
-							ret.value=await ret.value;
+						ret=this.evalWithContext(form,context);
+						if (isPromise(ret))
+							ret=await ret;
 
 						if (context.isReturned())
-							ret.value=context.getReturnValue();
+							ret=context.getReturnValue();
 					}
 
 					else if (this.functions[fn]) {
 						this.assertValidKeys(clause,[fn]);
 						let argClause=clause[fn];
 						let arg=this.evalWithContext(argClause,context);
-						if (context.isAsync())
+						if (isPromise(arg))
 							arg=await arg;
 
-						ret.value=this.functions[fn](arg);
-						if (context.isAsync())
-							ret.value=await ret.value;
-
-						if (ret.value instanceof Promise)
-							throw new Error("async not allowed");
+						ret=this.functions[fn](arg);
+						if (isPromise(ret))
+							ret=await ret;
 
 						if (context.isReturned())
-							ret.value=context.getReturnValue();
+							ret=context.getReturnValue();
 					}
 
 					else
 						throw new Error("Unknown form: "+JSON.stringify(clause));
+
+					resolve(ret);
 				}
 
 				else
 					throw new Error("Unknown form: "+JSON.stringify(clause));
 			}
 
-			catch (e) { ret.error=e; }
+			catch (e) { reject(e); }
 		});
 	}
 
 	evalSync(clause) {
 		let context=new YaMachineContext();
-		context.setAsync(false);
+		let v=this.evalWithContext(clause,context);
 
-		return this.evalWithContext(clause,context);
+		if (isPromise(v))
+			throw new Error("Async not allowed here");
+
+		return v;
 	}
 
-	evalAsync(clause) {
+	async evalAsync(clause) {
 		let context=new YaMachineContext();
-		context.setAsync(true);
 
-		return this.evalWithContext(clause,context);
+		return await this.evalWithContext(clause,context);
 	}
 }

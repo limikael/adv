@@ -1,44 +1,22 @@
 import Story from "../../src/model/Story.mjs";
-import yaml from "yaml";
 import fs from "fs";
+import {URL} from 'url';
+import {delay} from "../../src/utils/promise-util.mjs";
 
 describe("story",()=>{
-/*	it("works",()=>{
-		let story=new Story(yaml.parse(fs.readFileSync("./res/spec/morning_story.yaml","utf-8")));
+	it("handles parse errors",()=>{
+		let story=new Story("test: hello\ntest: hello2");
+		expect(story.getError().constructor.name).toEqual("YAMLSemanticError")
+	});
 
-		let bathroom=story.getObjectById("bathroom");
-		expect(bathroom.id).toEqual("bathroom");
+	it("can load a story",async ()=>{
+		let source=fs.readFileSync(new URL('./choice.yaml', import.meta.url).pathname);
+		let story=new Story(source);
+		expect(story.getError()).toEqual(undefined);
 
-		expect(story.getCurrentLocation().id).toEqual("bedroom");
+		//console.log("created, delaying");
+		await delay(0);
 
-		story.execute("goto","bathroom");
-		expect(story.getCurrentLocation().id).toEqual("bedroom");
-		expect(story.getMessage()).toContain("The dark room");
-		story.dismissMessage();
-		expect(story.getMessage()).toEqual(null);
-
-		story.execute("use","lamp");
-
-		expect(story.getObjectById("room lit").getValue()).toEqual(true);
-
-		story.execute("goto","bathroom");
-		expect(story.getCurrentLocation().id).toEqual("bedroom");
-		expect(story.getMessage()).toContain("too cold");
-		story.dismissMessage();
-
-		story.execute("use","slippers");
-		expect(story.getMessage()).toContain("need to pick them up");
-		story.dismissMessage();
-
-		story.execute("pickup","slippers");
-		story.execute("use","slippers");
-
-		story.dismissMessage();
-
-		story.execute("goto","bathroom");
-		expect(story.getCurrentLocation().id).toEqual("bathroom");
-
-		story.execute("lookat","lamp");
-		expect(story.getMessage()).toContain("lamp is simple and elegant");
-	});*/
+		expect(story.getMessage()).toEqual(["Welcome to the game."]);
+	});
 })

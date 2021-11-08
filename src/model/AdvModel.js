@@ -1,6 +1,5 @@
 import EventDispatcher from "events";
 import Story from "./Story.mjs";
-import yaml from "yaml";
 import {fetchEx} from "../utils/WebUtil.mjs";
 
 export default class AdvModel extends EventDispatcher {
@@ -90,10 +89,9 @@ export default class AdvModel extends EventDispatcher {
 			this.story=null;
 		}
 
-		//console.log(storySource);
-		let storyContent=yaml.parse(this.storySource);
-
-		this.story=new Story(storyContent);
+		console.log("creating story");
+		this.story=new Story(this.storySource);
+		console.log("story created");
 		this.story.on("change",()=>{
 			this.emit("change");
 		});
@@ -124,6 +122,12 @@ export default class AdvModel extends EventDispatcher {
 	}
 
 	getError() {
-		return this.error;
+		if (this.story)
+			return this.story.getError();
+
+		if (this.error)
+			return this.error;
+
+		return Error("No story loaded");
 	}
 }

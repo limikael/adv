@@ -19,7 +19,10 @@ describe("YaMachine",()=>{
 	it("async basic",async ()=>{
 		let y=new YaMachine();
 
-		y.addFunction("hello",async (s)=>s);
+		y.addFunction("hello",async (s)=>{
+			await delay(0);
+			return s;
+		});
 		let res=await y.evalAsync([
 			{hello: 1},
 			{hello: 2}
@@ -119,7 +122,7 @@ return: 123
 		expect(y.evalSync(y.preprocess(p))).toEqual(123);
 	});
 
-	it("checked for invalid keys",()=>{
+	it("checks for invalid keys",()=>{
 		let y=new YaMachine();
 
 		y.addFunction("hello",(s)=>s);
@@ -197,7 +200,7 @@ return: 123
 		];
 
 		let ret=y.evalAsync(p);
-		await delay(0);
+		//await delay(0);
 		expect(calls).toEqual(1);
 
 		resolver(123);
@@ -239,5 +242,28 @@ return: 123
 		let y=new YaMachine();
 
 		y.evalSync({quote: {if: "blupp", bla: [1,2,3]}})
+	});
+
+	it("works with or",async ()=>{
+		let y=new YaMachine();
+
+		y.addFunction("syncval",(s)=>{
+			return s;
+		});
+
+		expect(y.evalSync([
+			{or: [
+				{syncval: true},
+				{syncval: false}
+			]}
+		])).toEqual(true);
+
+		expect(y.evalSync(
+			{or: [false,false,false]}
+		)).toEqual(false);
+
+		expect(await y.evalAsync(
+			{or: [false,false,false]}
+		)).toEqual(false);
 	});
 })

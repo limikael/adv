@@ -7921,8 +7921,9 @@ ${cbNode.commentBefore}` : cb;
 
   // src/model/Story.mjs
   var import_events = __toModule(require_events());
+  var import_yaml2 = __toModule(require_yaml());
   var Story = class extends import_events.default {
-    constructor(spec) {
+    constructor(source) {
       super();
       __publicField(this, "restart", () => {
         if (this.messagePromise) {
@@ -7970,6 +7971,7 @@ ${cbNode.commentBefore}` : cb;
         this.currentMessage = null;
         this.yaMachine.evalAsync(this.getCurrentLocation().enter);
       });
+      let spec = import_yaml2.default.parse(source);
       this.spec = spec;
       this.name = "Interactive Fiction Game";
       this.completeMessage = "Thanks for playing!";
@@ -8273,10 +8275,12 @@ ${cbNode.commentBefore}` : cb;
       }
       this.applyingActions = null;
     }
+    getError() {
+      return null;
+    }
   };
 
   // src/model/AdvModel.js
-  var import_yaml2 = __toModule(require_yaml());
   var AdvModel = class extends import_events2.default {
     constructor(props) {
       super();
@@ -8349,8 +8353,9 @@ ${cbNode.commentBefore}` : cb;
         this.story.removeAllListeners();
         this.story = null;
       }
-      let storyContent = import_yaml2.default.parse(this.storySource);
-      this.story = new Story(storyContent);
+      console.log("creating story");
+      this.story = new Story(this.storySource);
+      console.log("story created");
       this.story.on("change", () => {
         this.emit("change");
       });
@@ -8369,7 +8374,11 @@ ${cbNode.commentBefore}` : cb;
       this.menuVisible = !this.menuVisible;
     }
     getError() {
-      return this.error;
+      if (this.story)
+        return this.story.getError();
+      if (this.error)
+        return this.error;
+      return Error("No story loaded");
     }
   };
 

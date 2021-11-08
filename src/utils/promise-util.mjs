@@ -17,3 +17,52 @@ export function createMethodPromise() {
 
 	return p;
 }
+
+export function maybeAsync(fn) {
+	let resolved,resolvedVal;
+	let rejected,rejectedVal;
+	let promise;
+
+	function resolve(v) {
+		resolved=true;
+		resolvedVal=v;
+	}
+
+	function reject(v) {
+		rejected=true;
+		rejectedVal=v;
+	}
+
+	promise=fn(resolve,reject);
+
+	if (resolved)
+		return resolvedVal;
+
+	if (rejected)
+		throw rejectedVal;
+
+	return new Promise((resolve, reject)=>{
+		promise.then(()=>{
+			if (resolved)
+				resolve(resolvedVal);
+
+			if (rejected)
+				reject(rejectedVal);
+
+			else
+				reject(Error("Function did not resolve or reject"));
+		}).catch((e)=>{
+			reject(e);
+		});
+	});
+}
+
+export function isPromise(p) {
+	if (p instanceof Promise)
+		return true;
+
+	if (p instanceof Object && p.hasOwnProperty("then"))
+		return true;
+
+	return false;
+}

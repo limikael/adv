@@ -5,15 +5,40 @@ import YaMachine from "../utils/YaMachine.mjs";
 import {createMethodPromise, delay} from "../utils/promise-util.mjs";
 import {createVerbs} from "./StoryVerbs.mjs";
 import EventDispatcher from "events";
+import yaml from "yaml";
 
 export default class Story extends EventDispatcher {
-	constructor(spec) {
+	constructor(source) {
 		super();
-		this.spec=spec;
+
+		try {
+			this.spec=yaml.parse(new String(source));
+		}
+
+		catch (e) {
+			this.error=e;
+			return;
+		}
+
 		this.name="Interactive Fiction Game";
 		this.completeMessage="Thanks for playing!";
 		this.actions=[];
+		this.setupYaMachine();
 
+		this.verbsById={};
+		for (let verb of createVerbs()) {
+			this.verbsById[verb.id]=verb;
+			verb.setStory(this);
+
+			this.yaMachine.addFunction(verb.id,async (arg)=>{
+				await this.execute(verb.id,arg);
+			});
+		}
+
+		this.restart();
+	}
+
+	setupYaMachine() {
 		let functions={
 			have: (id)=>{
 				return (this.getObjectById(id,"thing").location=="inventory")
@@ -126,18 +151,6 @@ export default class Story extends EventDispatcher {
 
 		for (let m in macros)
 			this.yaMachine.addMacro(m,macros[m].bind(this));
-
-		this.verbsById={};
-		for (let verb of createVerbs()) {
-			this.verbsById[verb.id]=verb;
-			verb.setStory(this);
-
-			this.yaMachine.addFunction(verb.id,async (arg)=>{
-				await this.execute(verb.id,arg);
-			});
-		}
-
-		this.restart();
 	}
 
 	getVerbs() {
@@ -209,6 +222,7 @@ export default class Story extends EventDispatcher {
 		this.currentLocationId=startId;
 		this.currentMessage=null;
 
+		//console.log("evaling enter..");
 		this.yaMachine.evalAsync(this.getCurrentLocation().enter);
 	}
 
@@ -475,5 +489,9 @@ export default class Story extends EventDispatcher {
 		}
 
 		this.applyingActions=null;
+	}
+
+	getError() {
+		return this.error;
 	}
 }
