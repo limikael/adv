@@ -1,4 +1,5 @@
 import {maybeAsync, isPromise} from "./promise-util.mjs";
+import yaml from "yaml";
 
 class YaMachineContext {
 	isReturned() {
@@ -12,6 +13,14 @@ class YaMachineContext {
 
 	getReturnValue(v) {
 		return this.returnValue;
+	}
+}
+
+class YaMachineError extends Error {
+	constructor(message, range) {
+		super(message);
+		this.name="YaMachineError";
+		this.range=range;
 	}
 }
 
@@ -39,16 +48,14 @@ export default class YaMachine {
 		let fn=Object.keys(o)[0];
 
 		for (let key in o)
-			if (!validKeys.includes(key))
+			if (!validKeys.includes(key) &&
+					key!="__sourceRange" &&
+					key!="__keySourceRange")
 				throw new Error("Unknown key "+key+" for call to "+fn);
 	}
 
 	preprocess(clause) {
-		if (typeof clause=="string" ||
-				typeof clause=="boolean" ||
-				typeof clause=="number" ||
-				typeof clause=="undefined" ||
-				clause===null)
+		if (this.isPrimitive(clause))
 			return clause;
 
 		else if (clause instanceof Array) {
@@ -69,6 +76,12 @@ export default class YaMachine {
 				for (let i=a.length-1; i>=1; i--) {
 					let newO={};
 					newO[a[i]]=o;
+
+					if (o) {
+						newO.__sourceRange=o.__keySourceRange;
+						newO.__keySourceRange=o.__keySourceRange;
+					}
+
 					o=newO;
 				}
 
@@ -230,17 +243,27 @@ export default class YaMachine {
 		});
 	}
 
+	isPrimitive(clause) {
+		if (typeof clause=="string" ||
+				typeof clause=="boolean" ||
+				typeof clause=="number" ||
+				typeof clause=="undefined" ||
+				clause===null)
+			return true;
+
+		if (clause instanceof String)
+			return true;
+
+		return false;
+	}
+
 	evalWithContext(clause, context) {
 		return maybeAsync(async(resolve, reject)=>{
 			try {
 				if (context.isReturned())
 					return resolve(context.getReturnValue());
 
-				else if (typeof clause=="string" ||
-						typeof clause=="boolean" ||
-						typeof clause=="number" ||
-						typeof clause=="undefined" ||
-						clause===null)
+				else if (this.isPrimitive(clause))
 					return resolve(clause);
 
 				else if (clause instanceof Array) {
@@ -299,7 +322,10 @@ export default class YaMachine {
 					}
 
 					else
-						throw new Error("Unknown form: "+JSON.stringify(clause));
+						throw new YaMachineError(
+							"Unknown function '"+fn+"'.",
+							clause[fn].__keySourceRange
+						);
 
 					resolve(ret);
 				}
@@ -326,5 +352,62 @@ export default class YaMachine {
 		let context=new YaMachineContext();
 
 		return await this.evalWithContext(clause,context);
+	}
+
+	toAnnotatedJS(doc) {
+		let ret;
+
+		//console.log(doc.constructor.name);
+		switch (doc.constructor.name) {
+			case "Document":
+				return this.toAnnotatedJS(doc.contents);
+				break;
+
+			case "YAMLSeq":
+				ret=[];
+
+				for(let item of doc.items)
+					ret.push(this.toAnnotatedJS(item));
+
+				ret.__sourceRange=doc.range;
+				return ret;
+				break;
+
+			case "YAMLMap":
+				ret={};
+
+				for(let item of doc.items) {
+					if (item.constructor.name!="Pair")
+						throw new Error("Expected pair");
+
+					let k=this.toAnnotatedJS(item.key);
+					let v=this.toAnnotatedJS(item.value);
+					v.__keySourceRange=k.__sourceRange;
+
+					ret[k]=v;
+				}
+
+				ret.__sourceRange=doc.range;
+				return ret;
+				break;
+
+			case "Scalar":
+				ret=new String(doc.value);
+				ret.__sourceRange=doc.range;
+				return ret;
+				break;
+
+			default:
+				throw new Error("Unknown YAML node type: "+doc.constructor.name);
+				break;
+		}
+	}
+
+	parseAndPreprocess(s) {
+		yaml.parse(s);
+		let doc=yaml.parseDocument(s);
+		let o=this.toAnnotatedJS(doc);
+
+		return this.preprocess(o);
 	}
 }

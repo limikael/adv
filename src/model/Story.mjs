@@ -13,29 +13,29 @@ export default class Story extends EventDispatcher {
 
 		try {
 			this.spec=yaml.parse(new String(source));
+
+			this.name="Interactive Fiction Game";
+			this.completeMessage="Thanks for playing!";
+			this.actions=[];
+			this.setupYaMachine();
+
+			this.verbsById={};
+			for (let verb of createVerbs()) {
+				this.verbsById[verb.id]=verb;
+				verb.setStory(this);
+
+				this.yaMachine.addFunction(verb.id,async (arg)=>{
+					await this.execute(verb.id,arg);
+				});
+			}
+
+			this.setupStory();
 		}
 
 		catch (e) {
 			this.error=e;
 			return;
 		}
-
-		this.name="Interactive Fiction Game";
-		this.completeMessage="Thanks for playing!";
-		this.actions=[];
-		this.setupYaMachine();
-
-		this.verbsById={};
-		for (let verb of createVerbs()) {
-			this.verbsById[verb.id]=verb;
-			verb.setStory(this);
-
-			this.yaMachine.addFunction(verb.id,async (arg)=>{
-				await this.execute(verb.id,arg);
-			});
-		}
-
-		this.restart();
 	}
 
 	setupYaMachine() {
@@ -163,22 +163,16 @@ export default class Story extends EventDispatcher {
 		return res;
 	}
 
-	restart=()=>{
-		if (this.messagePromise) {
-			this.messagePromise.reject("restarted");
-			this.messagePromise=null;
-		}
+	setupStory() {
+		this.spec=this.yaMachine.preprocess(this.spec);
 
-		let spec=this.yaMachine.preprocess(JSON.parse(JSON.stringify(this.spec)));
-
-		this.dead=false;
 		this.objectives=[];
 		this.objects=[];
 		this.storyVerbs=["goto","pickup"];
 
 		let startId;
 
-		for (let objectSpec of spec) {
+		for (let objectSpec of this.spec) {
 			let type=Object.keys(objectSpec)[0];
 
 			switch (type) {
@@ -268,6 +262,8 @@ export default class Story extends EventDispatcher {
 		this.emit("change");
 
 		if (this.dead || this.getCompletePercentage()==100) {
+			throw new Error("completion not yet implemented");
+
 			await this.message("Thanks for playing!");
 			this.restart();
 			this.emit("change");

@@ -7520,6 +7520,59 @@ ${cbNode.commentBefore}` : cb;
 
   // src/utils/YaMachine.mjs
   init_preact_shim();
+
+  // src/utils/promise-util.mjs
+  init_preact_shim();
+  function createMethodPromise() {
+    let resolve, reject;
+    let p4 = new Promise((argResolve, argReject) => {
+      resolve = argResolve;
+      reject = argReject;
+    });
+    p4.resolve = resolve;
+    p4.reject = reject;
+    return p4;
+  }
+  function maybeAsync(fn) {
+    let resolved, resolvedVal;
+    let rejected, rejectedVal;
+    let promise;
+    function resolve(v3) {
+      resolved = true;
+      resolvedVal = v3;
+    }
+    function reject(v3) {
+      rejected = true;
+      rejectedVal = v3;
+    }
+    promise = fn(resolve, reject);
+    if (resolved)
+      return resolvedVal;
+    if (rejected)
+      throw rejectedVal;
+    return new Promise((resolve2, reject2) => {
+      promise.then(() => {
+        if (resolved)
+          resolve2(resolvedVal);
+        if (rejected)
+          reject2(rejectedVal);
+        else
+          reject2(Error("Function did not resolve or reject"));
+      }).catch((e3) => {
+        reject2(e3);
+      });
+    });
+  }
+  function isPromise(p4) {
+    if (p4 instanceof Promise)
+      return true;
+    if (p4 instanceof Object && p4.hasOwnProperty("then"))
+      return true;
+    return false;
+  }
+
+  // src/utils/YaMachine.mjs
+  var import_yaml2 = __toModule(require_yaml());
   var YaMachineContext = class {
     isReturned() {
       return this.returned;
@@ -7531,11 +7584,12 @@ ${cbNode.commentBefore}` : cb;
     getReturnValue(v3) {
       return this.returnValue;
     }
-    isAsync() {
-      return this.async;
-    }
-    setAsync(async) {
-      this.async = async;
+  };
+  var YaMachineError = class extends Error {
+    constructor(message, range) {
+      super(message);
+      this.name = "YaMachineError";
+      this.range = range;
     }
   };
   var YaMachine = class {
@@ -7558,11 +7612,11 @@ ${cbNode.commentBefore}` : cb;
     assertValidKeys(o4, validKeys) {
       let fn = Object.keys(o4)[0];
       for (let key in o4)
-        if (!validKeys.includes(key))
+        if (!validKeys.includes(key) && key != "__sourceRange" && key != "__keySourceRange")
           throw new Error("Unknown key " + key + " for call to " + fn);
     }
     preprocess(clause) {
-      if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number" || typeof clause == "undefined" || clause === null)
+      if (this.isPrimitive(clause))
         return clause;
       else if (clause instanceof Array) {
         let res = [];
@@ -7577,6 +7631,10 @@ ${cbNode.commentBefore}` : cb;
           for (let i4 = a4.length - 1; i4 >= 1; i4--) {
             let newO = {};
             newO[a4[i4]] = o4;
+            if (o4) {
+              newO.__sourceRange = o4.__keySourceRange;
+              newO.__keySourceRange = o4.__keySourceRange;
+            }
             o4 = newO;
           }
           res[a4[0]] = o4;
@@ -7585,23 +7643,6 @@ ${cbNode.commentBefore}` : cb;
       } else
         throw new Error("Unknown form: " + JSON.stringify(clause));
     }
-    maybeAsync(isAsync, fn) {
-      let ret = {};
-      let fnRet = fn(ret);
-      if (isAsync) {
-        return new Promise((resolve, reject) => {
-          fnRet.then(() => {
-            if (ret.error)
-              reject(ret.error);
-            else
-              resolve(ret.value);
-          });
-        });
-      }
-      if (ret.error)
-        throw ret.error;
-      return ret.value;
-    }
     addFunction(name, fn) {
       this.functions[name] = fn;
     }
@@ -7609,192 +7650,235 @@ ${cbNode.commentBefore}` : cb;
       this.macros[name] = fn;
     }
     and(clause, context) {
-      return this.maybeAsync(context.isAsync(), async (ret) => {
+      return maybeAsync(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["and"]);
           if (!(clause.and instanceof Array))
             throw new Error("and needs an array");
-          ret.value = true;
+          let ret = true;
           for (let argPart of clause.and) {
-            if (ret.value) {
+            if (ret) {
               let v3 = this.evalWithContext(argPart, context);
-              if (context.isAsync())
+              if (isPromise(v3))
                 v3 = await v3;
-              ret.value = ret.value && this.castToBool(v3);
+              ret = ret && this.castToBool(v3);
             }
           }
+          resolve(ret);
         } catch (e3) {
-          ret.error = e3;
+          reject(e3);
         }
       });
     }
     or(clause, context) {
-      return this.maybeAsync(context.isAsync(), async (ret) => {
+      return maybeAsync(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["or"]);
           if (!(clause.or instanceof Array))
             throw new Error("or needs an array");
-          ret.value = false;
+          let ret = false;
           for (let argPart of clause.or) {
-            if (!ret.value) {
+            if (!ret) {
               let v3 = this.evalWithContext(argPart, context);
-              if (context.isAsync())
+              if (isPromise(v3))
                 v3 = await v3;
-              ret.value = ret.value || this.castToBool(v3);
+              ret = ret || this.castToBool(v3);
             }
           }
+          resolve(ret);
         } catch (e3) {
-          ret.error = e3;
+          reject(e3);
         }
       });
     }
     if(clause, context) {
-      return this.maybeAsync(context.isAsync(), async (ret) => {
+      return maybeAsync(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["if", "then", "else"]);
           let ifRes = this.evalWithContext(clause.if, context);
-          if (context.isAsync())
+          if (isPromise(ifRes))
             ifRes = await ifRes;
           ifRes = this.castToBool(ifRes);
           if (ifRes && clause.then)
-            ret.value = this.evalWithContext(clause.then, context);
+            return resolve(this.evalWithContext(clause.then, context));
           if (!ifRes && clause.else)
-            ret.value = this.evalWithContext(clause.else, context);
+            return resolve(this.evalWithContext(clause.else, context));
+          return resolve(void 0);
         } catch (e3) {
-          ret.error = e3;
+          reject(e3);
         }
       });
     }
     return(clause, context) {
-      return this.maybeAsync(context.isAsync(), async (ret) => {
+      return maybeAsync(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["return"]);
           if (context.isReturned())
-            ret.value = context.getReturnValue();
+            return resolve(context.getReturnValue());
           let v3 = this.evalWithContext(clause.return, context);
-          if (context.isAsync())
+          if (isPromise(v3))
             v3 = await v3;
           context.setReturnValue(v3);
-          ret.value = context.getReturnValue();
+          resolve(context.getReturnValue());
         } catch (e3) {
-          ret.error = e3;
+          reject(e3);
         }
       });
     }
     obj(clause, context) {
-      return this.maybeAsync(context.isAsync(), async (ret) => {
+      return maybeAsync(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["obj"]);
+          let ret;
           if (clause.obj instanceof Array)
-            ret.value = [];
+            ret = [];
           else if (typeof clause.obj == "object")
-            ret.value = {};
+            ret = {};
           else {
             let v3 = this.evalWithContext(clause.obj, context);
-            if (context.isAsync())
+            if (isPromise(v3))
               v3 = await v3;
-            ret.value = v3;
-            return;
+            return resolve(v3);
           }
           for (let c4 in clause.obj) {
             let v3 = this.evalWithContext(clause.obj[c4], context);
-            if (context.isAsync())
+            if (isPromise(v3))
               v3 = await v3;
-            ret.value[c4] = v3;
+            ret[c4] = v3;
           }
+          resolve(ret);
         } catch (e3) {
-          ret.error = e3;
+          reject(e3);
         }
       });
     }
     quote(clause, context) {
-      return this.maybeAsync(context.isAsync(), async (ret) => {
+      return maybeAsync(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["quote"]);
-          ret.value = clause.quote;
+          return resolve(clause);
         } catch (e3) {
-          ret.error = e3;
+          reject(e3);
         }
       });
     }
+    isPrimitive(clause) {
+      if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number" || typeof clause == "undefined" || clause === null)
+        return true;
+      if (clause instanceof String)
+        return true;
+      return false;
+    }
     evalWithContext(clause, context) {
-      return this.maybeAsync(context.isAsync(), async (ret) => {
+      return maybeAsync(async (resolve, reject) => {
         try {
           if (context.isReturned())
-            ret.value = context.getReturnValue();
-          else if (typeof clause == "string" || typeof clause == "boolean" || typeof clause == "number" || typeof clause == "undefined" || clause === null)
-            ret.value = clause;
+            return resolve(context.getReturnValue());
+          else if (this.isPrimitive(clause))
+            return resolve(clause);
           else if (clause instanceof Array) {
+            let ret;
             for (let subClause of clause) {
               if (!context.isReturned()) {
-                ret.value = this.evalWithContext(subClause, context);
-                if (context.isAsync())
-                  ret.value = await ret.value;
+                ret = this.evalWithContext(subClause, context);
+                if (isPromise(ret))
+                  ret = await ret;
               }
             }
             if (context.isReturned())
-              ret.value = context.getReturnValue();
+              return resolve(context.getReturnValue());
+            resolve(ret);
           } else if (typeof clause == "object") {
+            let ret;
             let fn = Object.keys(clause)[0];
             if (this.special[fn]) {
-              ret.value = this.special[fn](clause, context);
-              if (context.isAsync())
-                ret.value = await ret.value;
+              ret = this.special[fn](clause, context);
+              if (isPromise(ret))
+                ret = await ret;
               if (context.isReturned())
-                ret.value = context.getReturnValue();
+                ret = context.getReturnValue();
             } else if (this.macros[fn]) {
               let form = this.macros[fn](clause);
-              ret.value = this.evalWithContext(form, context);
-              if (context.isAsync())
-                ret.value = await ret.value;
+              ret = this.evalWithContext(form, context);
+              if (isPromise(ret))
+                ret = await ret;
               if (context.isReturned())
-                ret.value = context.getReturnValue();
+                ret = context.getReturnValue();
             } else if (this.functions[fn]) {
               this.assertValidKeys(clause, [fn]);
               let argClause = clause[fn];
               let arg = this.evalWithContext(argClause, context);
-              if (context.isAsync())
+              if (isPromise(arg))
                 arg = await arg;
-              ret.value = this.functions[fn](arg);
-              if (context.isAsync())
-                ret.value = await ret.value;
-              if (ret.value instanceof Promise)
-                throw new Error("async not allowed");
+              ret = this.functions[fn](arg);
+              if (isPromise(ret))
+                ret = await ret;
               if (context.isReturned())
-                ret.value = context.getReturnValue();
+                ret = context.getReturnValue();
             } else
-              throw new Error("Unknown form: " + JSON.stringify(clause));
+              throw new YaMachineError("Unknown function '" + fn + "'.", clause[fn].__keySourceRange);
+            resolve(ret);
           } else
             throw new Error("Unknown form: " + JSON.stringify(clause));
         } catch (e3) {
-          ret.error = e3;
+          reject(e3);
         }
       });
     }
     evalSync(clause) {
       let context = new YaMachineContext();
-      context.setAsync(false);
-      return this.evalWithContext(clause, context);
+      let v3 = this.evalWithContext(clause, context);
+      if (isPromise(v3))
+        throw new Error("Async not allowed here");
+      return v3;
     }
-    evalAsync(clause) {
+    async evalAsync(clause) {
       let context = new YaMachineContext();
-      context.setAsync(true);
-      return this.evalWithContext(clause, context);
+      return await this.evalWithContext(clause, context);
+    }
+    toAnnotatedJS(doc) {
+      let ret;
+      switch (doc.constructor.name) {
+        case "Document":
+          return this.toAnnotatedJS(doc.contents);
+          break;
+        case "YAMLSeq":
+          ret = [];
+          for (let item of doc.items)
+            ret.push(this.toAnnotatedJS(item));
+          ret.__sourceRange = doc.range;
+          return ret;
+          break;
+        case "YAMLMap":
+          ret = {};
+          for (let item of doc.items) {
+            if (item.constructor.name != "Pair")
+              throw new Error("Expected pair");
+            let k3 = this.toAnnotatedJS(item.key);
+            let v3 = this.toAnnotatedJS(item.value);
+            v3.__keySourceRange = k3.__sourceRange;
+            ret[k3] = v3;
+          }
+          ret.__sourceRange = doc.range;
+          return ret;
+          break;
+        case "Scalar":
+          ret = new String(doc.value);
+          ret.__sourceRange = doc.range;
+          return ret;
+          break;
+        default:
+          throw new Error("Unknown YAML node type: " + doc.constructor.name);
+          break;
+      }
+    }
+    parseAndPreprocess(s4) {
+      import_yaml2.default.parse(s4);
+      let doc = import_yaml2.default.parseDocument(s4);
+      let o4 = this.toAnnotatedJS(doc);
+      return this.preprocess(o4);
     }
   };
-
-  // src/utils/promise-util.mjs
-  init_preact_shim();
-  function createMethodPromise() {
-    let resolve, reject;
-    let p4 = new Promise((argResolve, argReject) => {
-      resolve = argResolve;
-      reject = argReject;
-    });
-    p4.resolve = resolve;
-    p4.reject = reject;
-    return p4;
-  }
 
   // src/model/StoryVerbs.mjs
   init_preact_shim();
@@ -7921,61 +8005,31 @@ ${cbNode.commentBefore}` : cb;
 
   // src/model/Story.mjs
   var import_events = __toModule(require_events());
-  var import_yaml2 = __toModule(require_yaml());
+  var import_yaml3 = __toModule(require_yaml());
   var Story = class extends import_events.default {
     constructor(source) {
       super();
-      __publicField(this, "restart", () => {
-        if (this.messagePromise) {
-          this.messagePromise.reject("restarted");
-          this.messagePromise = null;
+      try {
+        this.spec = import_yaml3.default.parse(new String(source));
+        this.name = "Interactive Fiction Game";
+        this.completeMessage = "Thanks for playing!";
+        this.actions = [];
+        this.setupYaMachine();
+        this.verbsById = {};
+        for (let verb of createVerbs()) {
+          this.verbsById[verb.id] = verb;
+          verb.setStory(this);
+          this.yaMachine.addFunction(verb.id, async (arg) => {
+            await this.execute(verb.id, arg);
+          });
         }
-        let spec = this.yaMachine.preprocess(JSON.parse(JSON.stringify(this.spec)));
-        this.dead = false;
-        this.objectives = [];
-        this.objects = [];
-        this.storyVerbs = ["goto", "pickup"];
-        let startId;
-        for (let objectSpec of spec) {
-          let type = Object.keys(objectSpec)[0];
-          switch (type) {
-            case "objectives":
-            case "name":
-            case "complete-message":
-            case "start":
-              if (objectSpec.name)
-                this.name = objectSpec.name;
-              if (objectSpec["complete-message"])
-                this.completeMessage = objectSpec["complete-message"];
-              if (objectSpec.objectives)
-                this.objectives = objectSpec.objectives;
-              if (objectSpec.start)
-                startId = objectSpec.start;
-              break;
-            case "verbs":
-              this.storyVerbs = objectSpec.verbs;
-              break;
-            default:
-              let o4 = new StoryObject(objectSpec);
-              o4.setStory(this);
-              this.objects.push(o4);
-              if (o4.things)
-                for (let object of o4.things)
-                  this.objects.push(object);
-              break;
-          }
-        }
-        if (!startId)
-          startId = this.getStartLocation().id;
-        this.currentLocationId = startId;
-        this.currentMessage = null;
-        this.yaMachine.evalAsync(this.getCurrentLocation().enter);
-      });
-      let spec = import_yaml2.default.parse(source);
-      this.spec = spec;
-      this.name = "Interactive Fiction Game";
-      this.completeMessage = "Thanks for playing!";
-      this.actions = [];
+        this.setupStory();
+      } catch (e3) {
+        this.error = e3;
+        return;
+      }
+    }
+    setupYaMachine() {
       let functions = {
         have: (id) => {
           return this.getObjectById(id, "thing").location == "inventory";
@@ -8067,15 +8121,6 @@ ${cbNode.commentBefore}` : cb;
         this.yaMachine.addFunction(f4, functions[f4].bind(this));
       for (let m3 in macros)
         this.yaMachine.addMacro(m3, macros[m3].bind(this));
-      this.verbsById = {};
-      for (let verb of createVerbs()) {
-        this.verbsById[verb.id] = verb;
-        verb.setStory(this);
-        this.yaMachine.addFunction(verb.id, async (arg) => {
-          await this.execute(verb.id, arg);
-        });
-      }
-      this.restart();
     }
     getVerbs() {
       let res = [];
@@ -8083,6 +8128,47 @@ ${cbNode.commentBefore}` : cb;
         if (this.storyVerbs.includes(verbId))
           res.push(this.verbsById[verbId]);
       return res;
+    }
+    setupStory() {
+      this.spec = this.yaMachine.preprocess(this.spec);
+      this.objectives = [];
+      this.objects = [];
+      this.storyVerbs = ["goto", "pickup"];
+      let startId;
+      for (let objectSpec of this.spec) {
+        let type = Object.keys(objectSpec)[0];
+        switch (type) {
+          case "objectives":
+          case "name":
+          case "complete-message":
+          case "start":
+            if (objectSpec.name)
+              this.name = objectSpec.name;
+            if (objectSpec["complete-message"])
+              this.completeMessage = objectSpec["complete-message"];
+            if (objectSpec.objectives)
+              this.objectives = objectSpec.objectives;
+            if (objectSpec.start)
+              startId = objectSpec.start;
+            break;
+          case "verbs":
+            this.storyVerbs = objectSpec.verbs;
+            break;
+          default:
+            let o4 = new StoryObject(objectSpec);
+            o4.setStory(this);
+            this.objects.push(o4);
+            if (o4.things)
+              for (let object of o4.things)
+                this.objects.push(object);
+            break;
+        }
+      }
+      if (!startId)
+        startId = this.getStartLocation().id;
+      this.currentLocationId = startId;
+      this.currentMessage = null;
+      this.yaMachine.evalAsync(this.getCurrentLocation().enter);
     }
     getStartLocation() {
       for (let object of this.objects)
@@ -8116,6 +8202,7 @@ ${cbNode.commentBefore}` : cb;
       await this.verbsById[verbId].execute(o4);
       this.emit("change");
       if (this.dead || this.getCompletePercentage() == 100) {
+        throw new Error("completion not yet implemented");
         await this.message("Thanks for playing!");
         this.restart();
         this.emit("change");
@@ -8276,7 +8363,7 @@ ${cbNode.commentBefore}` : cb;
       this.applyingActions = null;
     }
     getError() {
-      return null;
+      return this.error;
     }
   };
 

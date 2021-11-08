@@ -266,4 +266,23 @@ return: 123
 			{or: [false,false,false]}
 		)).toEqual(false);
 	});
+
+	it("knows line numbers",()=>{
+		let y=new YaMachine();
+
+		y.addFunction("syncval",(s)=>{
+			return s;
+		});
+
+		let s=`
+sync-val-test: bla
+`;
+
+		let o=y.parseAndPreprocess(s);
+
+		console.log(o);
+
+//		console.log(o[0].syncval.__keySourceRange);
+//		y.evalSync(o);
+	})
 })
