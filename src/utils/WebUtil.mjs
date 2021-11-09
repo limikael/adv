@@ -36,6 +36,7 @@ export async function fetchEx(url, options={}) {
 }
 
 export function linkify(text, processor) {
+	text=String(text);
 	/*console.log(text);
 	console.log(typeof text);*/
 

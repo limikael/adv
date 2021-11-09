@@ -16,7 +16,8 @@ export default function AlertView(props) {
 
 	let messages=[];
 	for (let message of props.model.story.getMessage())
-		messages.push(<p>{message}</p>);
+		if (message)
+			messages.push(<p>{String(message)}</p>);
 
 	fn=props.model.dispatcher("dismissMessage");
 	text="OK";

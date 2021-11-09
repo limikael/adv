@@ -13,7 +13,7 @@ class StoryVerb {
 		if (res instanceof StoryException)
 			return false;
 
-		if (typeof res=="string")
+		if (typeof res=="string" || res instanceof String)
 			await this.story.message(res);
 
 		return true;

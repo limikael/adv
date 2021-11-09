@@ -2,22 +2,26 @@ import StoryObject from "./StoryObject.mjs";
 import StoryException from "./StoryException.mjs";
 import StoryAlternative from "./StoryAlternative.mjs";
 import YaMachine from "../utils/YaMachine.mjs";
-import {createMethodPromise, delay} from "../utils/promise-util.mjs";
+import {createMethodPromise, delay, isPromise} from "../utils/promise-util.mjs";
 import {createVerbs} from "./StoryVerbs.mjs";
 import EventDispatcher from "events";
 import yaml from "yaml";
+import {lineNumberByCharIndex} from "../../src/utils/string-util.mjs";
 
 export default class Story extends EventDispatcher {
 	constructor(source) {
 		super();
 
 		try {
-			this.spec=yaml.parse(new String(source));
+			this.setupYaMachine();
+
+			this.source=new String(source);
+			this.spec=this.yaMachine.parse(this.source);
+//			this.spec=this.yaMachine.preprocess(yaml.parse(this.source));
 
 			this.name="Interactive Fiction Game";
 			this.completeMessage="Thanks for playing!";
 			this.actions=[];
-			this.setupYaMachine();
 
 			this.verbsById={};
 			for (let verb of createVerbs()) {
@@ -33,8 +37,20 @@ export default class Story extends EventDispatcher {
 		}
 
 		catch (e) {
-			this.error=e;
-			return;
+			this.setError(e);
+		}
+	}
+
+	setError(e) {
+		this.error=new Error();
+		this.error.message=e.message;
+		this.error.name=e.name;
+
+		if (e.source?.range?.start)
+			this.error.lineNumber=lineNumberByCharIndex(this.source,e.source.range.start);
+
+		if (e.range) {
+			this.error.lineNumber=lineNumberByCharIndex(this.source,e.range[0]);
 		}
 	}
 
@@ -164,8 +180,6 @@ export default class Story extends EventDispatcher {
 	}
 
 	setupStory() {
-		this.spec=this.yaMachine.preprocess(this.spec);
-
 		this.objectives=[];
 		this.objects=[];
 		this.storyVerbs=["goto","pickup"];
@@ -194,7 +208,14 @@ export default class Story extends EventDispatcher {
 					break;
 
 				case "verbs":
-					this.storyVerbs=objectSpec.verbs;
+					this.storyVerbs=[];
+
+					for (let verbId of objectSpec.verbs) {
+						if (!this.verbsById[verbId])
+							throw new Error("The verb "+verbId+" doesn't exist.");
+
+						this.storyVerbs.push(String(verbId));
+					}
 					break;
 
 				default:
@@ -216,8 +237,12 @@ export default class Story extends EventDispatcher {
 		this.currentLocationId=startId;
 		this.currentMessage=null;
 
-		//console.log("evaling enter..");
-		this.yaMachine.evalAsync(this.getCurrentLocation().enter);
+		let p=this.yaMachine.evalMaybeAsync(this.getCurrentLocation().enter);
+
+		if (isPromise(p))
+			p.catch((e)=>{
+				this.setError(e);
+			});
 	}
 
 	getStartLocation() {
@@ -227,13 +252,14 @@ export default class Story extends EventDispatcher {
 	}
 
 	getObjectById(id, type) {
-		for (let object of this.objects)
-			if (object.id==id) {
+		for (let object of this.objects) {
+			if (String(object.id)==id) {
 				if (type)
 					object.assertType(type);
 
 				return object;
 			}
+		}
 
 		return null;
 	}
@@ -258,7 +284,16 @@ export default class Story extends EventDispatcher {
 	async execute(verbId, objectId) {
 		let o=this.getObjectById(objectId);
 
-		await this.verbsById[verbId].execute(o);
+		try {
+			await this.verbsById[verbId].execute(o);
+		}
+
+		catch (e) {
+			this.setError(e);
+			this.emit("change");
+			throw e;
+		}
+
 		this.emit("change");
 
 		if (this.dead || this.getCompletePercentage()==100) {
@@ -271,6 +306,9 @@ export default class Story extends EventDispatcher {
 	}
 
 	async message(message) {
+//		console.log("doing message: "+message.toString());
+//		message="test";
+
 		if (this.currentMessage)
 			throw new Error("there is already a message");
 
@@ -375,7 +413,7 @@ export default class Story extends EventDispatcher {
 
 		for (let object of this.objects) {
 			if (object.type=="thing" &&
-					object.location==current.id &&
+					String(object.location)==String(current.id) &&
 					this.evalClause(object.exists))
 				res.push(object);
 		}
@@ -474,10 +512,14 @@ export default class Story extends EventDispatcher {
 
 		while (this.applyingActions.length) {
 			let action=this.applyingActions.shift();
-			if (this.isMessageAction(action))
+
+			if (action.action=="dismissMessage" && this.getMessage())
+				this.dismissMessage();
+
+			else if (this.isMessageAction(action))
 				throw new Error("Unexpected message action");
 
-			if (this.haveMoreActionsToApply())
+			else if (this.haveMoreActionsToApply())
 				await this.actionExecute(action.action,action.objectId);
 
 			else

@@ -49,8 +49,8 @@ export default class YaMachine {
 
 		for (let key in o)
 			if (!validKeys.includes(key) &&
-					key!="__sourceRange" &&
-					key!="__keySourceRange")
+					key!="__range" &&
+					key!="__keyRanges")
 				throw new Error("Unknown key "+key+" for call to "+fn);
 	}
 
@@ -68,25 +68,38 @@ export default class YaMachine {
 
 		else if (typeof clause=="object") {
 			let res={};
+			let keyRanges={};
 
 			for (let k in clause) {
-				let a=k.split("-");
-				let o=this.preprocess(clause[k]);
+				if (k!="__range" && k!="__keyRanges") {
+					let a=k.split("-");
+					let o=this.preprocess(clause[k]);
 
-				for (let i=a.length-1; i>=1; i--) {
-					let newO={};
-					newO[a[i]]=o;
+					for (let i=a.length-1; i>=1; i--) {
+						let newO={};
+						newO[a[i]]=o;
 
-					if (o) {
-						newO.__sourceRange=o.__keySourceRange;
-						newO.__keySourceRange=o.__keySourceRange;
+						if (o) {
+							newO.__range=clause.__range;
+
+							if (clause.__keyRanges) {
+								newO.__keyRanges={};
+								newO.__keyRanges[a[i]]=clause.__keyRanges[k];
+							}
+						}
+
+						o=newO;
 					}
 
-					o=newO;
-				}
+					res[a[0]]=o;
 
-				res[a[0]]=o;
+					if (clause.__keyRanges)
+						keyRanges[a[0]]=clause.__keyRanges[k];
+				}
 			}
+
+			res.__range=clause.__range;
+			res.__keyRanges=keyRanges;
 
 			return res;
 		}
@@ -202,20 +215,20 @@ export default class YaMachine {
 			try {
 				this.assertValidKeys(clause,["obj"]);
 
-				let ret;
-				if (clause.obj instanceof Array)
-					ret=[];
-
-				else if ((typeof clause.obj)=="object")
-					ret={};
-
-				else {
+				if (this.isPrimitive(clause.obj)) {
 					let v=this.evalWithContext(clause.obj,context);
 					if (isPromise(v))
 						v=await v;
 
 					return resolve(v);
 				}
+
+				let ret;
+				if (clause.obj instanceof Array)
+					ret=[];
+
+				else if ((typeof clause.obj)=="object")
+					ret={};
 
 				for (let c in clause.obj) {
 					let v=this.evalWithContext(clause.obj[c],context);
@@ -236,7 +249,7 @@ export default class YaMachine {
 		return maybeAsync(async(resolve, reject)=>{
 			try {
 				this.assertValidKeys(clause,["quote"]);
-				return resolve(clause);
+				return resolve(clause.quote);
 			}
 
 			catch (e) { reject(e); }
@@ -298,6 +311,7 @@ export default class YaMachine {
 
 					else if (this.macros[fn]) {
 						let form=this.macros[fn](clause);
+
 						ret=this.evalWithContext(form,context);
 						if (isPromise(ret))
 							ret=await ret;
@@ -324,7 +338,7 @@ export default class YaMachine {
 					else
 						throw new YaMachineError(
 							"Unknown function '"+fn+"'.",
-							clause[fn].__keySourceRange
+							clause.__keyRanges[fn]
 						);
 
 					resolve(ret);
@@ -334,7 +348,9 @@ export default class YaMachine {
 					throw new Error("Unknown form: "+JSON.stringify(clause));
 			}
 
-			catch (e) { reject(e); }
+			catch (e) {
+				reject(e);
+			}
 		});
 	}
 
@@ -354,10 +370,18 @@ export default class YaMachine {
 		return await this.evalWithContext(clause,context);
 	}
 
+	evalMaybeAsync(clause) {
+		let context=new YaMachineContext();
+
+		return this.evalWithContext(clause,context);
+	}
+
 	toAnnotatedJS(doc) {
 		let ret;
 
-		//console.log(doc.constructor.name);
+		if (doc===null)
+			return doc;
+
 		switch (doc.constructor.name) {
 			case "Document":
 				return this.toAnnotatedJS(doc.contents);
@@ -369,12 +393,13 @@ export default class YaMachine {
 				for(let item of doc.items)
 					ret.push(this.toAnnotatedJS(item));
 
-				ret.__sourceRange=doc.range;
+				ret.__range=doc.range;
 				return ret;
 				break;
 
 			case "YAMLMap":
 				ret={};
+				let keyRanges={};
 
 				for(let item of doc.items) {
 					if (item.constructor.name!="Pair")
@@ -382,18 +407,20 @@ export default class YaMachine {
 
 					let k=this.toAnnotatedJS(item.key);
 					let v=this.toAnnotatedJS(item.value);
-					v.__keySourceRange=k.__sourceRange;
 
 					ret[k]=v;
+					keyRanges[k]=k.__range;
 				}
 
-				ret.__sourceRange=doc.range;
+				ret.__range=doc.range;
+				ret.__keyRanges=keyRanges;
+
 				return ret;
 				break;
 
 			case "Scalar":
 				ret=new String(doc.value);
-				ret.__sourceRange=doc.range;
+				ret.__range=doc.range;
 				return ret;
 				break;
 
@@ -403,11 +430,23 @@ export default class YaMachine {
 		}
 	}
 
-	parseAndPreprocess(s) {
-		yaml.parse(s);
-		let doc=yaml.parseDocument(s);
-		let o=this.toAnnotatedJS(doc);
+	parse(s, options={}) {
+		if (!options.hasOwnProperty("annotate"))
+			options.annotate=true;
 
-		return this.preprocess(o);
+		if (!options.hasOwnProperty("preprocess"))
+			options.preprocess=true;
+
+		let o=yaml.parse(s);
+
+		if (options.annotate) {
+			let doc=yaml.parseDocument(s);
+			o=this.toAnnotatedJS(doc);
+		}
+
+		if (options.preprocess)
+			o=this.preprocess(o);
+
+		return o;
 	}
 }

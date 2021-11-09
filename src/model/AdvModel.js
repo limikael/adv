@@ -37,9 +37,11 @@ export default class AdvModel extends EventDispatcher {
 
 	dismissMessage() {
 		this.story.dismissMessage();
+		console.log("after dismiss, num actions="+this.story.getActions().length);
 	}
 
 	async refresh() {
+		console.log("enter refresh, num actions="+this.story.getActions().length);
 		if (!this.story)
 			return await this.safeLoadStory();
 
@@ -47,6 +49,8 @@ export default class AdvModel extends EventDispatcher {
 			this.error=null;
 			let actions=this.story.getActions();
 			await this.loadStory();
+			console.log("will apply, num actions="+actions.length);
+			console.log(actions);
 			await this.story.applyActions(actions);
 			this.emit("change");
 		}
@@ -89,9 +93,7 @@ export default class AdvModel extends EventDispatcher {
 			this.story=null;
 		}
 
-		console.log("creating story");
 		this.story=new Story(this.storySource);
-		console.log("story created");
 		this.story.on("change",()=>{
 			this.emit("change");
 		});
@@ -122,11 +124,11 @@ export default class AdvModel extends EventDispatcher {
 	}
 
 	getError() {
-		if (this.story)
-			return this.story.getError();
-
 		if (this.error)
 			return this.error;
+
+		if (this.story)
+			return this.story.getError();
 
 		return Error("No story loaded");
 	}

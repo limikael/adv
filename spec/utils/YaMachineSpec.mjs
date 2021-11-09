@@ -2,18 +2,26 @@ import YaMachine from "../../src/utils/YaMachine.mjs";
 import yaml from "yaml";
 import fs from "fs";
 import {delay} from "../../src/utils/promise-util.mjs";
+import {lineNumberByCharIndex} from "../../src/utils/string-util.mjs";
+import util from "util";
 
 describe("YaMachine",()=>{
+	function reparse(o) {
+		let y=new YaMachine();
+
+		return y.parse(yaml.stringify(o))
+	}
+
 	it("basic",()=>{
 		let y=new YaMachine();
 
 		y.addFunction("hello",(s)=>s);
-		let res=y.evalSync([
+		let res=y.evalSync(reparse([
 			{hello: 1},
 			{hello: 2}
-		]);
+		]));
 
-		expect(res).toEqual(2);
+		expect(res).toEqual("2");
 	});
 
 	it("async basic",async ()=>{
@@ -44,13 +52,13 @@ describe("YaMachine",()=>{
 				return true;
 		});
 
-		let p={
+		let p=[{
 			if: {having: "thing"},
 			then: "hello",
 			else: "world"
-		};
+		}];
 
-		expect(y.evalSync(p)).toEqual("hello");
+		expect(y.evalSync(reparse(p))).toEqual("hello");
 		expect(await y.evalAsync(p)).toEqual("hello");
 
 		let pa={
@@ -141,20 +149,26 @@ return: 123
 	});
 
 	it("can make arrays",()=>{
-		let p=yaml.parse(`
-- if-hello: test
-  then-obj:
-  - hello: a
-  - b
-  - c
-`);
+		let p=[{
+			"if-hello": "test",
+			"then-obj": [
+				{hello: "a"},
+				"b",
+				"c"
+			]
+		}];
+
+		//console.log(yaml.stringify(p));
 
 		let y=new YaMachine();
 		y.addFunction("hello",(s)=>{
 			return s;
 		});
 
-		p=y.preprocess(p);
+		p=reparse(p);
+		//y.preprocess(p);
+
+		//console.log(p);
 
 		let a=y.evalSync(p);
 		expect(a).toEqual(["a","b","c"]);
@@ -278,11 +292,42 @@ return: 123
 sync-val-test: bla
 `;
 
-		let o=y.parseAndPreprocess(s);
+		let o=y.parse(s);
 
-		console.log(o);
+//		console.log(o);
+	});
 
-//		console.log(o[0].syncval.__keySourceRange);
-//		y.evalSync(o);
+	it("knows line numbers",()=>{
+		let y=new YaMachine();
+
+		y.addFunction("syncval",(s)=>{
+			return s;
+		});
+
+		let s=`- bla: 2
+- bli: 5
+- test: 1
+  test: 2
+  test: 3`;
+
+		let o;
+		try {
+			o=y.parse(s);
+		}
+
+		catch (e) {
+			expect(e.toString()).toContain("Map keys must be unique");
+			expect(lineNumberByCharIndex(s,e.source.range.start)).toEqual(3);
+		}
+	});
+
+	it("parses",()=>{
+		let y=new YaMachine();
+		let p=[{
+			location: "test",
+			"enter-with-message": "hello"
+		}];
+
+		//console.log(util.inspect(reparse(p), false, null, true));
 	})
 })

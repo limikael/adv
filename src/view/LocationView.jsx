@@ -47,7 +47,7 @@ export default function LocationView(props) {
 		return (
 			<a onclick={props.model.dispatcher("objectClick",object.id)}
 					{...accessible}>
-				{object.getName()}
+				{String(object.getName())}
 			</a>
 		);
 	}
@@ -57,10 +57,10 @@ export default function LocationView(props) {
 
 	let loc=props.model.story.getCurrentLocation();
 	if (loc.getHeader())
-		text.push(<p class="adv-location-top bg-primary">{loc.getHeader()}</p>);
+		text.push(<p class="adv-location-top bg-primary">{String(loc.getHeader())}</p>);
 
 	for (let desc of descs) {
-		desc=desc.toString();
+		desc=String(desc);
 		text.push(<p>{linkify(desc,storyLink)}</p>);
 	}
 

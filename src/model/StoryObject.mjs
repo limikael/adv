@@ -45,7 +45,9 @@ export default class StoryObject {
 				break;
 
 			default:
-				throw new Error("Unknown story object type: "+this.type);
+				let e=new Error("Unknown story object type: "+this.type);
+				e.range=spec.__range;
+				throw e;
 		}
 	}
 
@@ -63,8 +65,13 @@ export default class StoryObject {
 		}
 
 		for (let k in spec)
-			if (!defaults.hasOwnProperty(k))
-				throw new Error("Unknown property: "+k);
+			if (!defaults.hasOwnProperty(k) &&
+					k!="__range" &&
+					k!="__keyRanges") {
+				let e=new Error("Unknown property: '"+k+"' for "+this.type+".");
+				e.range=spec.__keyRanges[k];
+				throw e;
+			}
 	}
 
 	setStory(story) {

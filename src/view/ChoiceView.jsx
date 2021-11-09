@@ -16,8 +16,9 @@ export default function ChoiceView(props) {
 
 	let descriptions=[];
 	for (let message of props.model.story.getMessage())
-		if (!(message instanceof StoryAlternative))
-			descriptions.push(<p>{message}</p>);
+		if (!(message instanceof StoryAlternative)
+				&& message)
+			descriptions.push(<p>{String(message)}</p>);
 
 	let alternativeButtons=[];
 	let i=0;
@@ -26,7 +27,7 @@ export default function ChoiceView(props) {
 		alternativeButtons.push(
 			<button style={emStyle(1,top+3*i,14,3)} class="adv-btn bg-info text-white adv-bx"
 					onclick={props.model.dispatcher("alternativeClick",i)}>
-				{alternative.label}
+				{String(alternative.label)}
 			</button>
 		);
 
