@@ -28,25 +28,13 @@ export default function AdvGame(props) {
 	if (model.getError())
 		error=model.getError()
 
-	let gameContent;
-	if (error) {
-		gameContent=(
-			<ErrorView error={error}/>
-		);
-	}
-
-	else {
-		gameContent=(
-			<AdvView model={model}/>
-		);
-	}
-
+	console.log("render...");
 
 	return (
 		<ContentScaler width="200" height="300">
 			<div class="adv-main">
 				<div style={emAppStyle()}>
-					{gameContent}
+					<AdvView model={model} error={error}/>
 				</div>
 			</div>
 		</ContentScaler>

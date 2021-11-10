@@ -7250,14 +7250,24 @@ ${cbNode.commentBefore}` : cb;
   // src/view/HeaderView.jsx
   init_preact_shim();
   function HeaderView(props) {
-    let countScore = Math.round(useCountUp(props.model.story.getCompletePercentage(), true));
+    let percentage = 0;
+    let name = "Advide Game";
+    if (props.model.story && !props.model.getError()) {
+      name = props.model.story.getName();
+      percentage = props.model.story.getCompletePercentage();
+    }
+    let countScore = Math.round(useCountUp(percentage, true));
+    if (countScore)
+      countScore = countScore + "%";
+    else
+      countScore = "";
     return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
       style: emStyle(0, 0, 19, 2),
       class: "adv-bx bg-black"
     }), /* @__PURE__ */ v("div", {
       style: emStyle(0, 0, 19, 2),
       class: "adv-bx adv-btn bg-black text-white text-center"
-    }, props.model.story.getName()), /* @__PURE__ */ v("a", {
+    }, name), /* @__PURE__ */ v("a", {
       style: emStyle(0, 0, 2, 2),
       class: "adv-bx text-center text-white adv-btn adv-menu-button",
       onclick: props.model.dispatcher("toggleMenu")
@@ -7266,7 +7276,7 @@ ${cbNode.commentBefore}` : cb;
     })), /* @__PURE__ */ v("div", {
       style: emStyle(14, 0, 5, 2),
       class: "adv-bx text-end text-white"
-    }, countScore, "%"));
+    }, countScore));
   }
 
   // src/view/ChoiceView.jsx
@@ -7326,7 +7336,8 @@ ${cbNode.commentBefore}` : cb;
     menuItems = {
       restart: "Restart",
       refresh: "Refresh",
-      undo: "Undo"
+      undo: "Undo",
+      redo: "Redo"
     };
     let menuButtons = [];
     let i4 = 0;
@@ -7358,10 +7369,7 @@ ${cbNode.commentBefore}` : cb;
     let lineText;
     if (error.lineNumber)
       lineText = "on line " + error.lineNumber;
-    return /* @__PURE__ */ v("div", {
-      style: emStyle(0, 0, 20, 30),
-      class: "bg-dark adv-bx"
-    }, /* @__PURE__ */ v("div", {
+    return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
       style: emStyle(0, 4, 19, 2),
       class: "text-warning"
     }, error.name), /* @__PURE__ */ v("div", {
@@ -7377,29 +7385,38 @@ ${cbNode.commentBefore}` : cb;
   }
 
   // src/view/AdvView.jsx
+  function StoryContent(props) {
+    return /* @__PURE__ */ v("div", null, /* @__PURE__ */ v(LocationView, {
+      model: props.model
+    }), /* @__PURE__ */ v(InventoryView, {
+      model: props.model
+    }), /* @__PURE__ */ v(VerbListView, {
+      model: props.model
+    }), /* @__PURE__ */ v(ChoiceView, {
+      model: props.model
+    }), /* @__PURE__ */ v(AlertView, {
+      model: props.model
+    }));
+  }
   function AdvView(props) {
     let storyContent;
-    if (props.model.story) {
-      storyContent = /* @__PURE__ */ v(d, null, /* @__PURE__ */ v(HeaderView, {
+    if (props.error)
+      storyContent = /* @__PURE__ */ v(ErrorView, {
+        error: props.error
+      });
+    else if (props.model.story) {
+      storyContent = /* @__PURE__ */ v(StoryContent, {
         model: props.model
-      }), /* @__PURE__ */ v(LocationView, {
-        model: props.model
-      }), /* @__PURE__ */ v(InventoryView, {
-        model: props.model
-      }), /* @__PURE__ */ v(VerbListView, {
-        model: props.model
-      }), /* @__PURE__ */ v(ChoiceView, {
-        model: props.model
-      }), /* @__PURE__ */ v(AlertView, {
-        model: props.model
-      }), /* @__PURE__ */ v(MenuView, {
-        model: props.model
-      }));
+      });
     }
     return /* @__PURE__ */ v("div", {
       style: emStyle(0, 0, 20, 30),
       class: "bg-dark adv-bx"
-    }, storyContent);
+    }, /* @__PURE__ */ v(HeaderView, {
+      model: props.model
+    }), storyContent, /* @__PURE__ */ v(MenuView, {
+      model: props.model
+    }));
   }
 
   // src/model/AdvModel.js
@@ -8062,7 +8079,6 @@ ${cbNode.commentBefore}` : cb;
         this.spec = this.yaMachine.parse(this.source);
         this.name = "Interactive Fiction Game";
         this.completeMessage = "Thanks for playing!";
-        this.actions = [];
         this.verbsById = {};
         for (let verb of createVerbs()) {
           this.verbsById[verb.id] = verb;
@@ -8257,13 +8273,6 @@ ${cbNode.commentBefore}` : cb;
     getCurrentLocationDescriptions() {
       return this.evalClauseArray(this.getCurrentLocation().description);
     }
-    async actionExecute(verbId, objectId) {
-      this.actions.push({
-        action: verbId,
-        objectId
-      });
-      await this.execute(verbId, objectId);
-    }
     async execute(verbId, objectId) {
       let o4 = this.getObjectById(objectId);
       try {
@@ -8290,7 +8299,6 @@ ${cbNode.commentBefore}` : cb;
         this.currentMessage = [message];
       let m3 = createMethodPromise();
       this.messagePromise = m3;
-      this.emit("change");
       if (this.applyingActions && this.applyingActions.length) {
         let action = this.applyingActions.shift();
         if (action.action == "dismissMessage") {
@@ -8302,13 +8310,16 @@ ${cbNode.commentBefore}` : cb;
           if (!this.getAlternatives())
             m3.reject("Bad story structure");
           else {
+            console.log("choosing alt: " + action.value);
             await this.chooseAlternative(action.value);
+            this.emit("change");
             m3.resolve();
           }
         } else {
           m3.reject("Bad story structure");
         }
       }
+      this.emit("change");
       return await m3;
     }
     getMessage() {
@@ -8326,9 +8337,6 @@ ${cbNode.commentBefore}` : cb;
       return alternatives;
     }
     dismissMessage() {
-      this.actions.push({
-        action: "dismissMessage"
-      });
       let p4 = this.messagePromise;
       this.currentMessage = null;
       this.messagePromise = null;
@@ -8337,10 +8345,6 @@ ${cbNode.commentBefore}` : cb;
       this.emit("change");
     }
     async chooseAlternative(index) {
-      this.actions.push({
-        action: "chooseAlternative",
-        index
-      });
       let p4 = this.messagePromise;
       let todo = this.getAlternatives()[index].do;
       this.currentMessage = null;
@@ -8431,9 +8435,10 @@ ${cbNode.commentBefore}` : cb;
         else if (this.isMessageAction(action))
           throw new Error("Unexpected message action");
         else if (this.haveMoreActionsToApply())
-          await this.actionExecute(action.action, action.value);
+          await this.execute(action.action, action.value);
         else
-          this.actionExecute(action.action, action.value);
+          this.execute(action.action, action.value);
+        this.emit("change");
       }
       this.applyingActions = null;
     }
@@ -8447,12 +8452,24 @@ ${cbNode.commentBefore}` : cb;
   var StoryHistory = class {
     constructor() {
       this.actions = [];
+      this.futureActions = [];
     }
     addAction(action, value) {
+      this.futureActions = [];
       this.actions.push({
         action,
         value
       });
+    }
+    undo() {
+      let action = this.actions.pop();
+      if (action)
+        this.futureActions.push(action);
+    }
+    redo() {
+      let action = this.futureActions.pop();
+      if (action)
+        this.actions.push(action);
     }
     async apply(story) {
       await story.applyActions(this.actions);
@@ -8483,7 +8500,7 @@ ${cbNode.commentBefore}` : cb;
       if (!this.currentVerb)
         return;
       this.storyHistory.addAction(this.currentVerb, id);
-      this.story.actionExecute(this.currentVerb, id).catch((e3) => {
+      this.story.execute(this.currentVerb, id).catch((e3) => {
         this.error = e3;
         this.emit("change");
       });
@@ -8502,6 +8519,10 @@ ${cbNode.commentBefore}` : cb;
     }
     async undo() {
       this.storyHistory.undo();
+      await this.loadStory();
+    }
+    async redo() {
+      this.storyHistory.redo();
       await this.loadStory();
     }
     async restart() {
@@ -8524,8 +8545,10 @@ ${cbNode.commentBefore}` : cb;
         this.story = null;
       }
       this.story = new Story(this.storySource);
+      console.log("applying history");
       if (!this.story.getError())
         await this.storyHistory.apply(this.story);
+      console.log("history applied");
       this.story.on("change", () => {
         this.emit("change");
       });
@@ -8561,16 +8584,7 @@ ${cbNode.commentBefore}` : cb;
     });
     if (model.getError())
       error = model.getError();
-    let gameContent;
-    if (error) {
-      gameContent = /* @__PURE__ */ v(ErrorView, {
-        error
-      });
-    } else {
-      gameContent = /* @__PURE__ */ v(AdvView, {
-        model
-      });
-    }
+    console.log("render...");
     return /* @__PURE__ */ v(ContentScaler, {
       width: "200",
       height: "300"
@@ -8578,7 +8592,10 @@ ${cbNode.commentBefore}` : cb;
       class: "adv-main"
     }, /* @__PURE__ */ v("div", {
       style: emAppStyle()
-    }, gameContent)));
+    }, /* @__PURE__ */ v(AdvView, {
+      model,
+      error
+    }))));
   }
 
   // src/advgame.jsx

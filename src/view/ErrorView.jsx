@@ -7,7 +7,7 @@ export default function ErrorView(props) {
 		lineText="on line "+error.lineNumber;
 
 	return (
-		<div style={emStyle(0,0,20,30)} class="bg-dark adv-bx">
+		<Fragment>
 			<div style={emStyle(0,4,19,2)} class="text-warning">
 				{error.name}
 			</div>
@@ -20,6 +20,6 @@ export default function ErrorView(props) {
 			<div style={emStyle(0,8,19,10)} class="text-white">
 				{error.message}
 			</div>
-		</div>
+		</Fragment>
 	)
 }

@@ -9,25 +9,34 @@ import ErrorView from "./ErrorView.jsx";
 import {emStyle, useIsValueChanged} from "../utils/react-util.js";
 import {useErrorBoundary} from "preact/hooks";
 
+function StoryContent(props) {
+	return (
+		<div>
+			<LocationView model={props.model} />
+			<InventoryView model={props.model} />
+			<VerbListView model={props.model} />
+			<ChoiceView model={props.model} />
+			<AlertView model={props.model} />
+		</div>
+	);	
+}
+
 export default function AdvView(props) {
 	let storyContent;
-	if (props.model.story) {
+	if (props.error)
 		storyContent=(
-			<Fragment>
-				<HeaderView model={props.model} />
-				<LocationView model={props.model} />
-				<InventoryView model={props.model} />
-				<VerbListView model={props.model} />
-				<ChoiceView model={props.model} />
-				<AlertView model={props.model} />
-				<MenuView model={props.model} />
-			</Fragment>
+			<ErrorView error={props.error} />
 		);
+
+	else if (props.model.story) {
+		storyContent=<StoryContent model={props.model}/>;
 	}
 
 	return (
 		<div style={emStyle(0,0,20,30)} class="bg-dark adv-bx">
+			<HeaderView model={props.model} />
 			{storyContent}
+			<MenuView model={props.model} />
 		</div>
 	);
 }

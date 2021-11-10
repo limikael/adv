@@ -7,7 +7,8 @@ export default function MenuView(props) {
 	menuItems={
 		restart: "Restart",
 		refresh: "Refresh",
-		undo: "Undo"
+		undo: "Undo",
+		redo: "Redo"
 	};
 
 	let menuButtons=[];

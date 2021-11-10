@@ -26,7 +26,7 @@ export default class AdvModel extends EventDispatcher {
 			return;
 
 		this.storyHistory.addAction(this.currentVerb,id);
-		this.story.actionExecute(this.currentVerb,id).catch((e)=>{
+		this.story.execute(this.currentVerb,id).catch((e)=>{
 			this.error=e;
 			this.emit("change");
 		});
@@ -50,6 +50,11 @@ export default class AdvModel extends EventDispatcher {
 
 	async undo() {
 		this.storyHistory.undo();
+		await this.loadStory();
+	}
+
+	async redo() {
+		this.storyHistory.redo();
 		await this.loadStory();
 	}
 
@@ -79,9 +84,11 @@ export default class AdvModel extends EventDispatcher {
 		}
 
 		this.story=new Story(this.storySource);
+		console.log("applying history");
 		if (!this.story.getError())
 			await this.storyHistory.apply(this.story);
 
+		console.log("history applied");
 		this.story.on("change",()=>{
 			this.emit("change");
 		});

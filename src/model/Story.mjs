@@ -17,11 +17,9 @@ export default class Story extends EventDispatcher {
 
 			this.source=new String(source);
 			this.spec=this.yaMachine.parse(this.source);
-//			this.spec=this.yaMachine.preprocess(yaml.parse(this.source));
 
 			this.name="Interactive Fiction Game";
 			this.completeMessage="Thanks for playing!";
-			this.actions=[];
 
 			this.verbsById={};
 			for (let verb of createVerbs()) {
@@ -272,15 +270,6 @@ export default class Story extends EventDispatcher {
 		return this.evalClauseArray(this.getCurrentLocation().description);
 	}
 
-	async actionExecute(verbId, objectId) {
-		this.actions.push({
-			action: verbId,
-			objectId: objectId
-		});
-
-		await this.execute(verbId, objectId);
-	}
-
 	async execute(verbId, objectId) {
 		let o=this.getObjectById(objectId);
 
@@ -306,9 +295,6 @@ export default class Story extends EventDispatcher {
 	}
 
 	async message(message) {
-//		console.log("doing message: "+message.toString());
-//		message="test";
-
 		if (this.currentMessage)
 			throw new Error("there is already a message");
 
@@ -320,7 +306,6 @@ export default class Story extends EventDispatcher {
 
 		let m=createMethodPromise();
 		this.messagePromise=m;
-		this.emit("change");
 
 		if (this.applyingActions && this.applyingActions.length) {
 			let action=this.applyingActions.shift();
@@ -338,7 +323,9 @@ export default class Story extends EventDispatcher {
 					m.reject("Bad story structure");
 
 				else {
+					console.log("choosing alt: "+action.value);
 					await this.chooseAlternative(action.value);
+					this.emit("change");
 					m.resolve();
 				}
 			}
@@ -347,6 +334,8 @@ export default class Story extends EventDispatcher {
 				m.reject("Bad story structure");
 			}
 		}
+
+		this.emit("change");
 
 		return await m;
 	}
@@ -371,10 +360,6 @@ export default class Story extends EventDispatcher {
 	}
 
 	dismissMessage() {
-		this.actions.push({
-			action: "dismissMessage"
-		});
-
 		let p=this.messagePromise;
 
 		this.currentMessage=null;
@@ -387,11 +372,6 @@ export default class Story extends EventDispatcher {
 	}
 
 	async chooseAlternative(index) {
-		this.actions.push({
-			action: "chooseAlternative",
-			index: index
-		});
-
 		let p=this.messagePromise;
 		let todo=this.getAlternatives()[index].do;
 
@@ -520,10 +500,12 @@ export default class Story extends EventDispatcher {
 				throw new Error("Unexpected message action");
 
 			else if (this.haveMoreActionsToApply())
-				await this.actionExecute(action.action,action.value);
+				await this.execute(action.action,action.value);
 
 			else
-				this.actionExecute(action.action,action.value);
+				this.execute(action.action,action.value);
+
+			this.emit("change");
 		}
 
 		this.applyingActions=null;
