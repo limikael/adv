@@ -8302,7 +8302,7 @@ ${cbNode.commentBefore}` : cb;
           if (!this.getAlternatives())
             m3.reject("Bad story structure");
           else {
-            await this.chooseAlternative(action.index);
+            await this.chooseAlternative(action.value);
             m3.resolve();
           }
         } else {
@@ -8406,7 +8406,7 @@ ${cbNode.commentBefore}` : cb;
       return percentage;
     }
     getName() {
-      return this.name;
+      return String(this.name);
     }
     getActions() {
       return this.actions;
@@ -8423,7 +8423,7 @@ ${cbNode.commentBefore}` : cb;
       return false;
     }
     async applyActions(actions) {
-      this.applyingActions = actions;
+      this.applyingActions = JSON.parse(JSON.stringify(actions));
       while (this.applyingActions.length) {
         let action = this.applyingActions.shift();
         if (action.action == "dismissMessage" && this.getMessage())
@@ -8431,14 +8431,31 @@ ${cbNode.commentBefore}` : cb;
         else if (this.isMessageAction(action))
           throw new Error("Unexpected message action");
         else if (this.haveMoreActionsToApply())
-          await this.actionExecute(action.action, action.objectId);
+          await this.actionExecute(action.action, action.value);
         else
-          this.actionExecute(action.action, action.objectId);
+          this.actionExecute(action.action, action.value);
       }
       this.applyingActions = null;
     }
     getError() {
       return this.error;
+    }
+  };
+
+  // src/model/StoryHistory.mjs
+  init_preact_shim();
+  var StoryHistory = class {
+    constructor() {
+      this.actions = [];
+    }
+    addAction(action, value) {
+      this.actions.push({
+        action,
+        value
+      });
+    }
+    async apply(story) {
+      await story.applyActions(this.actions);
     }
   };
 
@@ -8453,7 +8470,8 @@ ${cbNode.commentBefore}` : cb;
         };
       });
       this.props = props;
-      this.safeLoadStory();
+      this.storyHistory = new StoryHistory();
+      this.loadStory();
     }
     toggleCurrentVerb(verb) {
       if (this.currentVerb == verb)
@@ -8464,6 +8482,7 @@ ${cbNode.commentBefore}` : cb;
     objectClick(id) {
       if (!this.currentVerb)
         return;
+      this.storyHistory.addAction(this.currentVerb, id);
       this.story.actionExecute(this.currentVerb, id).catch((e3) => {
         this.error = e3;
         this.emit("change");
@@ -8471,37 +8490,22 @@ ${cbNode.commentBefore}` : cb;
       this.currentVerb = null;
     }
     alternativeClick(index) {
+      this.storyHistory.addAction("chooseAlternative", index);
       this.story.chooseAlternative(index);
     }
     dismissMessage() {
+      this.storyHistory.addAction("dismissMessage");
       this.story.dismissMessage();
-      console.log("after dismiss, num actions=" + this.story.getActions().length);
     }
     async refresh() {
-      console.log("enter refresh, num actions=" + this.story.getActions().length);
-      if (!this.story)
-        return await this.safeLoadStory();
-      try {
-        this.error = null;
-        let actions = this.story.getActions();
-        await this.loadStory();
-        console.log("will apply, num actions=" + actions.length);
-        console.log(actions);
-        await this.story.applyActions(actions);
-        this.emit("change");
-      } catch (e3) {
-        this.error = e3;
-        this.emit("change");
-      }
+      await this.loadStory();
     }
     async undo() {
-      let actions = this.story.getActions();
-      actions.pop();
+      this.storyHistory.undo();
       await this.loadStory();
-      await this.story.applyActions(actions);
-      this.emit("change");
     }
     async restart() {
+      this.storyHistory = new StoryHistory();
       await this.loadStory();
     }
     async loadStory() {
@@ -8520,19 +8524,12 @@ ${cbNode.commentBefore}` : cb;
         this.story = null;
       }
       this.story = new Story(this.storySource);
+      if (!this.story.getError())
+        await this.storyHistory.apply(this.story);
       this.story.on("change", () => {
         this.emit("change");
       });
       this.emit("change");
-    }
-    async safeLoadStory() {
-      try {
-        this.error = null;
-        await this.loadStory();
-      } catch (e3) {
-        this.error = e3;
-        this.emit("change");
-      }
     }
     toggleMenu() {
       this.menuVisible = !this.menuVisible;

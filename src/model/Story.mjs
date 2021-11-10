@@ -338,7 +338,7 @@ export default class Story extends EventDispatcher {
 					m.reject("Bad story structure");
 
 				else {
-					await this.chooseAlternative(action.index);
+					await this.chooseAlternative(action.value);
 					m.resolve();
 				}
 			}
@@ -484,7 +484,7 @@ export default class Story extends EventDispatcher {
 	}
 
 	getName() {
-		return this.name;
+		return String(this.name);
 	}
 
 	getActions() {
@@ -508,7 +508,7 @@ export default class Story extends EventDispatcher {
 	}
 
 	async applyActions(actions) {
-		this.applyingActions=actions;
+		this.applyingActions=JSON.parse(JSON.stringify(actions));
 
 		while (this.applyingActions.length) {
 			let action=this.applyingActions.shift();
@@ -520,10 +520,10 @@ export default class Story extends EventDispatcher {
 				throw new Error("Unexpected message action");
 
 			else if (this.haveMoreActionsToApply())
-				await this.actionExecute(action.action,action.objectId);
+				await this.actionExecute(action.action,action.value);
 
 			else
-				this.actionExecute(action.action,action.objectId);
+				this.actionExecute(action.action,action.value);
 		}
 
 		this.applyingActions=null;

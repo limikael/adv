@@ -1,5 +1,6 @@
 import EventDispatcher from "events";
 import Story from "./Story.mjs";
+import StoryHistory from "./StoryHistory.mjs";
 import {fetchEx} from "../utils/WebUtil.mjs";
 
 export default class AdvModel extends EventDispatcher {
@@ -7,8 +8,9 @@ export default class AdvModel extends EventDispatcher {
 		super();
 
 		this.props=props;
+		this.storyHistory=new StoryHistory();
 
-		this.safeLoadStory();
+		this.loadStory();
 	}
 
 	toggleCurrentVerb(verb) {
@@ -23,6 +25,7 @@ export default class AdvModel extends EventDispatcher {
 		if (!this.currentVerb)
 			return;
 
+		this.storyHistory.addAction(this.currentVerb,id);
 		this.story.actionExecute(this.currentVerb,id).catch((e)=>{
 			this.error=e;
 			this.emit("change");
@@ -32,44 +35,26 @@ export default class AdvModel extends EventDispatcher {
 	}
 
 	alternativeClick(index) {
+		this.storyHistory.addAction("chooseAlternative",index);
 		this.story.chooseAlternative(index);
 	}
 
 	dismissMessage() {
+		this.storyHistory.addAction("dismissMessage");
 		this.story.dismissMessage();
-		console.log("after dismiss, num actions="+this.story.getActions().length);
 	}
 
 	async refresh() {
-		console.log("enter refresh, num actions="+this.story.getActions().length);
-		if (!this.story)
-			return await this.safeLoadStory();
-
-		try {
-			this.error=null;
-			let actions=this.story.getActions();
-			await this.loadStory();
-			console.log("will apply, num actions="+actions.length);
-			console.log(actions);
-			await this.story.applyActions(actions);
-			this.emit("change");
-		}
-
-		catch (e) {
-			this.error=e;
-			this.emit("change");
-		}
+		await this.loadStory();
 	}
 
 	async undo() {
-		let actions=this.story.getActions();
-		actions.pop();
+		this.storyHistory.undo();
 		await this.loadStory();
-		await this.story.applyActions(actions);
-		this.emit("change");
 	}
 
 	async restart() {
+		this.storyHistory=new StoryHistory();
 		await this.loadStory();
 	}
 
@@ -94,22 +79,13 @@ export default class AdvModel extends EventDispatcher {
 		}
 
 		this.story=new Story(this.storySource);
+		if (!this.story.getError())
+			await this.storyHistory.apply(this.story);
+
 		this.story.on("change",()=>{
 			this.emit("change");
 		});
 		this.emit("change");
-	}
-
-	async safeLoadStory() {
-		try {
-			this.error=null;
-			await this.loadStory();
-		}
-
-		catch (e) {
-			this.error=e;
-			this.emit("change");
-		}
 	}
 
 	toggleMenu() {
