@@ -1,7 +1,21 @@
 export default class StoryObject {
 	constructor(spec) {
+		if (!spec ||
+				typeof spec != 'object' ||
+				spec.constructor !== Object) {
+			let e=new Error("This is not a proper object spec.");
+			e.range=spec.__range;
+			throw e;
+		}
+
 		this.type=Object.keys(spec)[0];
 		this.id=spec[this.type];
+
+		if (!this.id) {
+			let e=new Error("Object doesn't have an id.");
+			e.range=spec.__range;
+			throw e;
+		}
 
 		switch (this.type) {
 			case "thing":
@@ -126,7 +140,6 @@ export default class StoryObject {
 	}
 
 	async run() {
-		this.assertType("def");
-		return await this.story.yaMachine.evalAsync(this.do);
+		return await this.story.evalAsyncClause(this.do);
 	}
 }

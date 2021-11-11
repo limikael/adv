@@ -9,7 +9,7 @@ class StoryVerb {
 	}
 
 	async evalAndCheck(clause) {
-		let res=await this.story.yaMachine.evalAsync(clause);
+		let res=await this.story.evalAsyncClause(clause);
 		if (res instanceof StoryException)
 			return false;
 
@@ -52,7 +52,7 @@ class GotoVerb extends StoryVerb {
 			return;
 
 		if (object.type=="thing") {
-			await this.story.yaMachine.evalAsync(object.goto);
+			await this.story.evalAsyncClause(object.goto);
 		}
 
 		else {

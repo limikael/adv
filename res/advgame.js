@@ -7335,7 +7335,6 @@ ${cbNode.commentBefore}` : cb;
       return null;
     menuItems = {
       restart: "Restart",
-      refresh: "Refresh",
       undo: "Undo",
       redo: "Redo"
     };
@@ -7430,8 +7429,18 @@ ${cbNode.commentBefore}` : cb;
   init_preact_shim();
   var StoryObject = class {
     constructor(spec) {
+      if (!spec || typeof spec != "object" || spec.constructor !== Object) {
+        let e3 = new Error("This is not a proper object spec.");
+        e3.range = spec.__range;
+        throw e3;
+      }
       this.type = Object.keys(spec)[0];
       this.id = spec[this.type];
+      if (!this.id) {
+        let e3 = new Error("Object doesn't have an id.");
+        e3.range = spec.__range;
+        throw e3;
+      }
       switch (this.type) {
         case "thing":
           this.applySpec(spec, {
@@ -7532,8 +7541,7 @@ ${cbNode.commentBefore}` : cb;
       return this.story.evalClause(this.value);
     }
     async run() {
-      this.assertType("def");
-      return await this.story.yaMachine.evalAsync(this.do);
+      return await this.story.evalAsyncClause(this.do);
     }
   };
 
@@ -7599,6 +7607,11 @@ ${cbNode.commentBefore}` : cb;
     if (p4 instanceof Object && p4.hasOwnProperty("then"))
       return true;
     return false;
+  }
+  function waitForEvent(o4, ev) {
+    return new Promise((resolve, reject) => {
+      o4.once(ev, resolve);
+    });
   }
 
   // src/utils/YaMachine.mjs
@@ -7945,7 +7958,7 @@ ${cbNode.commentBefore}` : cb;
       this.story = story;
     }
     async evalAndCheck(clause) {
-      let res = await this.story.yaMachine.evalAsync(clause);
+      let res = await this.story.evalAsyncClause(clause);
       if (res instanceof StoryException)
         return false;
       if (typeof res == "string" || res instanceof String)
@@ -7979,7 +7992,7 @@ ${cbNode.commentBefore}` : cb;
       if (!await this.evalAndCheck(current.leave))
         return;
       if (object.type == "thing") {
-        await this.story.yaMachine.evalAsync(object.goto);
+        await this.story.evalAsyncClause(object.goto);
       } else {
         if (!await this.evalAndCheck(object.enter))
           return;
@@ -8074,11 +8087,17 @@ ${cbNode.commentBefore}` : cb;
     constructor(source) {
       super();
       try {
+        if (!String(source).trim()) {
+          let e3 = new Error("Hello! Type your story source to the left!");
+          e3.name = "Welcome";
+          throw e3;
+        }
         this.setupYaMachine();
         this.source = new String(source);
         this.spec = this.yaMachine.parse(this.source);
         this.name = "Interactive Fiction Game";
         this.completeMessage = "Thanks for playing!";
+        this.numAsyncRunning = 0;
         this.verbsById = {};
         for (let verb of createVerbs()) {
           this.verbsById[verb.id] = verb;
@@ -8099,9 +8118,10 @@ ${cbNode.commentBefore}` : cb;
       this.error.name = e3.name;
       if ((_b = (_a = e3.source) == null ? void 0 : _a.range) == null ? void 0 : _b.start)
         this.error.lineNumber = lineNumberByCharIndex(this.source, e3.source.range.start);
-      if (e3.range) {
+      if (e3.range)
         this.error.lineNumber = lineNumberByCharIndex(this.source, e3.range[0]);
-      }
+      if (e3.lineNumber)
+        this.error.lineNumber = e3.lineNumber;
     }
     setupYaMachine() {
       let functions = {
@@ -8208,7 +8228,11 @@ ${cbNode.commentBefore}` : cb;
       this.objects = [];
       this.storyVerbs = ["goto", "pickup"];
       let startId;
+      if (!Array.isArray(this.spec))
+        throw new Error("The story specification needs to be a YAML array of objects.");
       for (let objectSpec of this.spec) {
+        if (!objectSpec || typeof objectSpec != "object" || objectSpec.constructor !== Object)
+          throw new Error("The story specification needs to be a YAML array of objects.");
         let type = Object.keys(objectSpec)[0];
         switch (type) {
           case "objectives":
@@ -8242,8 +8266,11 @@ ${cbNode.commentBefore}` : cb;
             break;
         }
       }
-      if (!startId)
+      if (!startId) {
+        if (!this.getStartLocation())
+          throw new Error("Your story needs to have at least one location.");
         startId = this.getStartLocation().id;
+      }
       this.currentLocationId = startId;
       this.currentMessage = null;
       let p4 = this.yaMachine.evalMaybeAsync(this.getCurrentLocation().enter);
@@ -8274,23 +8301,30 @@ ${cbNode.commentBefore}` : cb;
       return this.evalClauseArray(this.getCurrentLocation().description);
     }
     async execute(verbId, objectId) {
+      if (this.getError())
+        return;
+      this.numAsyncRunning++;
       let o4 = this.getObjectById(objectId);
       try {
+        if (!o4)
+          throw new Error("No such object: " + objectId);
         await this.verbsById[verbId].execute(o4);
       } catch (e3) {
         this.setError(e3);
         this.emit("change");
-        throw e3;
       }
-      this.emit("change");
       if (this.dead || this.getCompletePercentage() == 100) {
         throw new Error("completion not yet implemented");
         await this.message("Thanks for playing!");
         this.restart();
         this.emit("change");
       }
+      this.numAsyncRunning--;
+      this.emit("change");
     }
     async message(message) {
+      if (this.getError())
+        return;
       if (this.currentMessage)
         throw new Error("there is already a message");
       if (message instanceof Array)
@@ -8299,26 +8333,6 @@ ${cbNode.commentBefore}` : cb;
         this.currentMessage = [message];
       let m3 = createMethodPromise();
       this.messagePromise = m3;
-      if (this.applyingActions && this.applyingActions.length) {
-        let action = this.applyingActions.shift();
-        if (action.action == "dismissMessage") {
-          if (this.getAlternatives())
-            m3.reject("Bad story structure");
-          else
-            this.dismissMessage();
-        } else if (action.action == "chooseAlternative") {
-          if (!this.getAlternatives())
-            m3.reject("Bad story structure");
-          else {
-            console.log("choosing alt: " + action.value);
-            await this.chooseAlternative(action.value);
-            this.emit("change");
-            m3.resolve();
-          }
-        } else {
-          m3.reject("Bad story structure");
-        }
-      }
       this.emit("change");
       return await m3;
     }
@@ -8345,14 +8359,23 @@ ${cbNode.commentBefore}` : cb;
       this.emit("change");
     }
     async chooseAlternative(index) {
+      if (this.getError())
+        return;
       let p4 = this.messagePromise;
       let todo = this.getAlternatives()[index].do;
       this.currentMessage = null;
       this.messagePromise = null;
       this.emit("change");
-      let v3 = await this.yaMachine.evalAsync(todo);
+      this.numAsyncRunning++;
+      let v3;
+      try {
+        v3 = await this.evalAsyncClause(todo);
+      } catch (e3) {
+        this.setError(e3);
+      }
       if (p4)
         p4.resolve(v3);
+      this.numAsyncRunning--;
       this.emit("change");
     }
     getThingsByCurrentLocation() {
@@ -8381,6 +8404,11 @@ ${cbNode.commentBefore}` : cb;
     }
     evalClause(clause) {
       return this.yaMachine.evalSync(clause);
+    }
+    async evalAsyncClause(clause) {
+      let res = await this.yaMachine.evalAsync(clause);
+      this.emit("change");
+      return res;
     }
     evalClauseArray(clauseArray) {
       let res = [];
@@ -8415,32 +8443,52 @@ ${cbNode.commentBefore}` : cb;
     getActions() {
       return this.actions;
     }
-    isMessageAction(action) {
-      if (action.action == "dismissMessage" || action.action == "chooseAlternative")
+    isUserInputState() {
+      if (this.getMessage())
+        return true;
+      if (this.numAsyncRunning == 0)
         return true;
       return false;
     }
-    haveMoreActionsToApply() {
-      for (let action in this.applyingActions)
-        if (!this.isMessageAction(action))
-          return true;
-      return false;
+    async waitForUserInputState() {
+      while (!this.isUserInputState())
+        await waitForEvent(this, "change");
     }
     async applyActions(actions) {
-      this.applyingActions = JSON.parse(JSON.stringify(actions));
-      while (this.applyingActions.length) {
-        let action = this.applyingActions.shift();
-        if (action.action == "dismissMessage" && this.getMessage())
-          this.dismissMessage();
-        else if (this.isMessageAction(action))
-          throw new Error("Unexpected message action");
-        else if (this.haveMoreActionsToApply())
-          await this.execute(action.action, action.value);
-        else
-          this.execute(action.action, action.value);
-        this.emit("change");
+      let lastActionString;
+      try {
+        for (let action of actions) {
+          if (!this.getError()) {
+            lastActionString = JSON.stringify(action);
+            await this.waitForUserInputState();
+            if (action.action == "dismissMessage") {
+              if (!this.getMessage())
+                throw new Error("nothing to dismiss!!!");
+              this.dismissMessage();
+            } else if (action.action == "chooseAlternative") {
+              if (!this.getAlternatives())
+                throw new Error("no alternatives");
+              if (!this.getMessage())
+                throw new Error("nothing to choose");
+              this.chooseAlternative(action.value);
+            } else {
+              if (this.getMessage())
+                throw new Error("didn't expect a dialog in this state");
+              this.execute(action.action, action.value);
+            }
+            await this.waitForUserInputState();
+          }
+        }
+        await this.waitForUserInputState();
+      } catch (e3) {
+        this.setError(e3);
       }
-      this.applyingActions = null;
+      if (this.getError()) {
+        let e3 = this.getError();
+        e3.message = "This error happened while restoring state, you can try undo or reset.\n\nWhen applying action: " + lastActionString + ":\n\n" + e3.message;
+        this.setError(e3);
+      }
+      this.emit("change");
     }
     getError() {
       return this.error;

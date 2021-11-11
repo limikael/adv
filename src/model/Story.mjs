@@ -2,7 +2,7 @@ import StoryObject from "./StoryObject.mjs";
 import StoryException from "./StoryException.mjs";
 import StoryAlternative from "./StoryAlternative.mjs";
 import YaMachine from "../utils/YaMachine.mjs";
-import {createMethodPromise, delay, isPromise} from "../utils/promise-util.mjs";
+import {createMethodPromise, delay, isPromise, waitForEvent} from "../utils/promise-util.mjs";
 import {createVerbs} from "./StoryVerbs.mjs";
 import EventDispatcher from "events";
 import yaml from "yaml";
@@ -13,13 +13,20 @@ export default class Story extends EventDispatcher {
 		super();
 
 		try {
+			if (!String(source).trim()) {
+				let e=new Error("Hello! Type your story source to the left!")
+				e.name="Welcome";
+
+				throw e;
+			}
+
 			this.setupYaMachine();
 
 			this.source=new String(source);
 			this.spec=this.yaMachine.parse(this.source);
-
 			this.name="Interactive Fiction Game";
 			this.completeMessage="Thanks for playing!";
+			this.numAsyncRunning=0;
 
 			this.verbsById={};
 			for (let verb of createVerbs()) {
@@ -47,9 +54,11 @@ export default class Story extends EventDispatcher {
 		if (e.source?.range?.start)
 			this.error.lineNumber=lineNumberByCharIndex(this.source,e.source.range.start);
 
-		if (e.range) {
+		if (e.range)
 			this.error.lineNumber=lineNumberByCharIndex(this.source,e.range[0]);
-		}
+
+		if (e.lineNumber)
+			this.error.lineNumber=e.lineNumber;
 	}
 
 	setupYaMachine() {
@@ -184,7 +193,15 @@ export default class Story extends EventDispatcher {
 
 		let startId;
 
+		if (!Array.isArray(this.spec))
+			throw new Error("The story specification needs to be a YAML array of objects.");
+
 		for (let objectSpec of this.spec) {
+			if (!objectSpec ||
+					typeof objectSpec != 'object' ||
+					objectSpec.constructor !== Object)
+				throw new Error("The story specification needs to be a YAML array of objects.");
+
 			let type=Object.keys(objectSpec)[0];
 
 			switch (type) {
@@ -229,8 +246,12 @@ export default class Story extends EventDispatcher {
 			}			
 		}
 
-		if (!startId)
+		if (!startId) {
+			if (!this.getStartLocation())
+				throw new Error("Your story needs to have at least one location.")
+
 			startId=this.getStartLocation().id;
+		}
 
 		this.currentLocationId=startId;
 		this.currentMessage=null;
@@ -271,19 +292,24 @@ export default class Story extends EventDispatcher {
 	}
 
 	async execute(verbId, objectId) {
+		if (this.getError())
+			return;
+
+		this.numAsyncRunning++;
+
 		let o=this.getObjectById(objectId);
 
 		try {
+			if (!o)
+				throw new Error("No such object: "+objectId);
+
 			await this.verbsById[verbId].execute(o);
 		}
 
 		catch (e) {
 			this.setError(e);
 			this.emit("change");
-			throw e;
 		}
-
-		this.emit("change");
 
 		if (this.dead || this.getCompletePercentage()==100) {
 			throw new Error("completion not yet implemented");
@@ -292,9 +318,15 @@ export default class Story extends EventDispatcher {
 			this.restart();
 			this.emit("change");
 		}
+
+		this.numAsyncRunning--;
+		this.emit("change");
 	}
 
 	async message(message) {
+		if (this.getError())
+			return;
+
 		if (this.currentMessage)
 			throw new Error("there is already a message");
 
@@ -306,35 +338,6 @@ export default class Story extends EventDispatcher {
 
 		let m=createMethodPromise();
 		this.messagePromise=m;
-
-		if (this.applyingActions && this.applyingActions.length) {
-			let action=this.applyingActions.shift();
-
-			if (action.action=="dismissMessage") {
-				if (this.getAlternatives())
-					m.reject("Bad story structure");
-
-				else
-					this.dismissMessage();
-			}
-
-			else if (action.action=="chooseAlternative") {
-				if (!this.getAlternatives())
-					m.reject("Bad story structure");
-
-				else {
-					console.log("choosing alt: "+action.value);
-					await this.chooseAlternative(action.value);
-					this.emit("change");
-					m.resolve();
-				}
-			}
-
-			else {
-				m.reject("Bad story structure");
-			}
-		}
-
 		this.emit("change");
 
 		return await m;
@@ -372,6 +375,9 @@ export default class Story extends EventDispatcher {
 	}
 
 	async chooseAlternative(index) {
+		if (this.getError())
+			return;
+
 		let p=this.messagePromise;
 		let todo=this.getAlternatives()[index].do;
 
@@ -379,11 +385,21 @@ export default class Story extends EventDispatcher {
 		this.messagePromise=null;
 		this.emit("change");
 
-		let v=await this.yaMachine.evalAsync(todo);
+		this.numAsyncRunning++;
+
+		let v;
+		try {
+			v=await this.evalAsyncClause(todo);
+		}
+
+		catch (e) {
+			this.setError(e);
+		}
 
 		if (p)
 			p.resolve(v);
 
+		this.numAsyncRunning--;
 		this.emit("change");
 	}
 
@@ -425,6 +441,13 @@ export default class Story extends EventDispatcher {
 
 	evalClause(clause) {
 		return this.yaMachine.evalSync(clause);
+	}
+
+	async evalAsyncClause(clause) {
+		let res=await this.yaMachine.evalAsync(clause);
+
+		this.emit("change");
+		return res;
 	}
 
 	evalClauseArray(clauseArray) {
@@ -471,44 +494,76 @@ export default class Story extends EventDispatcher {
 		return this.actions;
 	}
 
-	isMessageAction(action) {
-		if (action.action=="dismissMessage" ||
-				action.action=="chooseAlternative")
+	isUserInputState() {
+		if (this.getMessage())
+			return true;
+
+		if (this.numAsyncRunning==0)
 			return true;
 
 		return false;
 	}
 
-	haveMoreActionsToApply() {
-		for (let action in this.applyingActions)
-			if (!this.isMessageAction(action))
-				return true;
-
-		return false;
+	async waitForUserInputState() {
+		while (!this.isUserInputState())
+			await waitForEvent(this,"change");
 	}
 
 	async applyActions(actions) {
-		this.applyingActions=JSON.parse(JSON.stringify(actions));
+		let lastActionString;
 
-		while (this.applyingActions.length) {
-			let action=this.applyingActions.shift();
+		try {
+			for (let action of actions) {
+				if (!this.getError()) {
+					lastActionString=JSON.stringify(action);
 
-			if (action.action=="dismissMessage" && this.getMessage())
-				this.dismissMessage();
+					await this.waitForUserInputState();
 
-			else if (this.isMessageAction(action))
-				throw new Error("Unexpected message action");
+					if (action.action=="dismissMessage") {
+						if (!this.getMessage())
+							throw new Error("nothing to dismiss!!!");
 
-			else if (this.haveMoreActionsToApply())
-				await this.execute(action.action,action.value);
+						this.dismissMessage();
+					}
 
-			else
-				this.execute(action.action,action.value);
+					else if (action.action=="chooseAlternative") {
+						if (!this.getAlternatives())
+							throw new Error("no alternatives");
 
-			this.emit("change");
+						if (!this.getMessage())
+							throw new Error("nothing to choose");
+
+						this.chooseAlternative(action.value)
+					}
+
+					else {
+						if (this.getMessage())
+							throw new Error("didn't expect a dialog in this state");
+
+						this.execute(action.action,action.value);
+					}
+
+					await this.waitForUserInputState();
+				}
+			}
+
+			await this.waitForUserInputState();
 		}
 
-		this.applyingActions=null;
+		catch (e) {
+			this.setError(e);
+		}
+
+		if (this.getError()) {
+			let e=this.getError();
+			e.message=
+				"This error happened while restoring state, you can try undo or reset.\n\n"+
+				"When applying action: "+lastActionString+":\n\n"+
+				e.message;
+			this.setError(e);
+		}
+
+		this.emit("change");
 	}
 
 	getError() {

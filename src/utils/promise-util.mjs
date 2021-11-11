@@ -66,3 +66,9 @@ export function isPromise(p) {
 
 	return false;
 }
+
+export function waitForEvent(o, ev) {
+	return new Promise((resolve,reject)=>{
+		o.once(ev,resolve)
+	});
+}
