@@ -60,6 +60,7 @@
 #
 
 - location: command deck
+  header: on the command deck
   description:
   - You are standing on the command deck of your spaceship, as befits a captain like you.
     There is a door to your [quarters] behind you.
@@ -74,6 +75,7 @@
       should head to the nearest spaceship fuel station.
 
 - location: quarters
+  header: in your quarters
   name: personal captain's quarters
   description:
   - Ah, your personal quarters. You always withdraw here when things heat up out on the [command deck].
@@ -364,7 +366,11 @@
   description: The [holographic key] from the planet with the lethal barber shop sits next to the souvenirs.
   lookat:
   - It looks like a key
-  pickup: true
+  pickup:
+  - set: key found
+  - message:
+      As the aliens discuss what happened with Bob's head, you manage to find a holographic key
+      at the bottom of the box.
   use:
   - if-in: planet upstreet
     then-return:
@@ -376,11 +382,9 @@
         "Transport error. Reset performed."
     - goto: command deck
   - if-in: quarters
-    then-return:
-    - drop: holographic key
-    - You place the key next to your souvenirs on the shelf.
-
+    then-return-drop: holographic key
   - It doesn't seem to be usable here.
+  drop-message: You place the key next to your souvenirs on the shelf.
 
 - thing: box
   use-lookat: box
@@ -391,11 +395,7 @@
         looking tools.
     - if-state: bob dead
       then:
-      - set: key found
       - pickup: holographic key
-      - message:
-          As the aliens discuss what happened with Bob's head, you manage to find a holographic key
-          at the bottom of the box.
       else: You try to examine it more closely, but the creatures look at you suspiciously.
 
 - thing: garden door
@@ -447,6 +447,7 @@
 - thing: translation cartridge
   description: The [translation cartridge] from the planet with the robots also sits neatly on the shelf.
   pickup-message: Inside the compartment you find a translation cartridge.
+  drop-message: You place the cartridge next to your souvenirs on the shelf.
   lookat:
   - message:
     - It is a 72 pin cartridge, it fits into your translation device.
@@ -479,11 +480,8 @@
         The robots prepare a tank ship to service your vessel while it reaches the orbit,‭
         ‬and you signal to your ship's computer to transfer you back.
     - goto: command deck
-
   - if-in: quarters
-    then-return:
-    - message: You place the cartridge next to your souvenirs on the shelf.
-    - drop: translation cartridge
+    then-return-drop: translation cartridge
   - Can't use that here.
 
 # planet 2 desert
