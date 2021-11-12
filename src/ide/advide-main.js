@@ -1,6 +1,7 @@
 const {app, BrowserWindow, Menu, dialog, ipcMain}=require("electron");
 const {createIpcAppProxy}=require("../utils/electron-util.js");
 const fs=require("fs");
+const prompt=require("electron-prompt");
 
 app.whenReady().then(()=>{
 	let win=new BrowserWindow({
@@ -31,7 +32,7 @@ app.whenReady().then(()=>{
 		},{
 			label: "Open Story...",
 			click: async ()=>{
-				let fileInfo=await dialog.showOpenDialog({
+				let fileInfo=await dialog.showOpenDialog(win,{
 					properties: ['openFile'],
 					filters: fileFilters
 				});
@@ -47,7 +48,7 @@ app.whenReady().then(()=>{
 		},*/{
 			label: "Save As...",
 			click: async ()=>{
-				let fileInfo=await dialog.showSaveDialog({
+				let fileInfo=await dialog.showSaveDialog(win,{
 					filters: fileFilters
 				});
 
@@ -63,7 +64,22 @@ app.whenReady().then(()=>{
 		},{
 			role: "quit"
 		}]
-	},{
+	},/*{
+		label: "Edit",
+		submenu: [{
+			label: "Find...",
+			accelerator: "Ctrl+F",
+			click: async ()=>{
+				let searchString=await prompt({
+					title: "Find...",
+					label: "Find: ",
+					type: "input"
+				},win);
+
+				appProxy.find(searchString);
+			}
+		}]
+	},*/{
 		label: "Debug",
 		submenu: [{
 			label: "Open DevTools",

@@ -26,7 +26,11 @@
 - location: back room
   header: In the back room
   description:
-    You are in the back room, you can to to [test]...
+  - You are in the back room, you can to to [test]...
+  - There is a [back thing] here
+
+- thing: back thing
+  lookat-message: It is a back thing...
 
 - thing: lever
   description:
@@ -48,7 +52,9 @@
 - thing: ball
   description: There is a [ball] here.
   location: test
-  lookat: it is a ball
+  lookat:
+  - message: it is a toxic ball
+  - die: so toxic so you die...
   pickup: You pick it up
 
 - def: lever choice
@@ -64,3 +70,7 @@
     do:
     - reset: door open
     - Nothing interesting happens...
+
+- objectives:
+  - did-lookat: lever
+  - did-lookat: back thing

@@ -311,16 +311,19 @@ export default class Story extends EventDispatcher {
 			this.emit("change");
 		}
 
-		if (this.dead || this.getCompletePercentage()==100) {
+		/*if (this.dead || this.getCompletePercentage()==100) {
 			throw new Error("completion not yet implemented");
 
 			await this.message("Thanks for playing!");
-			this.restart();
 			this.emit("change");
-		}
+		}*/
 
 		this.numAsyncRunning--;
 		this.emit("change");
+	}
+
+	isFinished() {
+		return (this.dead || this.getCompletePercentage()==100)
 	}
 
 	async message(message) {

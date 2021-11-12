@@ -11,9 +11,8 @@ export default class AdvideModel extends EventEmitter {
 		this.ipcReceiver=createIpcRendererReceiver("advide",this);
 	}
 
-	onIpcRendererMessage=(ev, message)=>{
-		console.log(ev);
-		console.log(message);
+	find(searchString) {
+		console.log("finding: "+searchString);
 	}
 
 	loadSource(fileName) {

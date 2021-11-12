@@ -4,6 +4,7 @@ import {useRef,useLayoutEffect} from "react";
 
 import "ace-builds/src-noconflict/mode-yaml";
 import "ace-builds/src-noconflict/theme-vibrant_ink";
+import "ace-builds/src-noconflict/ext-searchbox";
 
 export default function AdvideView(props) {
 	let iframeRef=useRef();

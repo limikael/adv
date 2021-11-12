@@ -166,9 +166,10 @@
   - if-not-state: talked to crew member
     then:
     - set: talked to crew member
-    - seq:
-      - 'The crew member announces: "Another ship is approaching."'
-      - Hardly has she had time to say that, when your ship shakes and the lights blink.
+    - message: >
+        The crew member announces: "Another ship is approaching."
+    - message: >
+        Hardly has she had time to say that, when your ship shakes and the lights blink.
         "We have been shot!" Suddenly, your mission to transport passengers to a distant
         planet takes a different turn.
     else:
@@ -178,83 +179,85 @@
 # Choices
 #
 
-- choice: command choices
-  description:
-    The AI system of the ship has conveniently placed some typical options for this situation
-    on your personal screen.
-  alternatives:
-  - label: Red alert
-    exists-not-state: red alert
-    do:
-    - set: red alert
-    - A monotonous voice starts repeatedly announcing that a red alert has been declared.
-      Blinking red lights appear. The crew starts hustling and bustling around computers. Your
-      first officer says something, but you can’t hear it over the computerised alert
-      announcement.
+- def: command choices
+  do:
+  - message:
+    - The AI system of the ship has conveniently placed some typical options for this situation
+      on your personal screen.
+    - alternative: Red alert
+      exists-not-state: red alert
+      do:
+      - set: red alert
+      - A monotonous voice starts repeatedly announcing that a red alert has been declared.
+        Blinking red lights appear. The crew starts hustling and bustling around computers. Your
+        first officer says something, but you can’t hear it over the computerised alert
+        announcement.
 
-  - label: Cancel red alert
-    exists-state: red alert
-    do:
-    - reset: red alert
-    - >
-      The voice stops. The lights return to normal. Your first officer says:
-      "Thanks. I couldn’t hear the music on my headphones over that."
+    - alternative: Cancel red alert
+      exists-state: red alert
+      do:
+      - reset: red alert
+      - >
+        The voice stops. The lights return to normal. Your first officer says:
+        "Thanks. I couldn’t hear the music on my headphones over that."
 
-  - label: Take power from the shields for weapons
-    exists-not-state: weapons active
-    do:
-    - set: weapons active
-    - Your screen announces that the shields are now at 60% and that the weapons are ready.
+    - alternative: Take power from the shields for weapons
+      exists-not-state: weapons active
+      do:
+      - set: weapons active
+      - Your screen announces that the shields are now at 60% and that the weapons are ready.
 
-  - label: Activate weapons
-    exists-state: weapons active
-    do-seq:
-    - You can see strays of light shooting from your ship towards the enemy spaceship, which
-      is still too far to be seen.
-    - You don't have time to see if the weapons hit their target though, before another impact
-      shakes your ship.
-    - Life support systems are down! The first officer announces, and that’s the last thing you
-      hear.
+    - alternative: Activate weapons
+      exists-state: weapons active
+      do:
+      - message: 
+          You can see strays of light shooting from your ship towards the enemy spaceship, which
+          is still too far to be seen.
+      - message:
+          You don't have time to see if the weapons hit their target though, before another impact
+          shakes your ship.
+      - die: 
+          Life support systems are down! The first officer announces, and that’s the last thing you
+          hear.
 
-  - label: Disable weapons
-    exists-state: weapons active
-    do:
-    - reset: weapons active
-    - Your screen announces that the shields are now at 100%
+    - alternative: Disable weapons
+      exists-state: weapons active
+      do:
+      - reset: weapons active
+      - Your screen announces that the shields are now at 100%
 
-  - label: Activate escape sequence
-    do:
-    - set: escape sequence
-    - >
-      The computer announces: "Escape sequence activated!"
-      You feel a sharp jolt and the scenery outside the ship becomes filled with blurry white
-      lines.
-      "We are doing a jump!" the first officer states. "I wonder where!"
-      After only a few minutes, the white stripes outside turn into more star-like patterns.
+    - alternative: Activate escape sequence
+      do:
+      - set: escape sequence
+      - >
+        The computer announces: "Escape sequence activated!"
+        You feel a sharp jolt and the scenery outside the ship becomes filled with blurry white
+        lines.
+        "We are doing a jump!" the first officer states. "I wonder where!"
+        After only a few minutes, the white stripes outside turn into more star-like patterns.
 
-- choice: planet choice
-  description:
-    The map of the solar system has two planets, numbered Planet 1 and Planet 2.
-
-  alternatives:
-  - label: Plot a course for planet 1
-    do:
-    - if-state: planet 1 visited
-      then:
-      - After thinking about it for a while, you decide not to. You assess the risk of decapitation by
-        pan galactic barbers as too great.
-      else:
-      - goto: planet street
-      - You and two of your crew members, Shirley and Bob, teleports to the
-        surface of the planet.
-  - label: Plot a coutse for planet 2
-    do:
-    - if-state: planet 2 visited
-      then:
-      - Although the robots seemed happy, it is probably better to leave them alone.
-      else:
-      - goto: planet 2
-      - You and two of your crew members,‭ ‬Shirley and‭ ‬Jason,‭ ‬have been teleported to the surface of the planet.‭
+- def: planet choice
+  do:
+  - message:
+    - The map of the solar system has two planets, numbered Planet 1 and Planet 2.
+    - alternative: Plot a course for planet 1
+      do:
+      - if-state: planet 1 visited
+        then:
+        - After thinking about it for a while, you decide not to. You assess the risk of decapitation by
+          pan galactic barbers as too great.
+        else:
+        - goto: planet street
+        - You and two of your crew members, Shirley and Bob, teleports to the
+          surface of the planet.
+    - alternative: Plot a coutse for planet 2
+      do:
+      - if-state: planet 2 visited
+        then:
+        - Although the robots seemed happy, it is probably better to leave them alone.
+        else:
+        - goto: planet 2
+        - You and two of your crew members,‭ ‬Shirley and‭ ‬Jason,‭ ‬have been teleported to the surface of the planet.‭
 
 #
 # Planet 1
@@ -392,22 +395,22 @@
   use-spawn: planet street
   name: door
 
-- choice: haircut
-  description:
-    You sit on the chair, and the green alien says something that sounds like "GGGhhrrriijjk
-    bloooob". Your translation device automatically translates this to mean 
-    "Would you like a complete or superficial haircut, sir?"
-  alternatives:
-  - label: Complete
-    do-die: 
-      The barber alien reaches for the box and takes out a tool that looks like a laser wand.
-      You feel a sharp pain on your neck and see nothing more.
-  - label: Superficial
-    do:
-    - set: haircut done
-    - The barber alien reaches for the box and takes out a pair of very ordinary looking
-      scissors. After completing your haircut he holds out a mirror, and you can see that it’s a
-      very nice haircut indeed.
+- def: haircut
+  do:
+  - message:
+    - You sit on the chair, and the green alien says something that sounds like "GGGhhrrriijjk
+      bloooob". Your translation device automatically translates this to mean 
+      "Would you like a complete or superficial haircut, sir?"
+    - alternative: Complete
+      do-die:
+        The barber alien reaches for the box and takes out a tool that looks like a laser wand.
+        You feel a sharp pain on your neck and see nothing more.
+    - alternative: Superficial
+      do:
+      - set: haircut done
+      - The barber alien reaches for the box and takes out a pair of very ordinary looking
+        scissors. After completing your haircut he holds out a mirror, and you can see that it’s a
+        very nice haircut indeed.
 
 # planet 1 up the street
 
