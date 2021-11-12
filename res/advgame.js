@@ -7267,19 +7267,31 @@ ${cbNode.commentBefore}` : cb;
   init_preact_shim();
   function AlertView(props) {
     let ref = s3();
-    let message, fn, text;
+    let messages = [], fn, buttonText;
     h3(() => {
       if (ref.current)
         ref.current.scrollTop = 0;
     });
-    if (!props.model.story.getMessage() || props.model.story.getAlternatives())
+    if (props.model.story.isFinished()) {
+      if (props.model.story.dead)
+        messages.push(/* @__PURE__ */ v("p", {
+          class: "adv-location-top bg-danger"
+        }, "YOU DIED"));
+      else
+        messages.push(/* @__PURE__ */ v("p", {
+          class: "adv-location-top bg-success"
+        }, "GAME COMPLETE"));
+      messages.push(/* @__PURE__ */ v("p", null, "Thanks for playing!!!"));
+      fn = props.model.dispatcher("restart");
+      buttonText = "PLAY AGAIN";
+    } else if (props.model.story.getMessage() && !props.model.story.getAlternatives()) {
+      for (let message of props.model.story.getMessage())
+        if (message)
+          messages.push(/* @__PURE__ */ v("p", null, String(message)));
+      fn = props.model.dispatcher("dismissMessage");
+      buttonText = "OK";
+    } else
       return null;
-    let messages = [];
-    for (let message2 of props.model.story.getMessage())
-      if (message2)
-        messages.push(/* @__PURE__ */ v("p", null, String(message2)));
-    fn = props.model.dispatcher("dismissMessage");
-    text = "OK";
     return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
       class: "adv-modal-cover bg-body"
     }), /* @__PURE__ */ v("div", {
@@ -7293,7 +7305,7 @@ ${cbNode.commentBefore}` : cb;
       style: emStyle(3, 13, 10, 2),
       class: "adv-btn bg-info text-white adv-bx",
       onclick: fn
-    }, text)));
+    }, buttonText)));
   }
 
   // src/view/InventoryView.jsx
@@ -8151,7 +8163,7 @@ ${cbNode.commentBefore}` : cb;
           return this.getObjectById(id, "thing").location == "inventory";
         },
         in: (id) => {
-          return this.getCurrentLocation().id == id;
+          return String(this.getCurrentLocation().id) == String(id);
         },
         spawn: async (id) => {
           let o4 = this.getObjectById(id, "def");
@@ -8335,14 +8347,11 @@ ${cbNode.commentBefore}` : cb;
         this.setError(e3);
         this.emit("change");
       }
-      if (this.dead || this.getCompletePercentage() == 100) {
-        throw new Error("completion not yet implemented");
-        await this.message("Thanks for playing!");
-        this.restart();
-        this.emit("change");
-      }
       this.numAsyncRunning--;
       this.emit("change");
+    }
+    isFinished() {
+      return this.dead || this.getCompletePercentage() == 100;
     }
     async message(message) {
       if (this.getError())
@@ -8448,16 +8457,21 @@ ${cbNode.commentBefore}` : cb;
       return res;
     }
     getCompletePercentage() {
-      if (!this.objectives.length)
-        return 0;
-      let complete = 0;
-      for (let objectiveClause of this.objectives) {
-        let v3 = this.evalClause(objectiveClause);
-        if (v3 && !(v3 instanceof StoryException))
-          complete++;
+      try {
+        if (!this.objectives.length)
+          return 0;
+        let complete = 0;
+        for (let objectiveClause of this.objectives) {
+          let v3 = this.evalClause(objectiveClause);
+          if (v3 && !(v3 instanceof StoryException))
+            complete++;
+        }
+        let percentage = Math.round(100 * complete / this.objectives.length);
+        return percentage;
+      } catch (e3) {
+        this.setError(e3);
+        this.emit("change");
       }
-      let percentage = Math.round(100 * complete / this.objectives.length);
-      return percentage;
     }
     getName() {
       return String(this.name);

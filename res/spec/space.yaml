@@ -86,7 +86,7 @@
 
 - thing: bed
   goto-use: bed
-  use:
+  use: >
     Ah... You lie down on the bed. You relax a little, but the thought about space command
     calling you to check on your mission makes you nervous.
   lookat:
@@ -128,10 +128,11 @@
   - set: used screen
   - if-state: mission complete
     then-return:
-    - set: complete
-    - seq:
+    - message:
       - Hello, this is space command, we are calling to see how the mission is going.
+    - message:
       - You are too tired to answer and hang up. Enough for one day. You can worry about it tomorrow.
+    - set: complete
   - if-state: escape sequence
     then-return-spawn: planet choice
   - if-state: talked to crew member
@@ -256,8 +257,10 @@
         then:
         - Although the robots seemed happy, it is probably better to leave them alone.
         else:
+        - message: >
+            You and two of your crew members, Shirley and Jason,
+            have been teleported to the surface of the planet.
         - goto: planet 2
-        - You and two of your crew members,‭ ‬Shirley and‭ ‬Jason,‭ ‬have been teleported to the surface of the planet.‭
 
 #
 # Planet 1
@@ -276,15 +279,17 @@
       if-state: haircut done
       then:
       - set: bob dead
-      - seq:
-          - You look at Bob,‭ ‬your officer in his red uniform,‭ ‬who shrugs and approaches the chair and the alien.‭ 
-            ‬He sits on the chair and the green alien says something that sounds like‭ “‬GGGhhrrriijjk bloooob‭”‬.‭
-            ‬You can hear‭ ‬Bob’s translation device automatically translating this to mean‭
-            "‬Would you like a complete or superficial haircut,‭ ‬sir‭?"
-          - Bob says:‭ "Oh,‭ ‬nice,‭ ‬a complete one please.‭ ‬My hair is very overgrown at the moment.‭"
-          - The barber reaches for his‭ ‬box‭ ‬for what looks like a laser wand,‭ ‬and without ceremony cuts Bob’s head off with‭ ‬it,‭ ‬
-            as his body is still left sitting on the‭ ‬chair.‭ ‬
-            The alien seems a bit confused about the amount of blood spilled,‭ ‬and inspects its tool.
+      - message: >
+          You look at Bob,‭ ‬your officer in his red uniform,‭ ‬who shrugs and approaches the chair and the alien.‭ 
+          ‬He sits on the chair and the green alien says something that sounds like‭ “‬GGGhhrrriijjk bloooob‭”‬.‭
+          ‬You can hear‭ ‬Bob’s translation device automatically translating this to mean‭
+          "‬Would you like a complete or superficial haircut,‭ ‬sir‭?"
+      - message: >
+          Bob says: "Oh, nice, a complete one please. My hair is very overgrown at the moment"
+      - message: >
+          The barber reaches for his‭ ‬box‭ ‬for what looks like a laser wand,‭ ‬and without ceremony cuts Bob’s head off with‭ ‬it,‭ ‬
+          as his body is still left sitting on the‭ ‬chair.‭ ‬
+          The alien seems a bit confused about the amount of blood spilled,‭ ‬and inspects its tool.
       else:
         Why don't you try the haircut, sir?
     else:
@@ -311,19 +316,20 @@
   pickup-fail: Can't pick it up.
   lookat:
   - set: seen symbol
-  - seq:
-    - Your portable translation device tells you that the symbol above the door handle stands
+  - message: >
+      Your portable translation device tells you that the symbol above the door handle stands
       for "barber shop". The creatures on the street don’t even look at you when they keep
       walking on.
-    - As you examine the symbol you suddenly hear a mechanism click inside the door.
+  - message:
+      As you examine the symbol you suddenly hear a mechanism click inside the door.
 
 - thing: handle
   pickup-fail: Can't pick it up.
   use:
     - if-state: seen symbol
       then:
-      - spawn: planet garden
-      - As soon as you touch the handle, the door opens to an open garden.
+      - message: As soon as you touch the handle, the door opens to an open garden.
+      - goto: planet garden
       else:
       - Nothing happens, the door is firmly locked.
 
@@ -363,11 +369,12 @@
   - if-in: planet upstreet
     then-return:
     - set: key used
-    - spawn: command deck
-    - seq:
-      - The key seem to fit in the big doors. They slowly open to reveal what's on the other side.
-      - Suddenly you and Shirley are back inside your ship. The computer screen shows
+    - message:
+        The key seem to fit in the big doors. They slowly open to reveal what's on the other side.
+    - message:
+        Suddenly you and Shirley are back inside your ship. The computer screen shows
         "Transport error. Reset performed."
+    - goto: command deck
   - if-in: quarters
     then-return:
     - drop: holographic key
@@ -379,20 +386,21 @@
   use-lookat: box
   goto-lookat: box
   lookat:
-    seq:
-    - You approach the box, which is open from the top, and see that it’s full of strange
-      looking tools.
+    - message: 
+        You approach the box, which is open from the top, and see that it’s full of strange
+        looking tools.
     - if-state: bob dead
       then:
       - set: key found
       - pickup: holographic key
-      - As the aliens discuss what happened with Bob's head, you manage to find a holographic key
-        at the bottom of the box.
+      - message:
+          As the aliens discuss what happened with Bob's head, you manage to find a holographic key
+          at the bottom of the box.
       else: You try to examine it more closely, but the creatures look at you suspiciously.
 
 - thing: garden door
-  goto-spawn: planet street
-  use-spawn: planet street
+  goto-goto: planet street
+  use-goto: planet street
   name: door
 
 - def: haircut
@@ -438,45 +446,43 @@
 
 - thing: translation cartridge
   description: The [translation cartridge] from the planet with the robots also sits neatly on the shelf.
+  pickup-message: Inside the compartment you find a translation cartridge.
   lookat:
-  - seq:
+  - message:
     - It is a 72 pin cartridge, it fits into your translation device.
-    - >
-      By conincidence, the layout of the cartridge pins is exactly the same as was once used 
-      by a company called "Nindendo" located on a remote planet. It was only used for a short while,
-      roughly at the time when the planet had spun 1,980 times around its host star after
-      one man had been nailed to a tree for saying how great it would be to be nice to people for a change.
-    - But this story has nothing to do with that man, nor the company.
+  - message:
+      - By conincidence, the layout of the cartridge pins is exactly the same as was once used 
+        by a company called "Nindendo" located on a remote planet. 
+      - It was only used for a short while,
+        roughly at the time when the planet had spun 1,980 times around its host star after
+        one man had been nailed to a tree for saying how great it would be to be nice to people for a change.
+  - message:
+      But this story has nothing to do with that man, nor the company.
   use:
   - if-in: planet 2 buildings
     then-return:
     - set: translation done
-    - spawn: command deck
-    - seq:
-      - >
+    - message: >
         Shirley inserts the cartridge into her translator device, and starts a conversation with the robots.
         "‬Do you understand me‭?"
-
-      - >
+    - message: >
         The robots wait while one of them moves forward from behind the others.‭ ‬This one is bigger and dustier than many.‭ 
         It stops in front of you and says: "‬I understand.‭ ‬Are you looking for us‭?"
-
-      - >
+    - message: >
         "Perhaps‭..." ‬Shirley says cautiously.‭ "‬We need fuel for our spaceship."
-
-      - >
+    - message: >
         All the robots make a sound at the same time,‭ ‬a sound that sounds like‭ “‬brrrrrrr‭!”‬,‭ ‬and start wheeling,‭ 
         rattling and bouncing around Shirley.
-
-      - >
+    - message: >
         "‬We've got it‭!" ‬The boss robot says.‭ "‬We are the ones you were looking for.‭"
-
-      - >
+    - message: >
         The robots prepare a tank ship to service your vessel while it reaches the orbit,‭
         ‬and you signal to your ship's computer to transfer you back.
+    - goto: command deck
+
   - if-in: quarters
-    then-return-seq:
-    - You place the cartridge next to your souvenirs on the shelf.
+    then-return:
+    - message: You place the cartridge next to your souvenirs on the shelf.
     - drop: translation cartridge
   - Can't use that here.
 
@@ -510,8 +516,9 @@
     They are all talking in a strange language,‭ ‬but your translator device tells you what they are saying.‭ 
     They are all just repeating:‭ "Are you looking for me‭?"
   talkto:
-  - seq:
+  - message:
     - You wait for the robots to reach you.‭ ‬They all keep talking at the same time,‭ ‬repeating:‭ "‬Are you looking for me‭?"
+  - message:
     - The robots keep talking, but your translation device is unable to translate.
   pickup-fail: That's too dangerous!
 
@@ -545,29 +552,28 @@
 - thing: controls
   lookat:
   - set: found cartridge
+  - message: Examining the controls closely, you see that one panel is in fact a compartment for space gloves.
   - pickup: translation cartridge
-  - seq:
-    - Examining the controls closely, you see that one panel is in fact a compartment for space gloves.
-    - Inside the compartment you find a translation cartridge.
 
 - thing: command deck door
   name: door
-  use-spawn: planet 2 shuttles
-  goto-spawn: planet 2 shuttles
+  use-goto: planet 2 shuttles
+  goto-goto: planet 2 shuttles
   lookat: The door is still open.
 
 - thing: start switch
   use:
-  - die-seq:
-    - As soon as you have touched the ship’s start switch,‭ ‬it becomes alive.‭ 
+  - message: >
+      As soon as you have touched the ship’s start switch,‭ ‬it becomes alive.‭ 
       ‬The lights of the command deck turn on,‭ ‬and the computer starts speaking:‭ 
       "Biomarker incorrect.‭ ‬Say override password.‭"
-    - This keeps on going for a while.‭ 
+  - message: >
+      This keeps on going for a while.‭ 
       Then,‭ ‬suddenly,‭ ‬the ship’s doors shut behind you,‭ ‬and the computer message changes to:‭ "‬Calling security‭".
       Before you have time to react,‭ ‬three armed police robots teleport to the command deck behind you.
-    - >
+  - message: >
       "You are under arrest for attempted theft‭! ‬Calling the judge‭!"
       The robots surround you.‭ ‬Another robot with an old-fashioned judge’s wig materialises behind them.
-    - >
+  - die: >
       "‬Guilty as charged‭!" ‬The judge robot screams.‭ "‬The punishment is writing one billion times‭
       '‬I will not unlawfully take into my possession any vehicle that does not belong to me‭!'"

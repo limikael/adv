@@ -68,7 +68,7 @@ export default class Story extends EventDispatcher {
 			},
 
 			in: (id)=>{
-				return (this.getCurrentLocation().id==id)
+				return (String(this.getCurrentLocation().id)==String(id))
 			},
 
 			spawn: async (id)=>{
@@ -474,19 +474,26 @@ export default class Story extends EventDispatcher {
 	}
 
 	getCompletePercentage() {
-		if (!this.objectives.length)
-			return 0;
+		try {
+			if (!this.objectives.length)
+				return 0;
 
-		let complete=0;
-		for (let objectiveClause of this.objectives) {
-			let v=this.evalClause(objectiveClause);
+			let complete=0;
+			for (let objectiveClause of this.objectives) {
+				let v=this.evalClause(objectiveClause);
 
-			if (v && !(v instanceof StoryException))
-				complete++;
+				if (v && !(v instanceof StoryException))
+					complete++;
+			}
+
+			let percentage=Math.round(100*complete/this.objectives.length);
+			return percentage;
 		}
 
-		let percentage=Math.round(100*complete/this.objectives.length);
-		return percentage;
+		catch (e) {
+			this.setError(e);
+			this.emit("change");
+		}
 	}
 
 	getName() {
