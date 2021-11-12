@@ -1,3 +1,4 @@
+- name: The Morning Game
 - state: using slippers
 
 - verbs:
@@ -147,5 +148,3 @@
   - did-use: lamp
   - did-use: toothbrush
   - did-lookat: garden gnome
-
-  name: The Morning Game
