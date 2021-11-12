@@ -1,7 +1,7 @@
 import Story from "../../src/model/Story.mjs";
 import fs from "fs";
 import {URL} from 'url';
-import {delay} from "../../src/utils/promise-util.mjs";
+import {delay} from "../../src/utils/promise-util.js";
 import yaml from "yaml";
 import {lineNumberByCharIndex} from "../../src/utils/string-util.mjs";
 

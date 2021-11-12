@@ -1,4 +1,4 @@
-import {maybeAsync,delay} from "../../src/utils/promise-util.mjs";
+import {maybeAsync,delay} from "../../src/utils/promise-util.js";
 
 describe("promise util",()=>{
 	it("can run things that maybe are async",async ()=>{

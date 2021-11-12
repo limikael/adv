@@ -20,10 +20,15 @@
     return a3;
   };
   var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
+  var __require = (x3) => {
+    if (typeof require !== "undefined")
+      return require(x3);
+    throw new Error('Dynamic require of "' + x3 + '" is not supported');
+  };
   var __esm = (fn, res) => function __init() {
     return fn && (res = (0, fn[Object.keys(fn)[0]])(fn = 0)), res;
   };
-  var __commonJS = (cb, mod) => function __require() {
+  var __commonJS = (cb, mod) => function __require2() {
     return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
   var __export = (target, all) => {
@@ -24587,6 +24592,61 @@
     }
   });
 
+  // src/utils/electron-util.js
+  var require_electron_util = __commonJS({
+    "src/utils/electron-util.js"(exports, module) {
+      init_preact_shim();
+      var { ipcRenderer, ipcMain } = __require("electron");
+      function createMethodPromise() {
+        let resolve, reject;
+        let p3 = new Promise((argResolve, argReject) => {
+          resolve = argResolve;
+          reject = argReject;
+        });
+        p3.resolve = resolve;
+        p3.reject = reject;
+        return p3;
+      }
+      function createIpcRendererReceiver2(channel, obj) {
+        ipcRenderer.on(channel, async (ev, message) => {
+          let res = await obj[message.call](...message.args);
+          ipcRenderer.send(channel, {
+            id: message.id,
+            response: res
+          });
+        });
+      }
+      function createIpcAppProxy(win, channel) {
+        let id = 0;
+        let promises = {};
+        ipcMain.on(channel, (ev, message) => {
+          if (message.hasOwnProperty("response")) {
+            promises[message.id].resolve(message.response);
+          }
+        });
+        return new Proxy({}, {
+          get: (target, prop, receiver) => {
+            return (...args) => {
+              id++;
+              let promise = createMethodPromise();
+              promises[id] = promise;
+              win.webContents.send(channel, {
+                id,
+                call: prop,
+                args
+              });
+              return promise;
+            };
+          }
+        });
+      }
+      module.exports = {
+        createIpcRendererReceiver: createIpcRendererReceiver2,
+        createIpcAppProxy
+      };
+    }
+  });
+
   // src/ide/advide.jsx
   init_preact_shim();
 
@@ -25266,13 +25326,19 @@
   // src/ide/AdvideModel.mjs
   init_preact_shim();
   var import_events = __toModule(require_events());
+  var import_electron_util = __toModule(require_electron_util());
   var AdvideModel = class extends import_events.default {
     constructor() {
       super();
+      __publicField(this, "onIpcRendererMessage", (ev, message) => {
+        console.log(ev);
+        console.log(message);
+      });
       __publicField(this, "setSource", (source) => {
         this.source = source;
         window.sessionStorage.setItem("advsource", this.source);
         this.notifyGameFrame();
+        this.emit("change");
       });
       __publicField(this, "dispatcher", (fn, ...args) => {
         return (...fnArgs) => {
@@ -25283,6 +25349,10 @@
       });
       this.setSource("");
       this.gameFrame = null;
+      this.ipcReceiver = (0, import_electron_util.createIpcRendererReceiver)("advide", this);
+    }
+    loadSource(fileName) {
+      this.setSource(fs.loadFileSync(fileName));
     }
     getSource() {
       return this.source;

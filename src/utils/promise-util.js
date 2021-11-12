@@ -1,10 +1,10 @@
-export function delay(ms) {
+function delay(ms) {
 	return new Promise((resolve, reject)=>{
 		setTimeout(resolve,ms);
 	});
 }
 
-export function createMethodPromise() {
+function createMethodPromise() {
 	let resolve,reject;
 
 	let p=new Promise((argResolve,argReject)=>{
@@ -18,7 +18,7 @@ export function createMethodPromise() {
 	return p;
 }
 
-export function maybeAsync(fn) {
+function maybeAsync(fn) {
 	let resolved,resolvedVal;
 	let rejected,rejectedVal;
 	let promise;
@@ -57,7 +57,7 @@ export function maybeAsync(fn) {
 	});
 }
 
-export function isPromise(p) {
+function isPromise(p) {
 	if (p instanceof Promise)
 		return true;
 
@@ -67,8 +67,16 @@ export function isPromise(p) {
 	return false;
 }
 
-export function waitForEvent(o, ev) {
+function waitForEvent(o, ev) {
 	return new Promise((resolve,reject)=>{
 		o.once(ev,resolve)
 	});
 }
+
+module.exports={
+	delay,
+	createMethodPromise,
+	maybeAsync,
+	isPromise,
+	waitForEvent
+};

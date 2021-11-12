@@ -1,4 +1,4 @@
-import {maybeAsync, isPromise} from "./promise-util.mjs";
+import {maybeAsync, isPromise} from "./promise-util.js";
 import yaml from "yaml";
 
 class YaMachineContext {

@@ -1,4 +1,6 @@
-const {app, BrowserWindow, Menu, dialog} = require('electron');
+const {app, BrowserWindow, Menu, dialog, ipcMain}=require("electron");
+const {createIpcAppProxy}=require("../utils/electron-util.js");
+const fs=require("fs");
 
 app.whenReady().then(()=>{
 	let win=new BrowserWindow({
@@ -8,36 +10,66 @@ app.whenReady().then(()=>{
         }
     });
 
-    //win.webContents.openDevTools();
+	let appProxy=createIpcAppProxy(win, "advide");
 	win.loadFile("res/advide.html");
+
+	let fileFilters=[{
+		name: "Advide Stories",
+		extensions: ["yaml"]
+	},{
+		name: 'All Files',
+		extensions: ['*'] 
+	}];
 
 	let menu=Menu.buildFromTemplate([{
 		label: "File",
 		submenu: [{
 			label: "New Story",
-			click: ()=>{console.log("hello..."); win.webContents.send("message",{message: "new"})}
-		},{
-			label: "Open Story...",
 			click: ()=>{
-				dialog.showOpenDialog({
-					properties: ['openFile'],
-					filters: [{
-						name: "Advide Stories",
-						extensions: ["yaml"]
-					},{
-						name: 'All Files',
-						extensions: ['*'] 
-					}]
-				});
+				appProxy.setSource("");
 			}
 		},{
+			label: "Open Story...",
+			click: async ()=>{
+				let fileInfo=await dialog.showOpenDialog({
+					properties: ['openFile'],
+					filters: fileFilters
+				});
+
+				if (!fileInfo.canceled && fileInfo.filePaths.length) {
+					let fn=fileInfo.filePaths[0];
+					let source=fs.readFileSync(fn,"utf-8");
+					appProxy.setSource(source);
+				}
+			}
+		},/*{
 			label: "Save"
-		},{
-			label: "Save As..."
+		},*/{
+			label: "Save As...",
+			click: async ()=>{
+				let fileInfo=await dialog.showSaveDialog({
+					filters: fileFilters
+				});
+
+				if (!fileInfo.canceled && fileInfo.filePath) {
+					let fn=fileInfo.filePath;
+					let source=await appProxy.getSource();
+					fs.writeFileSync(fn,source);
+				}
+			}
+
 		},{
 			type: 'separator'
 		},{
 			role: "quit"
+		}]
+	},{
+		label: "Debug",
+		submenu: [{
+			label: "Open DevTools",
+			click: ()=>{
+				win.webContents.openDevTools();
+			}
 		}]
 	}])
 

@@ -2,7 +2,7 @@ import StoryObject from "./StoryObject.mjs";
 import StoryException from "./StoryException.mjs";
 import StoryAlternative from "./StoryAlternative.mjs";
 import YaMachine from "../utils/YaMachine.mjs";
-import {createMethodPromise, delay, isPromise, waitForEvent} from "../utils/promise-util.mjs";
+import {createMethodPromise, delay, isPromise, waitForEvent} from "../utils/promise-util.js";
 import {createVerbs} from "./StoryVerbs.mjs";
 import EventDispatcher from "events";
 import yaml from "yaml";

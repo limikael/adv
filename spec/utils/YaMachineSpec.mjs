@@ -1,7 +1,7 @@
 import YaMachine from "../../src/utils/YaMachine.mjs";
 import yaml from "yaml";
 import fs from "fs";
-import {delay} from "../../src/utils/promise-util.mjs";
+import {delay} from "../../src/utils/promise-util.js";
 import {lineNumberByCharIndex} from "../../src/utils/string-util.mjs";
 import util from "util";
 

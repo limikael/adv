@@ -1,6 +1,6 @@
 import Story from "../../src/model/Story.mjs";
 import StoryHistory from "../../src/model/StoryHistory.mjs";
-import {delay} from "../../src/utils/promise-util.mjs";
+import {delay} from "../../src/utils/promise-util.js";
 import fs from "fs";
 
 describe("StoryHistory",()=>{

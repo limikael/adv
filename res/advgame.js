@@ -6360,6 +6360,77 @@ ${cbNode.commentBefore}` : cb;
     }
   });
 
+  // src/utils/promise-util.js
+  var require_promise_util = __commonJS({
+    "src/utils/promise-util.js"(exports, module) {
+      init_preact_shim();
+      function delay2(ms) {
+        return new Promise((resolve, reject) => {
+          setTimeout(resolve, ms);
+        });
+      }
+      function createMethodPromise2() {
+        let resolve, reject;
+        let p4 = new Promise((argResolve, argReject) => {
+          resolve = argResolve;
+          reject = argReject;
+        });
+        p4.resolve = resolve;
+        p4.reject = reject;
+        return p4;
+      }
+      function maybeAsync2(fn) {
+        let resolved, resolvedVal;
+        let rejected, rejectedVal;
+        let promise;
+        function resolve(v3) {
+          resolved = true;
+          resolvedVal = v3;
+        }
+        function reject(v3) {
+          rejected = true;
+          rejectedVal = v3;
+        }
+        promise = fn(resolve, reject);
+        if (resolved)
+          return resolvedVal;
+        if (rejected)
+          throw rejectedVal;
+        return new Promise((resolve2, reject2) => {
+          promise.then(() => {
+            if (resolved)
+              resolve2(resolvedVal);
+            if (rejected)
+              reject2(rejectedVal);
+            else
+              reject2(Error("Function did not resolve or reject"));
+          }).catch((e3) => {
+            reject2(e3);
+          });
+        });
+      }
+      function isPromise3(p4) {
+        if (p4 instanceof Promise)
+          return true;
+        if (p4 instanceof Object && p4.hasOwnProperty("then"))
+          return true;
+        return false;
+      }
+      function waitForEvent2(o4, ev) {
+        return new Promise((resolve, reject) => {
+          o4.once(ev, resolve);
+        });
+      }
+      module.exports = {
+        delay: delay2,
+        createMethodPromise: createMethodPromise2,
+        maybeAsync: maybeAsync2,
+        isPromise: isPromise3,
+        waitForEvent: waitForEvent2
+      };
+    }
+  });
+
   // src/advgame.jsx
   init_preact_shim();
 
@@ -7562,63 +7633,7 @@ ${cbNode.commentBefore}` : cb;
 
   // src/utils/YaMachine.mjs
   init_preact_shim();
-
-  // src/utils/promise-util.mjs
-  init_preact_shim();
-  function createMethodPromise() {
-    let resolve, reject;
-    let p4 = new Promise((argResolve, argReject) => {
-      resolve = argResolve;
-      reject = argReject;
-    });
-    p4.resolve = resolve;
-    p4.reject = reject;
-    return p4;
-  }
-  function maybeAsync(fn) {
-    let resolved, resolvedVal;
-    let rejected, rejectedVal;
-    let promise;
-    function resolve(v3) {
-      resolved = true;
-      resolvedVal = v3;
-    }
-    function reject(v3) {
-      rejected = true;
-      rejectedVal = v3;
-    }
-    promise = fn(resolve, reject);
-    if (resolved)
-      return resolvedVal;
-    if (rejected)
-      throw rejectedVal;
-    return new Promise((resolve2, reject2) => {
-      promise.then(() => {
-        if (resolved)
-          resolve2(resolvedVal);
-        if (rejected)
-          reject2(rejectedVal);
-        else
-          reject2(Error("Function did not resolve or reject"));
-      }).catch((e3) => {
-        reject2(e3);
-      });
-    });
-  }
-  function isPromise(p4) {
-    if (p4 instanceof Promise)
-      return true;
-    if (p4 instanceof Object && p4.hasOwnProperty("then"))
-      return true;
-    return false;
-  }
-  function waitForEvent(o4, ev) {
-    return new Promise((resolve, reject) => {
-      o4.once(ev, resolve);
-    });
-  }
-
-  // src/utils/YaMachine.mjs
+  var import_promise_util = __toModule(require_promise_util());
   var import_yaml2 = __toModule(require_yaml());
   var YaMachineContext = class {
     isReturned() {
@@ -7707,7 +7722,7 @@ ${cbNode.commentBefore}` : cb;
       this.macros[name] = fn;
     }
     and(clause, context) {
-      return maybeAsync(async (resolve, reject) => {
+      return (0, import_promise_util.maybeAsync)(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["and"]);
           if (!(clause.and instanceof Array))
@@ -7716,7 +7731,7 @@ ${cbNode.commentBefore}` : cb;
           for (let argPart of clause.and) {
             if (ret) {
               let v3 = this.evalWithContext(argPart, context);
-              if (isPromise(v3))
+              if ((0, import_promise_util.isPromise)(v3))
                 v3 = await v3;
               ret = ret && this.castToBool(v3);
             }
@@ -7728,7 +7743,7 @@ ${cbNode.commentBefore}` : cb;
       });
     }
     or(clause, context) {
-      return maybeAsync(async (resolve, reject) => {
+      return (0, import_promise_util.maybeAsync)(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["or"]);
           if (!(clause.or instanceof Array))
@@ -7737,7 +7752,7 @@ ${cbNode.commentBefore}` : cb;
           for (let argPart of clause.or) {
             if (!ret) {
               let v3 = this.evalWithContext(argPart, context);
-              if (isPromise(v3))
+              if ((0, import_promise_util.isPromise)(v3))
                 v3 = await v3;
               ret = ret || this.castToBool(v3);
             }
@@ -7749,11 +7764,11 @@ ${cbNode.commentBefore}` : cb;
       });
     }
     if(clause, context) {
-      return maybeAsync(async (resolve, reject) => {
+      return (0, import_promise_util.maybeAsync)(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["if", "then", "else"]);
           let ifRes = this.evalWithContext(clause.if, context);
-          if (isPromise(ifRes))
+          if ((0, import_promise_util.isPromise)(ifRes))
             ifRes = await ifRes;
           ifRes = this.castToBool(ifRes);
           if (ifRes && clause.then)
@@ -7767,13 +7782,13 @@ ${cbNode.commentBefore}` : cb;
       });
     }
     return(clause, context) {
-      return maybeAsync(async (resolve, reject) => {
+      return (0, import_promise_util.maybeAsync)(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["return"]);
           if (context.isReturned())
             return resolve(context.getReturnValue());
           let v3 = this.evalWithContext(clause.return, context);
-          if (isPromise(v3))
+          if ((0, import_promise_util.isPromise)(v3))
             v3 = await v3;
           context.setReturnValue(v3);
           resolve(context.getReturnValue());
@@ -7783,12 +7798,12 @@ ${cbNode.commentBefore}` : cb;
       });
     }
     obj(clause, context) {
-      return maybeAsync(async (resolve, reject) => {
+      return (0, import_promise_util.maybeAsync)(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["obj"]);
           if (this.isPrimitive(clause.obj)) {
             let v3 = this.evalWithContext(clause.obj, context);
-            if (isPromise(v3))
+            if ((0, import_promise_util.isPromise)(v3))
               v3 = await v3;
             return resolve(v3);
           }
@@ -7799,7 +7814,7 @@ ${cbNode.commentBefore}` : cb;
             ret = {};
           for (let c4 in clause.obj) {
             let v3 = this.evalWithContext(clause.obj[c4], context);
-            if (isPromise(v3))
+            if ((0, import_promise_util.isPromise)(v3))
               v3 = await v3;
             ret[c4] = v3;
           }
@@ -7810,7 +7825,7 @@ ${cbNode.commentBefore}` : cb;
       });
     }
     quote(clause, context) {
-      return maybeAsync(async (resolve, reject) => {
+      return (0, import_promise_util.maybeAsync)(async (resolve, reject) => {
         try {
           this.assertValidKeys(clause, ["quote"]);
           return resolve(clause.quote);
@@ -7827,7 +7842,7 @@ ${cbNode.commentBefore}` : cb;
       return false;
     }
     evalWithContext(clause, context) {
-      return maybeAsync(async (resolve, reject) => {
+      return (0, import_promise_util.maybeAsync)(async (resolve, reject) => {
         try {
           if (context.isReturned())
             return resolve(context.getReturnValue());
@@ -7838,7 +7853,7 @@ ${cbNode.commentBefore}` : cb;
             for (let subClause of clause) {
               if (!context.isReturned()) {
                 ret = this.evalWithContext(subClause, context);
-                if (isPromise(ret))
+                if ((0, import_promise_util.isPromise)(ret))
                   ret = await ret;
               }
             }
@@ -7850,14 +7865,14 @@ ${cbNode.commentBefore}` : cb;
             let fn = Object.keys(clause)[0];
             if (this.special[fn]) {
               ret = this.special[fn](clause, context);
-              if (isPromise(ret))
+              if ((0, import_promise_util.isPromise)(ret))
                 ret = await ret;
               if (context.isReturned())
                 ret = context.getReturnValue();
             } else if (this.macros[fn]) {
               let form = this.macros[fn](clause);
               ret = this.evalWithContext(form, context);
-              if (isPromise(ret))
+              if ((0, import_promise_util.isPromise)(ret))
                 ret = await ret;
               if (context.isReturned())
                 ret = context.getReturnValue();
@@ -7865,10 +7880,10 @@ ${cbNode.commentBefore}` : cb;
               this.assertValidKeys(clause, [fn]);
               let argClause = clause[fn];
               let arg = this.evalWithContext(argClause, context);
-              if (isPromise(arg))
+              if ((0, import_promise_util.isPromise)(arg))
                 arg = await arg;
               ret = this.functions[fn](arg);
-              if (isPromise(ret))
+              if ((0, import_promise_util.isPromise)(ret))
                 ret = await ret;
               if (context.isReturned())
                 ret = context.getReturnValue();
@@ -7885,7 +7900,7 @@ ${cbNode.commentBefore}` : cb;
     evalSync(clause) {
       let context = new YaMachineContext();
       let v3 = this.evalWithContext(clause, context);
-      if (isPromise(v3))
+      if ((0, import_promise_util.isPromise)(v3))
         throw new Error("Async not allowed here");
       return v3;
     }
@@ -7952,6 +7967,9 @@ ${cbNode.commentBefore}` : cb;
       return o4;
     }
   };
+
+  // src/model/Story.mjs
+  var import_promise_util2 = __toModule(require_promise_util());
 
   // src/model/StoryVerbs.mjs
   init_preact_shim();
@@ -8278,7 +8296,7 @@ ${cbNode.commentBefore}` : cb;
       this.currentLocationId = startId;
       this.currentMessage = null;
       let p4 = this.yaMachine.evalMaybeAsync(this.getCurrentLocation().enter);
-      if (isPromise(p4))
+      if ((0, import_promise_util2.isPromise)(p4))
         p4.catch((e3) => {
           this.setError(e3);
         });
@@ -8335,7 +8353,7 @@ ${cbNode.commentBefore}` : cb;
         this.currentMessage = message;
       else
         this.currentMessage = [message];
-      let m3 = createMethodPromise();
+      let m3 = (0, import_promise_util2.createMethodPromise)();
       this.messagePromise = m3;
       this.emit("change");
       return await m3;
@@ -8456,7 +8474,7 @@ ${cbNode.commentBefore}` : cb;
     }
     async waitForUserInputState() {
       while (!this.isUserInputState())
-        await waitForEvent(this, "change");
+        await (0, import_promise_util2.waitForEvent)(this, "change");
     }
     async applyActions(actions) {
       let lastActionString;
