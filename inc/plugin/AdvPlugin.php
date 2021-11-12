@@ -33,13 +33,9 @@ class AdvPlugin extends Singleton {
 			array(),$this->data["Version"],true);
 
 		if (is_admin()) {
-			wp_enqueue_script("ace",
-				$resUrl."/ace.js",
-				array(),$this->data["Version"],true);
-
-			wp_enqueue_script("adv-admin",
-				$resUrl."/adv-admin.js",
-				array("ace","jquery"),$this->data["Version"],true);
+			wp_enqueue_script("advadmin",
+				$resUrl."/advadmin.bundle.js",
+				array("jquery"),$this->data["Version"],true);
 		}
 
 		if (!is_admin()) {
