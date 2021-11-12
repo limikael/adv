@@ -7356,7 +7356,7 @@ ${cbNode.commentBefore}` : cb;
       class: "adv-modal-cover bg-body",
       onclick: props.model.dispatcher("toggleMenu")
     }), /* @__PURE__ */ v("div", {
-      style: emStyle(0, 1, 10, i4 * 2 + 1),
+      style: emStyle(1, 2, 10, i4 * 2 + 1),
       class: "adv-bx bg-white border-black"
     }, menuButtons));
   }
@@ -7385,7 +7385,9 @@ ${cbNode.commentBefore}` : cb;
 
   // src/view/AdvView.jsx
   function StoryContent(props) {
-    return /* @__PURE__ */ v("div", null, /* @__PURE__ */ v(LocationView, {
+    return /* @__PURE__ */ v("div", {
+      style: emStyle(0, 0, 20, 30)
+    }, /* @__PURE__ */ v(LocationView, {
       model: props.model
     }), /* @__PURE__ */ v(InventoryView, {
       model: props.model
@@ -7400,20 +7402,22 @@ ${cbNode.commentBefore}` : cb;
   function AdvView(props) {
     let storyContent;
     if (props.error)
-      storyContent = /* @__PURE__ */ v(ErrorView, {
+      storyContent = /* @__PURE__ */ v("div", {
+        style: emStyle(0, 0, 20, 30)
+      }, /* @__PURE__ */ v(ErrorView, {
         error: props.error
-      });
+      }));
     else if (props.model.story) {
       storyContent = /* @__PURE__ */ v(StoryContent, {
         model: props.model
       });
     }
-    return /* @__PURE__ */ v("div", {
+    return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("div", {
       style: emStyle(0, 0, 20, 30),
       class: "bg-dark adv-bx"
     }, /* @__PURE__ */ v(HeaderView, {
       model: props.model
-    }), storyContent, /* @__PURE__ */ v(MenuView, {
+    })), storyContent, /* @__PURE__ */ v(MenuView, {
       model: props.model
     }));
   }

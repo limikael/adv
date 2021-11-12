@@ -11,7 +11,7 @@ import {useErrorBoundary} from "preact/hooks";
 
 function StoryContent(props) {
 	return (
-		<div>
+		<div style={emStyle(0,0,20,30)}>
 			<LocationView model={props.model} />
 			<InventoryView model={props.model} />
 			<VerbListView model={props.model} />
@@ -25,7 +25,9 @@ export default function AdvView(props) {
 	let storyContent;
 	if (props.error)
 		storyContent=(
-			<ErrorView error={props.error} />
+			<div style={emStyle(0,0,20,30)}>
+				<ErrorView error={props.error} />
+			</div>
 		);
 
 	else if (props.model.story) {
@@ -33,10 +35,12 @@ export default function AdvView(props) {
 	}
 
 	return (
-		<div style={emStyle(0,0,20,30)} class="bg-dark adv-bx">
-			<HeaderView model={props.model} />
+		<Fragment>
+			<div style={emStyle(0,0,20,30)} class="bg-dark adv-bx">
+				<HeaderView model={props.model} />
+			</div>
 			{storyContent}
 			<MenuView model={props.model} />
-		</div>
+		</Fragment>
 	);
 }

@@ -33,7 +33,7 @@ export default function MenuView(props) {
 		<Fragment>
 			<div class="adv-modal-cover bg-body"
 					onclick={props.model.dispatcher("toggleMenu")}/>
-			<div style={emStyle(0,1,10,i*2+1)} class="adv-bx bg-white border-black">
+			<div style={emStyle(1,2,10,i*2+1)} class="adv-bx bg-white border-black">
 				{menuButtons}
 			</div>
 		</Fragment>
