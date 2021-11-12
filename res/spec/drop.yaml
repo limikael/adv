@@ -1,3 +1,5 @@
+- name: D.R.O.P. Eats
+
 - state: shown intro
 
 - verbs:
@@ -5,42 +7,52 @@
   - pickup
   - use
   - lookat
+  - talkto
+
+#### Restaurant ####
 
 - location: parking
   description:
-  - You are in the parking lot for D.R.O.P. Eats. There is a fancy entrance, intended to be used
-    by respected patrons of this establishment. It is clear that this does not mean delivery 
-    personell, they are instead more or less respectfully referred to the delivery pickup window
+  - You are in the parking lot for D.R.O.P. Eats. There is a fancy entrance to the [restaurant],
+    intended to be used by respected patrons of this establishment.
+    It is clear that this does not mean delivery 
+    personell, they are instead more or less respectfully referred to the [delivery window]
     at the back.
   enter:
   - if-not-state: shown intro
     then:
     - set: shown intro
-    - Due to circumstances, you find yourself as an employee of D.R.O.P eats.
-      The pizza delivery company with a reputation as the worst employer on this side of the river.
-  destinations:
-  - restaurant
-  - delivery window
+    - message: 
+      - Due to circumstances, you find yourself as an employee of D.R.O.P Eats.
+      - The pizza delivery company with a reputation as the worst employer on this side of the river.
 
 - location: delivery window
   description:
-    The walls of this side of the building is made of raw unfinished concrete bricks. They
+  - The walls of this side of the building is made of raw unfinished concrete bricks. They
     could have painted the grout between the bricks to make the place look more welcoming,
-    but choose not to. The window has an industrail looking aluminium frame.
-  enter: >
+    but choose not to. The [window] has an industrail looking aluminium frame.
+  - Back arond the corner from where you came is the [parking].
+
+- thing: window
+  lookat-talkto: window
+  talkto-message: >
     A faceless voice at the window says: Hey, where have you been, the pizza is getting cold. 
     We don't have the best reputation you know, are you going to make it worse? 
-
-  destinations:
-  - parking
+  pickup-fail: Better leave it alone, for now...
 
 - thing: employee manual
   description:
-    An note labled *employee manual* is attached next to the window.
+    An note labeled *employee manual* is attached next to the window.
   location: delivery window
-  lookat: >
-    It is laminated and has a company logo on it.
-    The manual reads: Smile at all times. Be grateful that you have a job. Now get on with it.
+  lookat-message:
+  - It is laminated and has a company logo on it.
+  - "The manual reads: Smile at all times. Be grateful that you have a job. Now get on with it."
+  drop-message:
+  - You put the note back on the wall. You hope no one will notice this minor act of vandalism.
+  use:
+  - if-in: delivery window
+    then-drop: employee manual
+    else: What are you going to do with it?
 
 - thing: pizza
   location: delivery window
@@ -49,15 +61,31 @@
   pickup:
     You sigh to yourself as you reluctantly pick up the pizza.
   lookat: >
-    The pizza has a note with the delivery address on it. It says "34 Earnshaw Avenue". 
-  inventory_name:
+    The pizza has a note with the delivery address on it. It says "Deliver to Earnshaw Tower". 
+  name:
     pizza for delivery
+
+- thing: restaurant door
+  name: door
+  goto-goto: parking
+  use-goto: parking
+
+- thing: interior
+  goto-goto: parking
+  use-goto: parking
+  lookat-message:
+  - It is amazing just how generic and impersonal this place looks.
+  - Even though some designer has been tasked with designing it to
+    look personal with a unique character.
 
 - location: restaurant
   description:
-    You are in the restaurant. You are not really supposed to be here.
-  destinations:
-  - parking
+  - You gaze around the [interior] as the [restaurant door] closes behind you.
+  - At one table sits a couple that seem to be on their first date.
+  - In the corner sits an old woman sipping from a glass, with a half bottle
+    of red wine on her table.
+
+#### Ride ####
 
 - thing: scooter
   location: parking
@@ -70,50 +98,66 @@
       You normally don't pick up scooters. It is rather the scooter that pick up you. 
       Or you use it to pick up things.
 
-- choice: ride-1
-  description:
-    You ride north along the East Canal Street, towards the harbour. Immagine that there once
+- def: ride-1
+  do-message:
+  - You ride north along the East Canal Street, towards the harbour. Immagine that there once
     was a time when people were actually making real things in this town and transported them along
     the canal. Now it is all just banksters on their yachts snorting cocaine. 
-  alternatives:
-  - label: Turn left and cross North Harbour Bridge.
-    do:
-      spawn: ride-2
-  - label: Turn right onto Harbour Road.
-    do:
-      spawn: 
+  - alternative: Turn left and cross North Harbour Bridge.
+    do-spawn: ride-2
+  - alternative: Turn right onto Harbour Road.
+    do-spawn: 
 
-- choice: ride-2
-  description:
-    You ride across the majestic old industrial steel structure that is North Harbour Bridge.
+- def: ride-2
+  do-message:
+  - You ride across the majestic old industrial steel structure that is North Harbour Bridge.
     They don't make them like this anymore. You stop at the traffic light.
-  alternatives:
-  - label: Turn left onto West Canal Street.
-    do:
-      spawn: ride-3
-  - label:
-    do:
-      spawn: 
+  - alternative: Turn left onto West Canal Street.
+    do-spawn: ride-3
+  - alternative:
+    do-spawn: 
 
-- choice: ride-3
-  description:
-    You ride south along the West Canal Street. 
-  alternatives:
-  - label: Turn left across the New South Bridge.
-    do:
-      spawn: ride-4
-  - label:
-    do:
-      spawn: 
+- def: ride-3
+  do-message:
+  - You ride south along the West Canal Street. 
+  - alternative: Turn left across the New South Bridge.
+    do-spawn: ride-4
+  - alternative: Turn right to enter the Central Business District.
+    do-spawn: ride-business
 
-- choice: ride-4
-  description:
-    You cross the post modern monstrosity that is the New South Bridge. In the street corner you
+- def: ride-4
+  do-message:
+  - You cross the post modern monstrosity that is the New South Bridge. In the street corner you
     see your work place.
-  alternatives:
-  - label: Turn left onto East Canal Street.
-    do:
-      spawn: ride-1
-  - label: Go to D.R.O.P. Eats.
-    do:
-      spawn: parking
+  - alternative: Turn left onto East Canal Street.
+    do-spawn: ride-1
+  - alternative: Go to D.R.O.P. Eats.
+    do-goto: parking
+
+- def: ride-business
+  do-message:
+  - You make your way into the business district.
+  - You gaze at the skyscrapers, these silver trees of geometry, inviting the eye up into the blue.
+  - alternative: Go back to West Canal Street.
+    do-spawn: ride-3
+  - alternative: Stop at The Exchange Plaza.
+    do-goto: exchange plaza
+  - alternative: Stop at Earnshaw Tower.
+    do-goto: earnshaw tower
+
+# city
+
+- location: exchange plaza
+  description:
+  - The towers lining the plaza was built in the good times, built on ego and ambition.
+  - Your [city scooter] doesn't quite belong in this city scape, so you have it parked on a side street.
+  - Bankers in suits are rushing back and forth across the square.
+  - In a corner sits a musician playing guitar.
+
+- location: earnshaw tower
+  description:
+
+- thing: city scooter
+  name: scooter
+  lookat-lookat: scooter
+  use-spawn: ride-business
