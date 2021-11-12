@@ -5,7 +5,7 @@
   "main": "src/ide/advide-main.js",
   "scripts": {
     "build:game": "esbuild src/advgame.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017",
-    "build:ide": "esbuild src/ide/advide.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advide.bundle.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017",
+    "build:ide": "esbuild src/ide/advide.jsx --external:electron --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advide.bundle.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017",
     "build": "npm run build:game && npm run build:ide",
     "dev": "esbuild src/advgame.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017 --servedir=res",
     "test": "jasmine",

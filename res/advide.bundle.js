@@ -42,6 +42,10 @@
   var __toModule = (module) => {
     return __reExport(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", module && module.__esModule && "default" in module ? { get: () => module.default, enumerable: true } : { value: module, enumerable: true })), module);
   };
+  var __publicField = (obj, key, value) => {
+    __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+    return value;
+  };
 
   // node_modules/preact/dist/preact.module.js
   var preact_module_exports = {};
@@ -376,6 +380,433 @@
   var init_preact_shim = __esm({
     "src/utils/preact-shim.js"() {
       init_preact_module();
+    }
+  });
+
+  // node_modules/preact/hooks/dist/hooks.module.js
+  var hooks_module_exports = {};
+  __export(hooks_module_exports, {
+    useCallback: () => A2,
+    useContext: () => F,
+    useDebugValue: () => T2,
+    useEffect: () => y2,
+    useErrorBoundary: () => q2,
+    useImperativeHandle: () => _2,
+    useLayoutEffect: () => h2,
+    useMemo: () => d2,
+    useReducer: () => p2,
+    useRef: () => s2,
+    useState: () => l2
+  });
+  function m2(t3, r3) {
+    l.__h && l.__h(u2, t3, o2 || r3), o2 = 0;
+    var i3 = u2.__H || (u2.__H = { __: [], __h: [] });
+    return t3 >= i3.__.length && i3.__.push({}), i3.__[t3];
+  }
+  function l2(n2) {
+    return o2 = 1, p2(w2, n2);
+  }
+  function p2(n2, r3, o3) {
+    var i3 = m2(t2++, 2);
+    return i3.t = n2, i3.__c || (i3.__ = [o3 ? o3(r3) : w2(void 0, r3), function(n3) {
+      var t3 = i3.t(i3.__[0], n3);
+      i3.__[0] !== t3 && (i3.__ = [t3, i3.__[1]], i3.__c.setState({}));
+    }], i3.__c = u2), i3.__;
+  }
+  function y2(r3, o3) {
+    var i3 = m2(t2++, 3);
+    !l.__s && k2(i3.__H, o3) && (i3.__ = r3, i3.__H = o3, u2.__H.__h.push(i3));
+  }
+  function h2(r3, o3) {
+    var i3 = m2(t2++, 4);
+    !l.__s && k2(i3.__H, o3) && (i3.__ = r3, i3.__H = o3, u2.__h.push(i3));
+  }
+  function s2(n2) {
+    return o2 = 5, d2(function() {
+      return { current: n2 };
+    }, []);
+  }
+  function _2(n2, t3, u3) {
+    o2 = 6, h2(function() {
+      typeof n2 == "function" ? n2(t3()) : n2 && (n2.current = t3());
+    }, u3 == null ? u3 : u3.concat(n2));
+  }
+  function d2(n2, u3) {
+    var r3 = m2(t2++, 7);
+    return k2(r3.__H, u3) && (r3.__ = n2(), r3.__H = u3, r3.__h = n2), r3.__;
+  }
+  function A2(n2, t3) {
+    return o2 = 8, d2(function() {
+      return n2;
+    }, t3);
+  }
+  function F(n2) {
+    var r3 = u2.context[n2.__c], o3 = m2(t2++, 9);
+    return o3.c = n2, r3 ? (o3.__ == null && (o3.__ = true, r3.sub(u2)), r3.props.value) : n2.__;
+  }
+  function T2(t3, u3) {
+    l.useDebugValue && l.useDebugValue(u3 ? u3(t3) : t3);
+  }
+  function q2(n2) {
+    var r3 = m2(t2++, 10), o3 = l2();
+    return r3.__ = n2, u2.componentDidCatch || (u2.componentDidCatch = function(n3) {
+      r3.__ && r3.__(n3), o3[1](n3);
+    }), [o3[0], function() {
+      o3[1](void 0);
+    }];
+  }
+  function x2() {
+    i2.forEach(function(t3) {
+      if (t3.__P)
+        try {
+          t3.__H.__h.forEach(g2), t3.__H.__h.forEach(j2), t3.__H.__h = [];
+        } catch (u3) {
+          t3.__H.__h = [], l.__e(u3, t3.__v);
+        }
+    }), i2 = [];
+  }
+  function g2(n2) {
+    var t3 = u2;
+    typeof n2.__c == "function" && n2.__c(), u2 = t3;
+  }
+  function j2(n2) {
+    var t3 = u2;
+    n2.__c = n2.__(), u2 = t3;
+  }
+  function k2(n2, t3) {
+    return !n2 || n2.length !== t3.length || t3.some(function(t4, u3) {
+      return t4 !== n2[u3];
+    });
+  }
+  function w2(n2, t3) {
+    return typeof t3 == "function" ? t3(n2) : t3;
+  }
+  var t2, u2, r2, o2, i2, c2, f2, e2, a2, v2, b2;
+  var init_hooks_module = __esm({
+    "node_modules/preact/hooks/dist/hooks.module.js"() {
+      init_preact_shim();
+      init_preact_module();
+      o2 = 0;
+      i2 = [];
+      c2 = l.__b;
+      f2 = l.__r;
+      e2 = l.diffed;
+      a2 = l.__c;
+      v2 = l.unmount;
+      l.__b = function(n2) {
+        u2 = null, c2 && c2(n2);
+      }, l.__r = function(n2) {
+        f2 && f2(n2), t2 = 0;
+        var r3 = (u2 = n2.__c).__H;
+        r3 && (r3.__h.forEach(g2), r3.__h.forEach(j2), r3.__h = []);
+      }, l.diffed = function(t3) {
+        e2 && e2(t3);
+        var o3 = t3.__c;
+        o3 && o3.__H && o3.__H.__h.length && (i2.push(o3) !== 1 && r2 === l.requestAnimationFrame || ((r2 = l.requestAnimationFrame) || function(n2) {
+          var t4, u3 = function() {
+            clearTimeout(r3), b2 && cancelAnimationFrame(t4), setTimeout(n2);
+          }, r3 = setTimeout(u3, 100);
+          b2 && (t4 = requestAnimationFrame(u3));
+        })(x2)), u2 = void 0;
+      }, l.__c = function(t3, u3) {
+        u3.some(function(t4) {
+          try {
+            t4.__h.forEach(g2), t4.__h = t4.__h.filter(function(n2) {
+              return !n2.__ || j2(n2);
+            });
+          } catch (r3) {
+            u3.some(function(n2) {
+              n2.__h && (n2.__h = []);
+            }), u3 = [], l.__e(r3, t4.__v);
+          }
+        }), a2 && a2(t3, u3);
+      }, l.unmount = function(t3) {
+        v2 && v2(t3);
+        var u3 = t3.__c;
+        if (u3 && u3.__H)
+          try {
+            u3.__H.__.forEach(g2);
+          } catch (t4) {
+            l.__e(t4, u3.__v);
+          }
+      };
+      b2 = typeof requestAnimationFrame == "function";
+    }
+  });
+
+  // node_modules/preact/compat/dist/compat.js
+  var require_compat = __commonJS({
+    "node_modules/preact/compat/dist/compat.js"(exports) {
+      init_preact_shim();
+      var n2 = (init_hooks_module(), hooks_module_exports);
+      var t3 = (init_preact_module(), preact_module_exports);
+      function e3(n3, t4) {
+        for (var e4 in t4)
+          n3[e4] = t4[e4];
+        return n3;
+      }
+      function r3(n3, t4) {
+        for (var e4 in n3)
+          if (e4 !== "__source" && !(e4 in t4))
+            return true;
+        for (var r4 in t4)
+          if (r4 !== "__source" && n3[r4] !== t4[r4])
+            return true;
+        return false;
+      }
+      function u3(n3) {
+        this.props = n3;
+      }
+      function o3(n3, e4) {
+        function u4(n4) {
+          var t4 = this.props.ref, u5 = t4 == n4.ref;
+          return !u5 && t4 && (t4.call ? t4(null) : t4.current = null), e4 ? !e4(this.props, n4) || !u5 : r3(this.props, n4);
+        }
+        function o4(e5) {
+          return this.shouldComponentUpdate = u4, t3.createElement(n3, e5);
+        }
+        return o4.displayName = "Memo(" + (n3.displayName || n3.name) + ")", o4.prototype.isReactComponent = true, o4.__f = true, o4;
+      }
+      (u3.prototype = new t3.Component()).isPureReactComponent = true, u3.prototype.shouldComponentUpdate = function(n3, t4) {
+        return r3(this.props, n3) || r3(this.state, t4);
+      };
+      var i3 = t3.options.__b;
+      t3.options.__b = function(n3) {
+        n3.type && n3.type.__f && n3.ref && (n3.props.ref = n3.ref, n3.ref = null), i3 && i3(n3);
+      };
+      var l3 = typeof Symbol != "undefined" && Symbol.for && Symbol.for("react.forward_ref") || 3911;
+      function c3(n3) {
+        function t4(t5, r4) {
+          var u4 = e3({}, t5);
+          return delete u4.ref, n3(u4, (r4 = t5.ref || r4) && (typeof r4 != "object" || "current" in r4) ? r4 : null);
+        }
+        return t4.$$typeof = l3, t4.render = t4, t4.prototype.isReactComponent = t4.__f = true, t4.displayName = "ForwardRef(" + (n3.displayName || n3.name) + ")", t4;
+      }
+      var f3 = function(n3, e4) {
+        return n3 == null ? null : t3.toChildArray(t3.toChildArray(n3).map(e4));
+      };
+      var a3 = { map: f3, forEach: f3, count: function(n3) {
+        return n3 ? t3.toChildArray(n3).length : 0;
+      }, only: function(n3) {
+        var e4 = t3.toChildArray(n3);
+        if (e4.length !== 1)
+          throw "Children.only";
+        return e4[0];
+      }, toArray: t3.toChildArray };
+      var s3 = t3.options.__e;
+      t3.options.__e = function(n3, t4, e4) {
+        if (n3.then) {
+          for (var r4, u4 = t4; u4 = u4.__; )
+            if ((r4 = u4.__c) && r4.__c)
+              return t4.__e == null && (t4.__e = e4.__e, t4.__k = e4.__k), r4.__c(n3, t4);
+        }
+        s3(n3, t4, e4);
+      };
+      var p3 = t3.options.unmount;
+      function h3() {
+        this.__u = 0, this.t = null, this.__b = null;
+      }
+      function v3(n3) {
+        var t4 = n3.__.__c;
+        return t4 && t4.__e && t4.__e(n3);
+      }
+      function d3(n3) {
+        var e4, r4, u4;
+        function o4(o5) {
+          if (e4 || (e4 = n3()).then(function(n4) {
+            r4 = n4.default || n4;
+          }, function(n4) {
+            u4 = n4;
+          }), u4)
+            throw u4;
+          if (!r4)
+            throw e4;
+          return t3.createElement(r4, o5);
+        }
+        return o4.displayName = "Lazy", o4.__f = true, o4;
+      }
+      function x3() {
+        this.u = null, this.o = null;
+      }
+      t3.options.unmount = function(n3) {
+        var t4 = n3.__c;
+        t4 && t4.__R && t4.__R(), t4 && n3.__h === true && (n3.type = null), p3 && p3(n3);
+      }, (h3.prototype = new t3.Component()).__c = function(n3, t4) {
+        var e4 = t4.__c, r4 = this;
+        r4.t == null && (r4.t = []), r4.t.push(e4);
+        var u4 = v3(r4.__v), o4 = false, i4 = function() {
+          o4 || (o4 = true, e4.__R = null, u4 ? u4(l4) : l4());
+        };
+        e4.__R = i4;
+        var l4 = function() {
+          if (!--r4.__u) {
+            if (r4.state.__e) {
+              var n4 = r4.state.__e;
+              r4.__v.__k[0] = function n5(t6, e5, r5) {
+                return t6 && (t6.__v = null, t6.__k = t6.__k && t6.__k.map(function(t7) {
+                  return n5(t7, e5, r5);
+                }), t6.__c && t6.__c.__P === e5 && (t6.__e && r5.insertBefore(t6.__e, t6.__d), t6.__c.__e = true, t6.__c.__P = r5)), t6;
+              }(n4, n4.__c.__P, n4.__c.__O);
+            }
+            var t5;
+            for (r4.setState({ __e: r4.__b = null }); t5 = r4.t.pop(); )
+              t5.forceUpdate();
+          }
+        }, c4 = t4.__h === true;
+        r4.__u++ || c4 || r4.setState({ __e: r4.__b = r4.__v.__k[0] }), n3.then(i4, i4);
+      }, h3.prototype.componentWillUnmount = function() {
+        this.t = [];
+      }, h3.prototype.render = function(n3, r4) {
+        if (this.__b) {
+          if (this.__v.__k) {
+            var u4 = document.createElement("div"), o4 = this.__v.__k[0].__c;
+            this.__v.__k[0] = function n4(t4, r5, u5) {
+              return t4 && (t4.__c && t4.__c.__H && (t4.__c.__H.__.forEach(function(n5) {
+                typeof n5.__c == "function" && n5.__c();
+              }), t4.__c.__H = null), (t4 = e3({}, t4)).__c != null && (t4.__c.__P === u5 && (t4.__c.__P = r5), t4.__c = null), t4.__k = t4.__k && t4.__k.map(function(t5) {
+                return n4(t5, r5, u5);
+              })), t4;
+            }(this.__b, u4, o4.__O = o4.__P);
+          }
+          this.__b = null;
+        }
+        var i4 = r4.__e && t3.createElement(t3.Fragment, null, n3.fallback);
+        return i4 && (i4.__h = null), [t3.createElement(t3.Fragment, null, r4.__e ? null : n3.children), i4];
+      };
+      var m3 = function(n3, t4, e4) {
+        if (++e4[1] === e4[0] && n3.o.delete(t4), n3.props.revealOrder && (n3.props.revealOrder[0] !== "t" || !n3.o.size))
+          for (e4 = n3.u; e4; ) {
+            for (; e4.length > 3; )
+              e4.pop()();
+            if (e4[1] < e4[0])
+              break;
+            n3.u = e4 = e4[2];
+          }
+      };
+      function y3(n3) {
+        return this.getChildContext = function() {
+          return n3.context;
+        }, n3.children;
+      }
+      function b3(n3) {
+        var e4 = this, r4 = n3.i;
+        e4.componentWillUnmount = function() {
+          t3.render(null, e4.l), e4.l = null, e4.i = null;
+        }, e4.i && e4.i !== r4 && e4.componentWillUnmount(), n3.__v ? (e4.l || (e4.i = r4, e4.l = { nodeType: 1, parentNode: r4, childNodes: [], appendChild: function(n4) {
+          this.childNodes.push(n4), e4.i.appendChild(n4);
+        }, insertBefore: function(n4, t4) {
+          this.childNodes.push(n4), e4.i.appendChild(n4);
+        }, removeChild: function(n4) {
+          this.childNodes.splice(this.childNodes.indexOf(n4) >>> 1, 1), e4.i.removeChild(n4);
+        } }), t3.render(t3.createElement(y3, { context: e4.context }, n3.__v), e4.l)) : e4.l && e4.componentWillUnmount();
+      }
+      function _3(n3, e4) {
+        return t3.createElement(b3, { __v: n3, i: e4 });
+      }
+      (x3.prototype = new t3.Component()).__e = function(n3) {
+        var t4 = this, e4 = v3(t4.__v), r4 = t4.o.get(n3);
+        return r4[0]++, function(u4) {
+          var o4 = function() {
+            t4.props.revealOrder ? (r4.push(u4), m3(t4, n3, r4)) : u4();
+          };
+          e4 ? e4(o4) : o4();
+        };
+      }, x3.prototype.render = function(n3) {
+        this.u = null, this.o = new Map();
+        var e4 = t3.toChildArray(n3.children);
+        n3.revealOrder && n3.revealOrder[0] === "b" && e4.reverse();
+        for (var r4 = e4.length; r4--; )
+          this.o.set(e4[r4], this.u = [1, 0, this.u]);
+        return n3.children;
+      }, x3.prototype.componentDidUpdate = x3.prototype.componentDidMount = function() {
+        var n3 = this;
+        this.o.forEach(function(t4, e4) {
+          m3(n3, e4, t4);
+        });
+      };
+      var S2 = typeof Symbol != "undefined" && Symbol.for && Symbol.for("react.element") || 60103;
+      var w3 = /^(?:accent|alignment|arabic|baseline|cap|clip(?!PathU)|color|fill|flood|font|glyph(?!R)|horiz|marker(?!H|W|U)|overline|paint|stop|strikethrough|stroke|text(?!L)|underline|unicode|units|v|vector|vert|word|writing|x(?!C))[A-Z]/;
+      var C2 = function(n3) {
+        return (typeof Symbol != "undefined" && typeof Symbol() == "symbol" ? /fil|che|rad/i : /fil|che|ra/i).test(n3);
+      };
+      function g3(n3, e4, r4) {
+        return e4.__k == null && (e4.textContent = ""), t3.render(n3, e4), typeof r4 == "function" && r4(), n3 ? n3.__c : null;
+      }
+      function E(n3, e4, r4) {
+        return t3.hydrate(n3, e4), typeof r4 == "function" && r4(), n3 ? n3.__c : null;
+      }
+      t3.Component.prototype.isReactComponent = {}, ["componentWillMount", "componentWillReceiveProps", "componentWillUpdate"].forEach(function(n3) {
+        Object.defineProperty(t3.Component.prototype, n3, { configurable: true, get: function() {
+          return this["UNSAFE_" + n3];
+        }, set: function(t4) {
+          Object.defineProperty(this, n3, { configurable: true, writable: true, value: t4 });
+        } });
+      });
+      var R = t3.options.event;
+      function N2() {
+      }
+      function O2() {
+        return this.cancelBubble;
+      }
+      function k3() {
+        return this.defaultPrevented;
+      }
+      t3.options.event = function(n3) {
+        return R && (n3 = R(n3)), n3.persist = N2, n3.isPropagationStopped = O2, n3.isDefaultPrevented = k3, n3.nativeEvent = n3;
+      };
+      var A3;
+      var L2 = { configurable: true, get: function() {
+        return this.class;
+      } };
+      var U = t3.options.vnode;
+      t3.options.vnode = function(n3) {
+        var e4 = n3.type, r4 = n3.props, u4 = r4;
+        if (typeof e4 == "string") {
+          for (var o4 in u4 = {}, r4) {
+            var i4 = r4[o4];
+            o4 === "value" && "defaultValue" in r4 && i4 == null || (o4 === "defaultValue" && "value" in r4 && r4.value == null ? o4 = "value" : o4 === "download" && i4 === true ? i4 = "" : /ondoubleclick/i.test(o4) ? o4 = "ondblclick" : /^onchange(textarea|input)/i.test(o4 + e4) && !C2(r4.type) ? o4 = "oninput" : /^on(Ani|Tra|Tou|BeforeInp)/.test(o4) ? o4 = o4.toLowerCase() : w3.test(o4) ? o4 = o4.replace(/[A-Z0-9]/, "-$&").toLowerCase() : i4 === null && (i4 = void 0), u4[o4] = i4);
+          }
+          e4 == "select" && u4.multiple && Array.isArray(u4.value) && (u4.value = t3.toChildArray(r4.children).forEach(function(n4) {
+            n4.props.selected = u4.value.indexOf(n4.props.value) != -1;
+          })), e4 == "select" && u4.defaultValue != null && (u4.value = t3.toChildArray(r4.children).forEach(function(n4) {
+            n4.props.selected = u4.multiple ? u4.defaultValue.indexOf(n4.props.value) != -1 : u4.defaultValue == n4.props.value;
+          })), n3.props = u4;
+        }
+        e4 && r4.class != r4.className && (L2.enumerable = "className" in r4, r4.className != null && (u4.class = r4.className), Object.defineProperty(u4, "className", L2)), n3.$$typeof = S2, U && U(n3);
+      };
+      var M2 = t3.options.__r;
+      t3.options.__r = function(n3) {
+        M2 && M2(n3), A3 = n3.__c;
+      };
+      var T3 = { ReactCurrentDispatcher: { current: { readContext: function(n3) {
+        return A3.__n[n3.__c].props.value;
+      } } } };
+      function j3(n3) {
+        return t3.createElement.bind(null, n3);
+      }
+      function D2(n3) {
+        return !!n3 && n3.$$typeof === S2;
+      }
+      function F2(n3) {
+        return D2(n3) ? t3.cloneElement.apply(null, arguments) : n3;
+      }
+      function I2(n3) {
+        return !!n3.__k && (t3.render(null, n3), true);
+      }
+      function W(n3) {
+        return n3 && (n3.base || n3.nodeType === 1 && n3) || null;
+      }
+      var P2 = function(n3, t4) {
+        return n3(t4);
+      };
+      var V = function(n3, t4) {
+        return n3(t4);
+      };
+      var z2 = t3.Fragment;
+      var B2 = { useState: n2.useState, useReducer: n2.useReducer, useEffect: n2.useEffect, useLayoutEffect: n2.useLayoutEffect, useRef: n2.useRef, useImperativeHandle: n2.useImperativeHandle, useMemo: n2.useMemo, useCallback: n2.useCallback, useContext: n2.useContext, useDebugValue: n2.useDebugValue, version: "17.0.2", Children: a3, render: g3, hydrate: E, unmountComponentAtNode: I2, createPortal: _3, createElement: t3.createElement, createContext: t3.createContext, createFactory: j3, cloneElement: F2, createRef: t3.createRef, Fragment: t3.Fragment, isValidElement: D2, findDOMNode: W, Component: t3.Component, PureComponent: u3, memo: o3, forwardRef: c3, flushSync: V, unstable_batchedUpdates: P2, StrictMode: z2, Suspense: h3, SuspenseList: x3, lazy: d3, __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: T3 };
+      Object.keys(n2).forEach(function(t4) {
+        exports[t4] = n2[t4];
+      }), exports.createElement = t3.createElement, exports.createContext = t3.createContext, exports.createRef = t3.createRef, exports.Fragment = t3.Fragment, exports.Component = t3.Component, exports.version = "17.0.2", exports.Children = a3, exports.render = g3, exports.hydrate = E, exports.unmountComponentAtNode = I2, exports.createPortal = _3, exports.createFactory = j3, exports.cloneElement = F2, exports.isValidElement = D2, exports.findDOMNode = W, exports.PureComponent = u3, exports.memo = o3, exports.forwardRef = c3, exports.flushSync = V, exports.unstable_batchedUpdates = P2, exports.StrictMode = z2, exports.Suspense = h3, exports.SuspenseList = x3, exports.lazy = d3, exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = T3, exports.default = B2;
     }
   });
 
@@ -1640,7 +2071,7 @@
       });
       ace.define("ace/keyboard/textinput", ["require", "exports", "module", "ace/lib/event", "ace/lib/useragent", "ace/lib/dom", "ace/lib/lang", "ace/clipboard", "ace/lib/keys"], function(require2, exports2, module2) {
         "use strict";
-        var event = require2("../lib/event");
+        var event2 = require2("../lib/event");
         var useragent = require2("../lib/useragent");
         var dom = require2("../lib/dom");
         var lang = require2("../lib/lang");
@@ -1680,13 +2111,13 @@
             var isFocused = document.activeElement === text;
           } catch (e3) {
           }
-          event.addListener(text, "blur", function(e3) {
+          event2.addListener(text, "blur", function(e3) {
             if (ignoreFocusEvents)
               return;
             host.onBlur(e3);
             isFocused = false;
           }, host);
-          event.addListener(text, "focus", function(e3) {
+          event2.addListener(text, "focus", function(e3) {
             if (ignoreFocusEvents)
               return;
             isFocused = true;
@@ -1958,7 +2389,7 @@
           var doCopy = function(e3, isCut) {
             var data = host.getCopyText();
             if (!data)
-              return event.preventDefault(e3);
+              return event2.preventDefault(e3);
             if (handleClipboardData(e3, data)) {
               if (isIOS) {
                 resetSelection(data);
@@ -1968,7 +2399,7 @@
                 }, 10);
               }
               isCut ? host.onCut() : host.onCopy();
-              event.preventDefault(e3);
+              event2.preventDefault(e3);
             } else {
               copied = true;
               text.value = data;
@@ -1995,20 +2426,20 @@
                 host.onPaste(data, e3);
               if (useragent.isIE)
                 setTimeout(resetSelection);
-              event.preventDefault(e3);
+              event2.preventDefault(e3);
             } else {
               text.value = "";
               pasted = true;
             }
           };
-          event.addCommandKeyListener(text, host.onCommandKey.bind(host), host);
-          event.addListener(text, "select", onSelect, host);
-          event.addListener(text, "input", onInput, host);
-          event.addListener(text, "cut", onCut, host);
-          event.addListener(text, "copy", onCopy, host);
-          event.addListener(text, "paste", onPaste, host);
+          event2.addCommandKeyListener(text, host.onCommandKey.bind(host), host);
+          event2.addListener(text, "select", onSelect, host);
+          event2.addListener(text, "input", onInput, host);
+          event2.addListener(text, "cut", onCut, host);
+          event2.addListener(text, "copy", onCopy, host);
+          event2.addListener(text, "paste", onPaste, host);
           if (!("oncut" in text) || !("oncopy" in text) || !("onpaste" in text)) {
-            event.addListener(parentNode, "keydown", function(e3) {
+            event2.addListener(parentNode, "keydown", function(e3) {
               if (useragent.isMac && !e3.metaKey || !e3.ctrlKey)
                 return;
               switch (e3.keyCode) {
@@ -2095,11 +2526,11 @@
             }
             syncComposition();
           }
-          event.addListener(text, "compositionstart", onCompositionStart, host);
-          event.addListener(text, "compositionupdate", onCompositionUpdate, host);
-          event.addListener(text, "keyup", onKeyup, host);
-          event.addListener(text, "keydown", syncComposition, host);
-          event.addListener(text, "compositionend", onCompositionEnd, host);
+          event2.addListener(text, "compositionstart", onCompositionStart, host);
+          event2.addListener(text, "compositionupdate", onCompositionUpdate, host);
+          event2.addListener(text, "keyup", onKeyup, host);
+          event2.addListener(text, "keydown", syncComposition, host);
+          event2.addListener(text, "compositionend", onCompositionEnd, host);
           this.getElement = function() {
             return text;
           };
@@ -2137,7 +2568,7 @@
             host.renderer.$isMousePressed = true;
             clearTimeout(closeTimeout);
             if (useragent.isWin)
-              event.capture(host.container, move, onContextMenuClose);
+              event2.capture(host.container, move, onContextMenuClose);
           };
           this.onContextMenuClose = onContextMenuClose;
           var closeTimeout;
@@ -2157,13 +2588,13 @@
             host.textInput.onContextMenu(e3);
             onContextMenuClose();
           };
-          event.addListener(text, "mouseup", onContextMenu, host);
-          event.addListener(text, "mousedown", function(e3) {
+          event2.addListener(text, "mouseup", onContextMenu, host);
+          event2.addListener(text, "mousedown", function(e3) {
             e3.preventDefault();
             onContextMenuClose();
           }, host);
-          event.addListener(host.renderer.scroller, "contextmenu", onContextMenu, host);
-          event.addListener(text, "contextmenu", onContextMenu, host);
+          event2.addListener(host.renderer.scroller, "contextmenu", onContextMenu, host);
+          event2.addListener(text, "contextmenu", onContextMenu, host);
           if (isIOS)
             addIosSelectionHandler(parentNode, host, text);
           function addIosSelectionHandler(parentNode2, host2, text2) {
@@ -2543,7 +2974,7 @@
         "use strict";
         var dom = require2("../lib/dom");
         var oop = require2("../lib/oop");
-        var event = require2("../lib/event");
+        var event2 = require2("../lib/event");
         var Tooltip = require2("../tooltip").Tooltip;
         function GutterHandler(mouseHandler) {
           var editor = mouseHandler.editor;
@@ -2630,7 +3061,7 @@
                 hideTooltip();
             }, 50);
           });
-          event.addListener(editor.renderer.$gutter, "mouseout", function(e3) {
+          event2.addListener(editor.renderer.$gutter, "mouseout", function(e3) {
             mouseEvent = null;
             if (!tooltipAnnotation || tooltipTimeout)
               return;
@@ -2666,7 +3097,7 @@
       });
       ace.define("ace/mouse/mouse_event", ["require", "exports", "module", "ace/lib/event", "ace/lib/useragent"], function(require2, exports2, module2) {
         "use strict";
-        var event = require2("../lib/event");
+        var event2 = require2("../lib/event");
         var useragent = require2("../lib/useragent");
         var MouseEvent = exports2.MouseEvent = function(domEvent, editor) {
           this.domEvent = domEvent;
@@ -2680,11 +3111,11 @@
         };
         (function() {
           this.stopPropagation = function() {
-            event.stopPropagation(this.domEvent);
+            event2.stopPropagation(this.domEvent);
             this.propagationStopped = true;
           };
           this.preventDefault = function() {
-            event.preventDefault(this.domEvent);
+            event2.preventDefault(this.domEvent);
             this.defaultPrevented = true;
           };
           this.stop = function() {
@@ -2711,7 +3142,7 @@
             return this.$inSelection;
           };
           this.getButton = function() {
-            return event.getButton(this.domEvent);
+            return event2.getButton(this.domEvent);
           };
           this.getShiftKey = function() {
             return this.domEvent.shiftKey;
@@ -2726,7 +3157,7 @@
       ace.define("ace/mouse/dragdrop_handler", ["require", "exports", "module", "ace/lib/dom", "ace/lib/event", "ace/lib/useragent"], function(require2, exports2, module2) {
         "use strict";
         var dom = require2("../lib/dom");
-        var event = require2("../lib/event");
+        var event2 = require2("../lib/event");
         var useragent = require2("../lib/useragent");
         var AUTOSCROLL_DELAY = 200;
         var SCROLL_CURSOR_DELAY = 200;
@@ -2794,7 +3225,7 @@
               addDragMarker();
             counter++;
             e3.dataTransfer.dropEffect = dragOperation = getDropEffect(e3);
-            return event.preventDefault(e3);
+            return event2.preventDefault(e3);
           };
           this.onDragOver = function(e3) {
             if (editor.getReadOnly() || !canAccept(e3.dataTransfer))
@@ -2808,14 +3239,14 @@
             if (onMouseMoveTimer !== null)
               onMouseMoveTimer = null;
             e3.dataTransfer.dropEffect = dragOperation = getDropEffect(e3);
-            return event.preventDefault(e3);
+            return event2.preventDefault(e3);
           };
           this.onDragLeave = function(e3) {
             counter--;
             if (counter <= 0 && dragSelectionMarker) {
               clearDragMarker();
               dragOperation = null;
-              return event.preventDefault(e3);
+              return event2.preventDefault(e3);
             }
           };
           this.onDrop = function(e3) {
@@ -2848,14 +3279,14 @@
               dragOperation = null;
             }
             clearDragMarker();
-            return event.preventDefault(e3);
+            return event2.preventDefault(e3);
           };
-          event.addListener(mouseTarget, "dragstart", this.onDragStart.bind(mouseHandler), editor);
-          event.addListener(mouseTarget, "dragend", this.onDragEnd.bind(mouseHandler), editor);
-          event.addListener(mouseTarget, "dragenter", this.onDragEnter.bind(mouseHandler), editor);
-          event.addListener(mouseTarget, "dragover", this.onDragOver.bind(mouseHandler), editor);
-          event.addListener(mouseTarget, "dragleave", this.onDragLeave.bind(mouseHandler), editor);
-          event.addListener(mouseTarget, "drop", this.onDrop.bind(mouseHandler), editor);
+          event2.addListener(mouseTarget, "dragstart", this.onDragStart.bind(mouseHandler), editor);
+          event2.addListener(mouseTarget, "dragend", this.onDragEnd.bind(mouseHandler), editor);
+          event2.addListener(mouseTarget, "dragenter", this.onDragEnter.bind(mouseHandler), editor);
+          event2.addListener(mouseTarget, "dragover", this.onDragOver.bind(mouseHandler), editor);
+          event2.addListener(mouseTarget, "dragleave", this.onDragLeave.bind(mouseHandler), editor);
+          event2.addListener(mouseTarget, "drop", this.onDrop.bind(mouseHandler), editor);
           function scrollCursorIntoView(cursor, prevCursor) {
             var now = Date.now();
             var vMovement = !prevCursor || cursor.row != prevCursor.row;
@@ -2926,7 +3357,7 @@
             onDragInterval();
             timerId = setInterval(onDragInterval, 20);
             counter = 0;
-            event.addListener(document, "mousemove", onMouseMove);
+            event2.addListener(document, "mousemove", onMouseMove);
           }
           function clearDragMarker() {
             clearInterval(timerId);
@@ -2940,7 +3371,7 @@
             counter = 0;
             autoScrollStartTime = null;
             cursorMovedTime = null;
-            event.removeListener(document, "mousemove", onMouseMove);
+            event2.removeListener(document, "mousemove", onMouseMove);
           }
           var onMouseMoveTimer = null;
           function onMouseMove() {
@@ -3058,7 +3489,7 @@
       ace.define("ace/mouse/touch_handler", ["require", "exports", "module", "ace/mouse/mouse_event", "ace/lib/event", "ace/lib/dom"], function(require2, exports2, module2) {
         "use strict";
         var MouseEvent = require2("./mouse_event").MouseEvent;
-        var event = require2("../lib/event");
+        var event2 = require2("../lib/event");
         var dom = require2("../lib/dom");
         exports2.addTouchListeners = function(el, editor) {
           var mode = "scroll";
@@ -3186,13 +3617,13 @@
             }
             mode = "wait";
           }
-          event.addListener(el, "contextmenu", function(e3) {
+          event2.addListener(el, "contextmenu", function(e3) {
             if (!pressed)
               return;
             var textarea = editor.textInput.getElement();
             textarea.focus();
           }, editor);
-          event.addListener(el, "touchstart", function(e3) {
+          event2.addListener(el, "touchstart", function(e3) {
             var touches = e3.touches;
             if (longTouchTimer || touches.length > 1) {
               clearTimeout(longTouchTimer);
@@ -3253,7 +3684,7 @@
             }
             touchStartT = t3;
           }, editor);
-          event.addListener(el, "touchend", function(e3) {
+          event2.addListener(el, "touchend", function(e3) {
             pressed = editor.$mouseHandler.isMousePressed = false;
             if (animationTimer)
               clearInterval(animationTimer);
@@ -3273,7 +3704,7 @@
             clearTimeout(longTouchTimer);
             longTouchTimer = null;
           }, editor);
-          event.addListener(el, "touchmove", function(e3) {
+          event2.addListener(el, "touchmove", function(e3) {
             if (longTouchTimer) {
               clearTimeout(longTouchTimer);
               longTouchTimer = null;
@@ -3382,14 +3813,14 @@
       });
       ace.define("ace/lib/event_emitter", ["require", "exports", "module"], function(require2, exports2, module2) {
         "use strict";
-        var EventEmitter = {};
+        var EventEmitter2 = {};
         var stopPropagation = function() {
           this.propagationStopped = true;
         };
         var preventDefault = function() {
           this.defaultPrevented = true;
         };
-        EventEmitter._emit = EventEmitter._dispatchEvent = function(eventName, e3) {
+        EventEmitter2._emit = EventEmitter2._dispatchEvent = function(eventName, e3) {
           this._eventRegistry || (this._eventRegistry = {});
           this._defaultHandlers || (this._defaultHandlers = {});
           var listeners = this._eventRegistry[eventName] || [];
@@ -3413,7 +3844,7 @@
           if (defaultHandler && !e3.defaultPrevented)
             return defaultHandler(e3, this);
         };
-        EventEmitter._signal = function(eventName, e3) {
+        EventEmitter2._signal = function(eventName, e3) {
           var listeners = (this._eventRegistry || {})[eventName];
           if (!listeners)
             return;
@@ -3421,7 +3852,7 @@
           for (var i3 = 0; i3 < listeners.length; i3++)
             listeners[i3](e3, this);
         };
-        EventEmitter.once = function(eventName, callback) {
+        EventEmitter2.once = function(eventName, callback) {
           var _self = this;
           this.on(eventName, function newCallback() {
             _self.off(eventName, newCallback);
@@ -3433,7 +3864,7 @@
             });
           }
         };
-        EventEmitter.setDefaultHandler = function(eventName, callback) {
+        EventEmitter2.setDefaultHandler = function(eventName, callback) {
           var handlers = this._defaultHandlers;
           if (!handlers)
             handlers = this._defaultHandlers = { _disabled_: {} };
@@ -3449,7 +3880,7 @@
           }
           handlers[eventName] = callback;
         };
-        EventEmitter.removeDefaultHandler = function(eventName, callback) {
+        EventEmitter2.removeDefaultHandler = function(eventName, callback) {
           var handlers = this._defaultHandlers;
           if (!handlers)
             return;
@@ -3463,7 +3894,7 @@
               disabled.splice(i3, 1);
           }
         };
-        EventEmitter.on = EventEmitter.addEventListener = function(eventName, callback, capturing) {
+        EventEmitter2.on = EventEmitter2.addEventListener = function(eventName, callback, capturing) {
           this._eventRegistry = this._eventRegistry || {};
           var listeners = this._eventRegistry[eventName];
           if (!listeners)
@@ -3472,7 +3903,7 @@
             listeners[capturing ? "unshift" : "push"](callback);
           return callback;
         };
-        EventEmitter.off = EventEmitter.removeListener = EventEmitter.removeEventListener = function(eventName, callback) {
+        EventEmitter2.off = EventEmitter2.removeListener = EventEmitter2.removeEventListener = function(eventName, callback) {
           this._eventRegistry = this._eventRegistry || {};
           var listeners = this._eventRegistry[eventName];
           if (!listeners)
@@ -3481,7 +3912,7 @@
           if (index !== -1)
             listeners.splice(index, 1);
         };
-        EventEmitter.removeAllListeners = function(eventName) {
+        EventEmitter2.removeAllListeners = function(eventName) {
           if (!eventName)
             this._eventRegistry = this._defaultHandlers = void 0;
           if (this._eventRegistry)
@@ -3489,12 +3920,12 @@
           if (this._defaultHandlers)
             this._defaultHandlers[eventName] = void 0;
         };
-        exports2.EventEmitter = EventEmitter;
+        exports2.EventEmitter = EventEmitter2;
       });
       ace.define("ace/lib/app_config", ["require", "exports", "module", "ace/lib/oop", "ace/lib/event_emitter"], function(require2, exports2, module2) {
         "no use strict";
         var oop = require2("./oop");
-        var EventEmitter = require2("./event_emitter").EventEmitter;
+        var EventEmitter2 = require2("./event_emitter").EventEmitter;
         var optionsProvider = {
           setOptions: function(optList) {
             Object.keys(optList).forEach(function(key) {
@@ -3558,7 +3989,7 @@
           this.$defaultOptions = {};
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.defineOptions = function(obj, path, options) {
             if (!obj.$options)
               this.$defaultOptions[path] = obj.$options = {};
@@ -3762,7 +4193,7 @@
       });
       ace.define("ace/mouse/mouse_handler", ["require", "exports", "module", "ace/lib/event", "ace/lib/useragent", "ace/mouse/default_handlers", "ace/mouse/default_gutter_handler", "ace/mouse/mouse_event", "ace/mouse/dragdrop_handler", "ace/mouse/touch_handler", "ace/config"], function(require2, exports2, module2) {
         "use strict";
-        var event = require2("../lib/event");
+        var event2 = require2("../lib/event");
         var useragent = require2("../lib/useragent");
         var DefaultHandlers = require2("./default_handlers").DefaultHandlers;
         var DefaultGutterHandler = require2("./default_gutter_handler").GutterHandler;
@@ -3783,26 +4214,26 @@
             editor.focus();
           };
           var mouseTarget = editor.renderer.getMouseEventTarget();
-          event.addListener(mouseTarget, "click", this.onMouseEvent.bind(this, "click"), editor);
-          event.addListener(mouseTarget, "mousemove", this.onMouseMove.bind(this, "mousemove"), editor);
-          event.addMultiMouseDownListener([
+          event2.addListener(mouseTarget, "click", this.onMouseEvent.bind(this, "click"), editor);
+          event2.addListener(mouseTarget, "mousemove", this.onMouseMove.bind(this, "mousemove"), editor);
+          event2.addMultiMouseDownListener([
             mouseTarget,
             editor.renderer.scrollBarV && editor.renderer.scrollBarV.inner,
             editor.renderer.scrollBarH && editor.renderer.scrollBarH.inner,
             editor.textInput && editor.textInput.getElement()
           ].filter(Boolean), [400, 300, 250], this, "onMouseEvent", editor);
-          event.addMouseWheelListener(editor.container, this.onMouseWheel.bind(this, "mousewheel"), editor);
+          event2.addMouseWheelListener(editor.container, this.onMouseWheel.bind(this, "mousewheel"), editor);
           addTouchListeners(editor.container, editor);
           var gutterEl = editor.renderer.$gutter;
-          event.addListener(gutterEl, "mousedown", this.onMouseEvent.bind(this, "guttermousedown"), editor);
-          event.addListener(gutterEl, "click", this.onMouseEvent.bind(this, "gutterclick"), editor);
-          event.addListener(gutterEl, "dblclick", this.onMouseEvent.bind(this, "gutterdblclick"), editor);
-          event.addListener(gutterEl, "mousemove", this.onMouseEvent.bind(this, "guttermousemove"), editor);
-          event.addListener(mouseTarget, "mousedown", focusEditor, editor);
-          event.addListener(gutterEl, "mousedown", focusEditor, editor);
+          event2.addListener(gutterEl, "mousedown", this.onMouseEvent.bind(this, "guttermousedown"), editor);
+          event2.addListener(gutterEl, "click", this.onMouseEvent.bind(this, "gutterclick"), editor);
+          event2.addListener(gutterEl, "dblclick", this.onMouseEvent.bind(this, "gutterdblclick"), editor);
+          event2.addListener(gutterEl, "mousemove", this.onMouseEvent.bind(this, "guttermousemove"), editor);
+          event2.addListener(mouseTarget, "mousedown", focusEditor, editor);
+          event2.addListener(gutterEl, "mousedown", focusEditor, editor);
           if (useragent.isIE && editor.renderer.scrollBarV) {
-            event.addListener(editor.renderer.scrollBarV.element, "mousedown", focusEditor, editor);
-            event.addListener(editor.renderer.scrollBarH.element, "mousedown", focusEditor, editor);
+            event2.addListener(editor.renderer.scrollBarV.element, "mousedown", focusEditor, editor);
+            event2.addListener(editor.renderer.scrollBarH.element, "mousedown", focusEditor, editor);
           }
           editor.on("mousemove", function(e3) {
             if (_self.state || _self.$dragDelay || !_self.$dragEnabled)
@@ -3893,7 +4324,7 @@
             editor.on("beforeEndOperation", onOperationEnd);
             editor.startOperation({ command: { name: "mouse" } });
             self2.$onCaptureMouseMove = onMouseMove;
-            self2.releaseMouse = event.capture(this.editor.container, onMouseMove, onCaptureEnd);
+            self2.releaseMouse = event2.capture(this.editor.container, onMouseMove, onCaptureEnd);
             var timerId = setInterval(onCaptureInterval, 20);
           };
           this.releaseMouse = null;
@@ -3903,7 +4334,7 @@
                 return;
               this.editor.off("nativecontextmenu", stop);
               if (e3 && e3.domEvent)
-                event.stopEvent(e3.domEvent);
+                event2.stopEvent(e3.domEvent);
             }.bind(this);
             setTimeout(stop, 10);
             this.editor.on("nativecontextmenu", stop);
@@ -3983,7 +4414,7 @@
       ace.define("ace/keyboard/keybinding", ["require", "exports", "module", "ace/lib/keys", "ace/lib/event"], function(require2, exports2, module2) {
         "use strict";
         var keyUtil = require2("../lib/keys");
-        var event = require2("../lib/event");
+        var event2 = require2("../lib/event");
         var KeyBinding = function(editor) {
           this.$editor = editor;
           this.$data = { editor };
@@ -4051,7 +4482,7 @@
                 success = commands.exec(toExecute.command, this.$editor, toExecute.args, e3);
               }
               if (success && e3 && hashId != -1 && toExecute.passEvent != true && toExecute.command.passEvent != true) {
-                event.stopEvent(e3);
+                event2.stopEvent(e3);
               }
               if (success)
                 break;
@@ -4901,7 +5332,7 @@
         "use strict";
         var oop = require2("./lib/oop");
         var lang = require2("./lib/lang");
-        var EventEmitter = require2("./lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("./lib/event_emitter").EventEmitter;
         var Range = require2("./range").Range;
         var Selection = function(session) {
           this.session = session;
@@ -4927,7 +5358,7 @@
           });
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.isEmpty = function() {
             return this.$isEmpty || this.anchor.row == this.lead.row && this.anchor.column == this.lead.column;
           };
@@ -6740,7 +7171,7 @@
       ace.define("ace/anchor", ["require", "exports", "module", "ace/lib/oop", "ace/lib/event_emitter"], function(require2, exports2, module2) {
         "use strict";
         var oop = require2("./lib/oop");
-        var EventEmitter = require2("./lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("./lib/event_emitter").EventEmitter;
         var Anchor = exports2.Anchor = function(doc, row, column) {
           this.$onChange = this.onChange.bind(this);
           this.attach(doc);
@@ -6750,7 +7181,7 @@
             this.setPosition(row, column);
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.getPosition = function() {
             return this.$clipPositionToDocument(this.row, this.column);
           };
@@ -6845,7 +7276,7 @@
         "use strict";
         var oop = require2("./lib/oop");
         var applyDelta = require2("./apply_delta").applyDelta;
-        var EventEmitter = require2("./lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("./lib/event_emitter").EventEmitter;
         var Range = require2("./range").Range;
         var Anchor = require2("./anchor").Anchor;
         var Document = function(textOrLines) {
@@ -6859,7 +7290,7 @@
           }
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.setValue = function(text) {
             var len = this.getLength() - 1;
             this.remove(new Range(0, 0, len, this.getLine(len).length));
@@ -7174,7 +7605,7 @@
       ace.define("ace/background_tokenizer", ["require", "exports", "module", "ace/lib/oop", "ace/lib/event_emitter"], function(require2, exports2, module2) {
         "use strict";
         var oop = require2("./lib/oop");
-        var EventEmitter = require2("./lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("./lib/event_emitter").EventEmitter;
         var BackgroundTokenizer = function(tokenizer, editor) {
           this.running = false;
           this.lines = [];
@@ -7216,7 +7647,7 @@
           };
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.setTokenizer = function(tokenizer) {
             this.tokenizer = tokenizer;
             this.lines = [];
@@ -8657,7 +9088,7 @@
         var lang = require2("./lib/lang");
         var BidiHandler = require2("./bidihandler").BidiHandler;
         var config = require2("./config");
-        var EventEmitter = require2("./lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("./lib/event_emitter").EventEmitter;
         var Selection = require2("./selection").Selection;
         var TextMode = require2("./mode/text").Mode;
         var Range = require2("./range").Range;
@@ -8689,7 +9120,7 @@
         };
         EditSession.$uid = 0;
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.setDocument = function(doc) {
             if (this.doc)
               this.doc.off("change", this.$onChange);
@@ -10652,7 +11083,7 @@
         "use strict";
         var oop = require2("../lib/oop");
         var MultiHashHandler = require2("../keyboard/hash_handler").MultiHashHandler;
-        var EventEmitter = require2("../lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("../lib/event_emitter").EventEmitter;
         var CommandManager = function(platform, commands) {
           MultiHashHandler.call(this, commands, platform);
           this.byName = this.commands;
@@ -10662,7 +11093,7 @@
         };
         oop.inherits(CommandManager, MultiHashHandler);
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.exec = function(command, editor, args) {
             if (Array.isArray(command)) {
               for (var i3 = command.length; i3--; ) {
@@ -11859,7 +12290,7 @@
         var EditSession = require2("./edit_session").EditSession;
         var Search = require2("./search").Search;
         var Range = require2("./range").Range;
-        var EventEmitter = require2("./lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("./lib/event_emitter").EventEmitter;
         var CommandManager = require2("./commands/command_manager").CommandManager;
         var defaultCommands = require2("./commands/default_commands").commands;
         var config = require2("./config");
@@ -11901,7 +12332,7 @@
         };
         Editor.$uid = 0;
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.$initOperationListeners = function() {
             this.commands.on("exec", this.startOperation.bind(this), true);
             this.commands.on("afterExec", this.endOperation.bind(this), true);
@@ -12465,8 +12896,8 @@
           this.onCut = function() {
             this.commands.exec("cut", this);
           };
-          this.onPaste = function(text, event) {
-            var e3 = { text, event };
+          this.onPaste = function(text, event2) {
+            var e3 = { text, event: event2 };
             this.commands.exec("paste", this, e3);
           };
           this.$handlePaste = function(e3) {
@@ -14341,7 +14772,7 @@
         var dom = require2("../lib/dom");
         var oop = require2("../lib/oop");
         var lang = require2("../lib/lang");
-        var EventEmitter = require2("../lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("../lib/event_emitter").EventEmitter;
         var Lines = require2("./lines").Lines;
         var Gutter = function(parentEl) {
           this.element = dom.createElement("div");
@@ -14355,7 +14786,7 @@
           this.$lines.$offsetCoefficient = 1;
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.setSession = function(session) {
             if (this.session)
               this.session.off("change", this.$updateAnnotations);
@@ -14830,7 +15261,7 @@
         var dom = require2("../lib/dom");
         var lang = require2("../lib/lang");
         var Lines = require2("./lines").Lines;
-        var EventEmitter = require2("../lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("../lib/event_emitter").EventEmitter;
         var Text = function(parentEl) {
           this.dom = dom;
           this.element = this.dom.createElement("div");
@@ -14840,7 +15271,7 @@
           this.$lines = new Lines(this.element);
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.EOF_CHAR = "\xB6";
           this.EOL_CHAR_LF = "\xAC";
           this.EOL_CHAR_CRLF = "\xA4";
@@ -15513,8 +15944,8 @@
         "use strict";
         var oop = require2("./lib/oop");
         var dom = require2("./lib/dom");
-        var event = require2("./lib/event");
-        var EventEmitter = require2("./lib/event_emitter").EventEmitter;
+        var event2 = require2("./lib/event");
+        var EventEmitter2 = require2("./lib/event_emitter").EventEmitter;
         var MAX_SCROLL_H = 32768;
         var ScrollBar = function(parent) {
           this.element = dom.createElement("div");
@@ -15526,11 +15957,11 @@
           parent.appendChild(this.element);
           this.setVisible(false);
           this.skipEvent = false;
-          event.addListener(this.element, "scroll", this.onScroll.bind(this));
-          event.addListener(this.element, "mousedown", event.preventDefault);
+          event2.addListener(this.element, "scroll", this.onScroll.bind(this));
+          event2.addListener(this.element, "mousedown", event2.preventDefault);
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.setVisible = function(isVisible) {
             this.element.style.display = isVisible ? "" : "none";
             this.isVisible = isVisible;
@@ -15626,7 +16057,7 @@
       });
       ace.define("ace/renderloop", ["require", "exports", "module", "ace/lib/event"], function(require2, exports2, module2) {
         "use strict";
-        var event = require2("./lib/event");
+        var event2 = require2("./lib/event");
         var RenderLoop = function(onRender, win) {
           this.onRender = onRender;
           this.pending = false;
@@ -15638,7 +16069,7 @@
             _self.pending = false;
             var changes = _self.changes;
             if (changes) {
-              event.blockIdle(100);
+              event2.blockIdle(100);
               _self.changes = 0;
               _self.onRender(changes);
             }
@@ -15655,7 +16086,7 @@
           this.schedule = function(change) {
             this.changes = this.changes | change;
             if (this.changes && !this.pending) {
-              event.nextFrame(this._flush);
+              event2.nextFrame(this._flush);
               this.pending = true;
             }
           };
@@ -15671,9 +16102,9 @@
         var oop = require2("../lib/oop");
         var dom = require2("../lib/dom");
         var lang = require2("../lib/lang");
-        var event = require2("../lib/event");
+        var event2 = require2("../lib/event");
         var useragent = require2("../lib/useragent");
-        var EventEmitter = require2("../lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("../lib/event_emitter").EventEmitter;
         var CHAR_COUNT = 256;
         var USE_OBSERVER = typeof ResizeObserver == "function";
         var L2 = 200;
@@ -15695,7 +16126,7 @@
             this.checkForSizeChanges();
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.$characterSize = { width: 0, height: 0 };
           this.$setMeasureNodeStyles = function(style, isRoot) {
             style.width = style.height = "auto";
@@ -15734,9 +16165,9 @@
             if (this.$pollSizeChangesTimer || this.$observer)
               return this.$pollSizeChangesTimer;
             var self2 = this;
-            return this.$pollSizeChangesTimer = event.onIdle(function cb() {
+            return this.$pollSizeChangesTimer = event2.onIdle(function cb() {
               self2.checkForSizeChanges();
-              event.onIdle(cb, 500);
+              event2.onIdle(cb, 500);
             }, 500);
           };
           this.setPolling = function(val) {
@@ -15847,7 +16278,7 @@
         var VScrollBar = require2("./scrollbar").VScrollBar;
         var RenderLoop = require2("./renderloop").RenderLoop;
         var FontMetrics = require2("./layer/font_metrics").FontMetrics;
-        var EventEmitter = require2("./lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("./lib/event_emitter").EventEmitter;
         var editorCss = `.ace_br1 {border-top-left-radius    : 3px;}.ace_br2 {border-top-right-radius   : 3px;}.ace_br3 {border-top-left-radius    : 3px; border-top-right-radius:    3px;}.ace_br4 {border-bottom-right-radius: 3px;}.ace_br5 {border-top-left-radius    : 3px; border-bottom-right-radius: 3px;}.ace_br6 {border-top-right-radius   : 3px; border-bottom-right-radius: 3px;}.ace_br7 {border-top-left-radius    : 3px; border-top-right-radius:    3px; border-bottom-right-radius: 3px;}.ace_br8 {border-bottom-left-radius : 3px;}.ace_br9 {border-top-left-radius    : 3px; border-bottom-left-radius:  3px;}.ace_br10{border-top-right-radius   : 3px; border-bottom-left-radius:  3px;}.ace_br11{border-top-left-radius    : 3px; border-top-right-radius:    3px; border-bottom-left-radius:  3px;}.ace_br12{border-bottom-right-radius: 3px; border-bottom-left-radius:  3px;}.ace_br13{border-top-left-radius    : 3px; border-bottom-right-radius: 3px; border-bottom-left-radius:  3px;}.ace_br14{border-top-right-radius   : 3px; border-bottom-right-radius: 3px; border-bottom-left-radius:  3px;}.ace_br15{border-top-left-radius    : 3px; border-top-right-radius:    3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;}.ace_editor {position: relative;overflow: hidden;padding: 0;font: 12px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;direction: ltr;text-align: left;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}.ace_scroller {position: absolute;overflow: hidden;top: 0;bottom: 0;background-color: inherit;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;user-select: none;cursor: text;}.ace_content {position: absolute;box-sizing: border-box;min-width: 100%;contain: style size layout;font-variant-ligatures: no-common-ligatures;}.ace_dragging .ace_scroller:before{position: absolute;top: 0;left: 0;right: 0;bottom: 0;content: '';background: rgba(250, 250, 250, 0.01);z-index: 1000;}.ace_dragging.ace_dark .ace_scroller:before{background: rgba(0, 0, 0, 0.01);}.ace_selecting, .ace_selecting * {cursor: text !important;}.ace_gutter {position: absolute;overflow : hidden;width: auto;top: 0;bottom: 0;left: 0;cursor: default;z-index: 4;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;user-select: none;contain: style size layout;}.ace_gutter-active-line {position: absolute;left: 0;right: 0;}.ace_scroller.ace_scroll-left {box-shadow: 17px 0 16px -16px rgba(0, 0, 0, 0.4) inset;}.ace_gutter-cell {position: absolute;top: 0;left: 0;right: 0;padding-left: 19px;padding-right: 6px;background-repeat: no-repeat;}.ace_gutter-cell.ace_error {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABOFBMVEX/////////QRswFAb/Ui4wFAYwFAYwFAaWGAfDRymzOSH/PxswFAb/SiUwFAYwFAbUPRvjQiDllog5HhHdRybsTi3/Tyv9Tir+Syj/UC3////XurebMBIwFAb/RSHbPx/gUzfdwL3kzMivKBAwFAbbvbnhPx66NhowFAYwFAaZJg8wFAaxKBDZurf/RB6mMxb/SCMwFAYwFAbxQB3+RB4wFAb/Qhy4Oh+4QifbNRcwFAYwFAYwFAb/QRzdNhgwFAYwFAbav7v/Uy7oaE68MBK5LxLewr/r2NXewLswFAaxJw4wFAbkPRy2PyYwFAaxKhLm1tMwFAazPiQwFAaUGAb/QBrfOx3bvrv/VC/maE4wFAbRPBq6MRO8Qynew8Dp2tjfwb0wFAbx6eju5+by6uns4uH9/f36+vr/GkHjAAAAYnRSTlMAGt+64rnWu/bo8eAA4InH3+DwoN7j4eLi4xP99Nfg4+b+/u9B/eDs1MD1mO7+4PHg2MXa347g7vDizMLN4eG+Pv7i5evs/v79yu7S3/DV7/498Yv24eH+4ufQ3Ozu/v7+y13sRqwAAADLSURBVHjaZc/XDsFgGIBhtDrshlitmk2IrbHFqL2pvXf/+78DPokj7+Fz9qpU/9UXJIlhmPaTaQ6QPaz0mm+5gwkgovcV6GZzd5JtCQwgsxoHOvJO15kleRLAnMgHFIESUEPmawB9ngmelTtipwwfASilxOLyiV5UVUyVAfbG0cCPHig+GBkzAENHS0AstVF6bacZIOzgLmxsHbt2OecNgJC83JERmePUYq8ARGkJx6XtFsdddBQgZE2nPR6CICZhawjA4Fb/chv+399kfR+MMMDGOQAAAABJRU5ErkJggg==");background-repeat: no-repeat;background-position: 2px center;}.ace_gutter-cell.ace_warning {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAmVBMVEX///8AAAD///8AAAAAAABPSzb/5sAAAAB/blH/73z/ulkAAAAAAAD85pkAAAAAAAACAgP/vGz/rkDerGbGrV7/pkQICAf////e0IsAAAD/oED/qTvhrnUAAAD/yHD/njcAAADuv2r/nz//oTj/p064oGf/zHAAAAA9Nir/tFIAAAD/tlTiuWf/tkIAAACynXEAAAAAAAAtIRW7zBpBAAAAM3RSTlMAABR1m7RXO8Ln31Z36zT+neXe5OzooRDfn+TZ4p3h2hTf4t3k3ucyrN1K5+Xaks52Sfs9CXgrAAAAjklEQVR42o3PbQ+CIBQFYEwboPhSYgoYunIqqLn6/z8uYdH8Vmdnu9vz4WwXgN/xTPRD2+sgOcZjsge/whXZgUaYYvT8QnuJaUrjrHUQreGczuEafQCO/SJTufTbroWsPgsllVhq3wJEk2jUSzX3CUEDJC84707djRc5MTAQxoLgupWRwW6UB5fS++NV8AbOZgnsC7BpEAAAAABJRU5ErkJggg==");background-position: 2px center;}.ace_gutter-cell.ace_info {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAAAAAA6mKC9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAJ0Uk5TAAB2k804AAAAPklEQVQY02NgIB68QuO3tiLznjAwpKTgNyDbMegwisCHZUETUZV0ZqOquBpXj2rtnpSJT1AEnnRmL2OgGgAAIKkRQap2htgAAAAASUVORK5CYII=");background-position: 2px center;}.ace_dark .ace_gutter-cell.ace_info {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAJFBMVEUAAAChoaGAgIAqKiq+vr6tra1ZWVmUlJSbm5s8PDxubm56enrdgzg3AAAAAXRSTlMAQObYZgAAAClJREFUeNpjYMAPdsMYHegyJZFQBlsUlMFVCWUYKkAZMxZAGdxlDMQBAG+TBP4B6RyJAAAAAElFTkSuQmCC");}.ace_scrollbar {contain: strict;position: absolute;right: 0;bottom: 0;z-index: 6;}.ace_scrollbar-inner {position: absolute;cursor: text;left: 0;top: 0;}.ace_scrollbar-v{overflow-x: hidden;overflow-y: scroll;top: 0;}.ace_scrollbar-h {overflow-x: scroll;overflow-y: hidden;left: 0;}.ace_print-margin {position: absolute;height: 100%;}.ace_text-input {position: absolute;z-index: 0;width: 0.5em;height: 1em;opacity: 0;background: transparent;-moz-appearance: none;appearance: none;border: none;resize: none;outline: none;overflow: hidden;font: inherit;padding: 0 1px;margin: 0 -1px;contain: strict;-ms-user-select: text;-moz-user-select: text;-webkit-user-select: text;user-select: text;white-space: pre!important;}.ace_text-input.ace_composition {background: transparent;color: inherit;z-index: 1000;opacity: 1;}.ace_composition_placeholder { color: transparent }.ace_composition_marker { border-bottom: 1px solid;position: absolute;border-radius: 0;margin-top: 1px;}[ace_nocontext=true] {transform: none!important;filter: none!important;clip-path: none!important;mask : none!important;contain: none!important;perspective: none!important;mix-blend-mode: initial!important;z-index: auto;}.ace_layer {z-index: 1;position: absolute;overflow: hidden;word-wrap: normal;white-space: pre;height: 100%;width: 100%;box-sizing: border-box;pointer-events: none;}.ace_gutter-layer {position: relative;width: auto;text-align: right;pointer-events: auto;height: 1000000px;contain: style size layout;}.ace_text-layer {font: inherit !important;position: absolute;height: 1000000px;width: 1000000px;contain: style size layout;}.ace_text-layer > .ace_line, .ace_text-layer > .ace_line_group {contain: style size layout;position: absolute;top: 0;left: 0;right: 0;}.ace_hidpi .ace_text-layer,.ace_hidpi .ace_gutter-layer,.ace_hidpi .ace_content,.ace_hidpi .ace_gutter {contain: strict;will-change: transform;}.ace_hidpi .ace_text-layer > .ace_line, .ace_hidpi .ace_text-layer > .ace_line_group {contain: strict;}.ace_cjk {display: inline-block;text-align: center;}.ace_cursor-layer {z-index: 4;}.ace_cursor {z-index: 4;position: absolute;box-sizing: border-box;border-left: 2px solid;transform: translatez(0);}.ace_multiselect .ace_cursor {border-left-width: 1px;}.ace_slim-cursors .ace_cursor {border-left-width: 1px;}.ace_overwrite-cursors .ace_cursor {border-left-width: 0;border-bottom: 1px solid;}.ace_hidden-cursors .ace_cursor {opacity: 0.2;}.ace_hasPlaceholder .ace_hidden-cursors .ace_cursor {opacity: 0;}.ace_smooth-blinking .ace_cursor {transition: opacity 0.18s;}.ace_animate-blinking .ace_cursor {animation-duration: 1000ms;animation-timing-function: step-end;animation-name: blink-ace-animate;animation-iteration-count: infinite;}.ace_animate-blinking.ace_smooth-blinking .ace_cursor {animation-duration: 1000ms;animation-timing-function: ease-in-out;animation-name: blink-ace-animate-smooth;}@keyframes blink-ace-animate {from, to { opacity: 1; }60% { opacity: 0; }}@keyframes blink-ace-animate-smooth {from, to { opacity: 1; }45% { opacity: 1; }60% { opacity: 0; }85% { opacity: 0; }}.ace_marker-layer .ace_step, .ace_marker-layer .ace_stack {position: absolute;z-index: 3;}.ace_marker-layer .ace_selection {position: absolute;z-index: 5;}.ace_marker-layer .ace_bracket {position: absolute;z-index: 6;}.ace_marker-layer .ace_error_bracket {position: absolute;border-bottom: 1px solid #DE5555;border-radius: 0;}.ace_marker-layer .ace_active-line {position: absolute;z-index: 2;}.ace_marker-layer .ace_selected-word {position: absolute;z-index: 4;box-sizing: border-box;}.ace_line .ace_fold {box-sizing: border-box;display: inline-block;height: 11px;margin-top: -2px;vertical-align: middle;background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAJCAYAAADU6McMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJpJREFUeNpi/P//PwOlgAXGYGRklAVSokD8GmjwY1wasKljQpYACtpCFeADcHVQfQyMQAwzwAZI3wJKvCLkfKBaMSClBlR7BOQikCFGQEErIH0VqkabiGCAqwUadAzZJRxQr/0gwiXIal8zQQPnNVTgJ1TdawL0T5gBIP1MUJNhBv2HKoQHHjqNrA4WO4zY0glyNKLT2KIfIMAAQsdgGiXvgnYAAAAASUVORK5CYII="),url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAA3CAYAAADNNiA5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACJJREFUeNpi+P//fxgTAwPDBxDxD078RSX+YeEyDFMCIMAAI3INmXiwf2YAAAAASUVORK5CYII=");background-repeat: no-repeat, repeat-x;background-position: center center, top left;color: transparent;border: 1px solid black;border-radius: 2px;cursor: pointer;pointer-events: auto;}.ace_dark .ace_fold {}.ace_fold:hover{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAJCAYAAADU6McMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJpJREFUeNpi/P//PwOlgAXGYGRklAVSokD8GmjwY1wasKljQpYACtpCFeADcHVQfQyMQAwzwAZI3wJKvCLkfKBaMSClBlR7BOQikCFGQEErIH0VqkabiGCAqwUadAzZJRxQr/0gwiXIal8zQQPnNVTgJ1TdawL0T5gBIP1MUJNhBv2HKoQHHjqNrA4WO4zY0glyNKLT2KIfIMAAQsdgGiXvgnYAAAAASUVORK5CYII="),url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAA3CAYAAADNNiA5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACBJREFUeNpi+P//fz4TAwPDZxDxD5X4i5fLMEwJgAADAEPVDbjNw87ZAAAAAElFTkSuQmCC");}.ace_tooltip {background-color: #FFF;background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));border: 1px solid gray;border-radius: 1px;box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);color: black;max-width: 100%;padding: 3px 4px;position: fixed;z-index: 999999;box-sizing: border-box;cursor: default;white-space: pre;word-wrap: break-word;line-height: normal;font-style: normal;font-weight: normal;letter-spacing: normal;pointer-events: none;}.ace_folding-enabled > .ace_gutter-cell {padding-right: 13px;}.ace_fold-widget {box-sizing: border-box;margin: 0 -12px 0 1px;display: none;width: 11px;vertical-align: top;background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAANElEQVR42mWKsQ0AMAzC8ixLlrzQjzmBiEjp0A6WwBCSPgKAXoLkqSot7nN3yMwR7pZ32NzpKkVoDBUxKAAAAABJRU5ErkJggg==");background-repeat: no-repeat;background-position: center;border-radius: 3px;border: 1px solid transparent;cursor: pointer;}.ace_folding-enabled .ace_fold-widget {display: inline-block;   }.ace_fold-widget.ace_end {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAANElEQVR42m3HwQkAMAhD0YzsRchFKI7sAikeWkrxwScEB0nh5e7KTPWimZki4tYfVbX+MNl4pyZXejUO1QAAAABJRU5ErkJggg==");}.ace_fold-widget.ace_closed {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAGCAYAAAAG5SQMAAAAOUlEQVR42jXKwQkAMAgDwKwqKD4EwQ26sSOkVWjgIIHAzPiCgaqiqnJHZnKICBERHN194O5b9vbLuAVRL+l0YWnZAAAAAElFTkSuQmCCXA==");}.ace_fold-widget:hover {border: 1px solid rgba(0, 0, 0, 0.3);background-color: rgba(255, 255, 255, 0.2);box-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);}.ace_fold-widget:active {border: 1px solid rgba(0, 0, 0, 0.4);background-color: rgba(0, 0, 0, 0.05);box-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);}.ace_dark .ace_fold-widget {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHklEQVQIW2P4//8/AzoGEQ7oGCaLLAhWiSwB146BAQCSTPYocqT0AAAAAElFTkSuQmCC");}.ace_dark .ace_fold-widget.ace_end {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAH0lEQVQIW2P4//8/AxQ7wNjIAjDMgC4AxjCVKBirIAAF0kz2rlhxpAAAAABJRU5ErkJggg==");}.ace_dark .ace_fold-widget.ace_closed {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAHElEQVQIW2P4//+/AxAzgDADlOOAznHAKgPWAwARji8UIDTfQQAAAABJRU5ErkJggg==");}.ace_dark .ace_fold-widget:hover {box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);background-color: rgba(255, 255, 255, 0.1);}.ace_dark .ace_fold-widget:active {box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);}.ace_inline_button {border: 1px solid lightgray;display: inline-block;margin: -1px 8px;padding: 0 5px;pointer-events: auto;cursor: pointer;}.ace_inline_button:hover {border-color: gray;background: rgba(200,200,200,0.2);display: inline-block;pointer-events: auto;}.ace_fold-widget.ace_invalid {background-color: #FFB4B4;border-color: #DE5555;}.ace_fade-fold-widgets .ace_fold-widget {transition: opacity 0.4s ease 0.05s;opacity: 0;}.ace_fade-fold-widgets:hover .ace_fold-widget {transition: opacity 0.05s ease 0.05s;opacity:1;}.ace_underline {text-decoration: underline;}.ace_bold {font-weight: bold;}.ace_nobold .ace_bold {font-weight: normal;}.ace_italic {font-style: italic;}.ace_error-marker {background-color: rgba(255, 0, 0,0.2);position: absolute;z-index: 9;}.ace_highlight-marker {background-color: rgba(255, 255, 0,0.2);position: absolute;z-index: 8;}.ace_mobile-menu {position: absolute;line-height: 1.5;border-radius: 4px;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;user-select: none;background: white;box-shadow: 1px 3px 2px grey;border: 1px solid #dcdcdc;color: black;}.ace_dark > .ace_mobile-menu {background: #333;color: #ccc;box-shadow: 1px 3px 2px grey;border: 1px solid #444;}.ace_mobile-button {padding: 2px;cursor: pointer;overflow: hidden;}.ace_mobile-button:hover {background-color: #eee;opacity:1;}.ace_mobile-button:active {background-color: #ddd;}.ace_placeholder {font-family: arial;transform: scale(0.9);transform-origin: left;white-space: pre;opacity: 0.7;margin: 0 10px;}`;
         var useragent = require2("./lib/useragent");
         var HIDE_TEXTAREA = useragent.isIE;
@@ -15960,7 +16391,7 @@
           this.CHANGE_MARKER_FRONT = 256;
           this.CHANGE_FULL = 512;
           this.CHANGE_H_SCROLL = 1024;
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.updateCharacterSize = function() {
             if (this.$textLayer.allowBoldFonts != this.$allowBoldFonts) {
               this.$allowBoldFonts = this.$textLayer.allowBoldFonts;
@@ -17053,7 +17484,7 @@
         "use strict";
         var oop = require2("../lib/oop");
         var net = require2("../lib/net");
-        var EventEmitter = require2("../lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("../lib/event_emitter").EventEmitter;
         var config = require2("../config");
         function $workerBlob(workerUrl) {
           var script = "importScripts('" + net.qualifyURL(workerUrl) + "');";
@@ -17091,7 +17522,7 @@
           this.$worker.onmessage = this.onMessage;
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.$createWorkerFromOldConfig = function(topLevelNamespaces, mod, classname, workerUrl, importScripts) {
             if (require2.nameToUrl && !require2.toUrl)
               require2.toUrl = require2.nameToUrl;
@@ -17164,11 +17595,11 @@
             }
             this.send(cmd, args);
           };
-          this.emit = function(event, data) {
+          this.emit = function(event2, data) {
             try {
               if (data.data && data.data.err)
                 data.data.err = { message: data.data.err.message, stack: data.data.err.stack, code: data.data.err.code };
-              this.$worker.postMessage({ event, data: { data: data.data } });
+              this.$worker.postMessage({ event: event2, data: { data: data.data } });
             } catch (ex) {
               console.error(ex.stack);
             }
@@ -17204,7 +17635,7 @@
         var UIWorkerClient = function(topLevelNamespaces, mod, classname) {
           var main = null;
           var emitSync = false;
-          var sender = Object.create(EventEmitter);
+          var sender = Object.create(EventEmitter2);
           var messageBuffer = [];
           var workerClient = new WorkerClient({
             messageBuffer,
@@ -17253,7 +17684,7 @@
       ace.define("ace/placeholder", ["require", "exports", "module", "ace/range", "ace/lib/event_emitter", "ace/lib/oop"], function(require2, exports2, module2) {
         "use strict";
         var Range = require2("./range").Range;
-        var EventEmitter = require2("./lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("./lib/event_emitter").EventEmitter;
         var oop = require2("./lib/oop");
         var PlaceHolder = function(session, length, pos, others, mainClass, othersClass) {
           var _self = this;
@@ -17277,7 +17708,7 @@
           session.selection.on("changeCursor", this.$onCursorChange);
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.setup = function() {
             var _self = this;
             var doc = this.doc;
@@ -17369,16 +17800,16 @@
             for (var i3 = this.others.length; i3--; )
               updateMarker(this.others[i3], this.othersClass);
           };
-          this.onCursorChange = function(event) {
+          this.onCursorChange = function(event2) {
             if (this.$updating || !this.session)
               return;
             var pos = this.session.selection.getCursor();
             if (pos.row === this.pos.row && pos.column >= this.pos.column && pos.column <= this.pos.column + this.length) {
               this.showOtherMarkers();
-              this._emit("cursorEnter", event);
+              this._emit("cursorEnter", event2);
             } else {
               this.hideOtherMarkers();
-              this._emit("cursorLeave", event);
+              this._emit("cursorLeave", event2);
             }
           };
           this.detach = function() {
@@ -17404,7 +17835,7 @@
         exports2.PlaceHolder = PlaceHolder;
       });
       ace.define("ace/mouse/multi_select_handler", ["require", "exports", "module", "ace/lib/event", "ace/lib/useragent"], function(require2, exports2, module2) {
-        var event = require2("../lib/event");
+        var event2 = require2("../lib/event");
         var useragent = require2("../lib/useragent");
         function isSamePoint(p1, p22) {
           return p1.row == p22.row && p1.column == p22.column;
@@ -17537,7 +17968,7 @@
               editor.$mouseHandler.$clickSelection = null;
             };
             var onSelectionInterval = blockSelect;
-            event.capture(editor.container, onMouseSelection, onMouseSelectionEnd);
+            event2.capture(editor.container, onMouseSelection, onMouseSelectionEnd);
             var timerId = setInterval(function() {
               onSelectionInterval();
             }, 20);
@@ -17676,7 +18107,7 @@
         var Range = require2("./range").Range;
         var Selection = require2("./selection").Selection;
         var onMouseDown = require2("./mouse/multi_select_handler").onMouseDown;
-        var event = require2("./lib/event");
+        var event2 = require2("./lib/event");
         var lang = require2("./lib/lang");
         var commands = require2("./commands/multi_select_commands");
         exports2.commands = commands.defaultCommands.concat(commands.multiSelectCommands);
@@ -18320,7 +18751,7 @@
             return;
           var el = editor.textInput.getElement();
           var altCursor = false;
-          event.addListener(el, "keydown", function(e3) {
+          event2.addListener(el, "keydown", function(e3) {
             var altDown = e3.keyCode == 18 && !(e3.ctrlKey || e3.shiftKey || e3.metaKey);
             if (editor.$blockSelectEnabled && altDown) {
               if (!altCursor) {
@@ -18331,8 +18762,8 @@
               reset();
             }
           }, editor);
-          event.addListener(el, "keyup", reset, editor);
-          event.addListener(el, "blur", reset, editor);
+          event2.addListener(el, "keyup", reset, editor);
+          event2.addListener(el, "blur", reset, editor);
           function reset(e3) {
             if (altCursor) {
               editor.renderer.setMouseCursor("");
@@ -18895,7 +19326,7 @@
         "use strict";
         require2("./lib/fixoldbrowsers");
         var dom = require2("./lib/dom");
-        var event = require2("./lib/event");
+        var event2 = require2("./lib/event");
         var Range = require2("./range").Range;
         var Editor = require2("./editor").Editor;
         var EditSession = require2("./edit_session").EditSession;
@@ -18940,9 +19371,9 @@
           };
           if (oldNode)
             env.textarea = oldNode;
-          event.addListener(window, "resize", env.onResize);
+          event2.addListener(window, "resize", env.onResize);
           editor.on("destroy", function() {
-            event.removeListener(window, "resize", env.onResize);
+            event2.removeListener(window, "resize", env.onResize);
             env.editor.container.env = null;
           });
           editor.container.env = editor.env = env;
@@ -19717,433 +20148,6 @@
       }
       var ReactIs;
       var throwOnDirectAccess;
-    }
-  });
-
-  // node_modules/preact/hooks/dist/hooks.module.js
-  var hooks_module_exports = {};
-  __export(hooks_module_exports, {
-    useCallback: () => A2,
-    useContext: () => F,
-    useDebugValue: () => T2,
-    useEffect: () => y2,
-    useErrorBoundary: () => q2,
-    useImperativeHandle: () => _2,
-    useLayoutEffect: () => h2,
-    useMemo: () => d2,
-    useReducer: () => p2,
-    useRef: () => s2,
-    useState: () => l2
-  });
-  function m2(t3, r3) {
-    l.__h && l.__h(u2, t3, o2 || r3), o2 = 0;
-    var i3 = u2.__H || (u2.__H = { __: [], __h: [] });
-    return t3 >= i3.__.length && i3.__.push({}), i3.__[t3];
-  }
-  function l2(n2) {
-    return o2 = 1, p2(w2, n2);
-  }
-  function p2(n2, r3, o3) {
-    var i3 = m2(t2++, 2);
-    return i3.t = n2, i3.__c || (i3.__ = [o3 ? o3(r3) : w2(void 0, r3), function(n3) {
-      var t3 = i3.t(i3.__[0], n3);
-      i3.__[0] !== t3 && (i3.__ = [t3, i3.__[1]], i3.__c.setState({}));
-    }], i3.__c = u2), i3.__;
-  }
-  function y2(r3, o3) {
-    var i3 = m2(t2++, 3);
-    !l.__s && k2(i3.__H, o3) && (i3.__ = r3, i3.__H = o3, u2.__H.__h.push(i3));
-  }
-  function h2(r3, o3) {
-    var i3 = m2(t2++, 4);
-    !l.__s && k2(i3.__H, o3) && (i3.__ = r3, i3.__H = o3, u2.__h.push(i3));
-  }
-  function s2(n2) {
-    return o2 = 5, d2(function() {
-      return { current: n2 };
-    }, []);
-  }
-  function _2(n2, t3, u3) {
-    o2 = 6, h2(function() {
-      typeof n2 == "function" ? n2(t3()) : n2 && (n2.current = t3());
-    }, u3 == null ? u3 : u3.concat(n2));
-  }
-  function d2(n2, u3) {
-    var r3 = m2(t2++, 7);
-    return k2(r3.__H, u3) && (r3.__ = n2(), r3.__H = u3, r3.__h = n2), r3.__;
-  }
-  function A2(n2, t3) {
-    return o2 = 8, d2(function() {
-      return n2;
-    }, t3);
-  }
-  function F(n2) {
-    var r3 = u2.context[n2.__c], o3 = m2(t2++, 9);
-    return o3.c = n2, r3 ? (o3.__ == null && (o3.__ = true, r3.sub(u2)), r3.props.value) : n2.__;
-  }
-  function T2(t3, u3) {
-    l.useDebugValue && l.useDebugValue(u3 ? u3(t3) : t3);
-  }
-  function q2(n2) {
-    var r3 = m2(t2++, 10), o3 = l2();
-    return r3.__ = n2, u2.componentDidCatch || (u2.componentDidCatch = function(n3) {
-      r3.__ && r3.__(n3), o3[1](n3);
-    }), [o3[0], function() {
-      o3[1](void 0);
-    }];
-  }
-  function x2() {
-    i2.forEach(function(t3) {
-      if (t3.__P)
-        try {
-          t3.__H.__h.forEach(g2), t3.__H.__h.forEach(j2), t3.__H.__h = [];
-        } catch (u3) {
-          t3.__H.__h = [], l.__e(u3, t3.__v);
-        }
-    }), i2 = [];
-  }
-  function g2(n2) {
-    var t3 = u2;
-    typeof n2.__c == "function" && n2.__c(), u2 = t3;
-  }
-  function j2(n2) {
-    var t3 = u2;
-    n2.__c = n2.__(), u2 = t3;
-  }
-  function k2(n2, t3) {
-    return !n2 || n2.length !== t3.length || t3.some(function(t4, u3) {
-      return t4 !== n2[u3];
-    });
-  }
-  function w2(n2, t3) {
-    return typeof t3 == "function" ? t3(n2) : t3;
-  }
-  var t2, u2, r2, o2, i2, c2, f2, e2, a2, v2, b2;
-  var init_hooks_module = __esm({
-    "node_modules/preact/hooks/dist/hooks.module.js"() {
-      init_preact_shim();
-      init_preact_module();
-      o2 = 0;
-      i2 = [];
-      c2 = l.__b;
-      f2 = l.__r;
-      e2 = l.diffed;
-      a2 = l.__c;
-      v2 = l.unmount;
-      l.__b = function(n2) {
-        u2 = null, c2 && c2(n2);
-      }, l.__r = function(n2) {
-        f2 && f2(n2), t2 = 0;
-        var r3 = (u2 = n2.__c).__H;
-        r3 && (r3.__h.forEach(g2), r3.__h.forEach(j2), r3.__h = []);
-      }, l.diffed = function(t3) {
-        e2 && e2(t3);
-        var o3 = t3.__c;
-        o3 && o3.__H && o3.__H.__h.length && (i2.push(o3) !== 1 && r2 === l.requestAnimationFrame || ((r2 = l.requestAnimationFrame) || function(n2) {
-          var t4, u3 = function() {
-            clearTimeout(r3), b2 && cancelAnimationFrame(t4), setTimeout(n2);
-          }, r3 = setTimeout(u3, 100);
-          b2 && (t4 = requestAnimationFrame(u3));
-        })(x2)), u2 = void 0;
-      }, l.__c = function(t3, u3) {
-        u3.some(function(t4) {
-          try {
-            t4.__h.forEach(g2), t4.__h = t4.__h.filter(function(n2) {
-              return !n2.__ || j2(n2);
-            });
-          } catch (r3) {
-            u3.some(function(n2) {
-              n2.__h && (n2.__h = []);
-            }), u3 = [], l.__e(r3, t4.__v);
-          }
-        }), a2 && a2(t3, u3);
-      }, l.unmount = function(t3) {
-        v2 && v2(t3);
-        var u3 = t3.__c;
-        if (u3 && u3.__H)
-          try {
-            u3.__H.__.forEach(g2);
-          } catch (t4) {
-            l.__e(t4, u3.__v);
-          }
-      };
-      b2 = typeof requestAnimationFrame == "function";
-    }
-  });
-
-  // node_modules/preact/compat/dist/compat.js
-  var require_compat = __commonJS({
-    "node_modules/preact/compat/dist/compat.js"(exports) {
-      init_preact_shim();
-      var n2 = (init_hooks_module(), hooks_module_exports);
-      var t3 = (init_preact_module(), preact_module_exports);
-      function e3(n3, t4) {
-        for (var e4 in t4)
-          n3[e4] = t4[e4];
-        return n3;
-      }
-      function r3(n3, t4) {
-        for (var e4 in n3)
-          if (e4 !== "__source" && !(e4 in t4))
-            return true;
-        for (var r4 in t4)
-          if (r4 !== "__source" && n3[r4] !== t4[r4])
-            return true;
-        return false;
-      }
-      function u3(n3) {
-        this.props = n3;
-      }
-      function o3(n3, e4) {
-        function u4(n4) {
-          var t4 = this.props.ref, u5 = t4 == n4.ref;
-          return !u5 && t4 && (t4.call ? t4(null) : t4.current = null), e4 ? !e4(this.props, n4) || !u5 : r3(this.props, n4);
-        }
-        function o4(e5) {
-          return this.shouldComponentUpdate = u4, t3.createElement(n3, e5);
-        }
-        return o4.displayName = "Memo(" + (n3.displayName || n3.name) + ")", o4.prototype.isReactComponent = true, o4.__f = true, o4;
-      }
-      (u3.prototype = new t3.Component()).isPureReactComponent = true, u3.prototype.shouldComponentUpdate = function(n3, t4) {
-        return r3(this.props, n3) || r3(this.state, t4);
-      };
-      var i3 = t3.options.__b;
-      t3.options.__b = function(n3) {
-        n3.type && n3.type.__f && n3.ref && (n3.props.ref = n3.ref, n3.ref = null), i3 && i3(n3);
-      };
-      var l3 = typeof Symbol != "undefined" && Symbol.for && Symbol.for("react.forward_ref") || 3911;
-      function c3(n3) {
-        function t4(t5, r4) {
-          var u4 = e3({}, t5);
-          return delete u4.ref, n3(u4, (r4 = t5.ref || r4) && (typeof r4 != "object" || "current" in r4) ? r4 : null);
-        }
-        return t4.$$typeof = l3, t4.render = t4, t4.prototype.isReactComponent = t4.__f = true, t4.displayName = "ForwardRef(" + (n3.displayName || n3.name) + ")", t4;
-      }
-      var f3 = function(n3, e4) {
-        return n3 == null ? null : t3.toChildArray(t3.toChildArray(n3).map(e4));
-      };
-      var a3 = { map: f3, forEach: f3, count: function(n3) {
-        return n3 ? t3.toChildArray(n3).length : 0;
-      }, only: function(n3) {
-        var e4 = t3.toChildArray(n3);
-        if (e4.length !== 1)
-          throw "Children.only";
-        return e4[0];
-      }, toArray: t3.toChildArray };
-      var s3 = t3.options.__e;
-      t3.options.__e = function(n3, t4, e4) {
-        if (n3.then) {
-          for (var r4, u4 = t4; u4 = u4.__; )
-            if ((r4 = u4.__c) && r4.__c)
-              return t4.__e == null && (t4.__e = e4.__e, t4.__k = e4.__k), r4.__c(n3, t4);
-        }
-        s3(n3, t4, e4);
-      };
-      var p3 = t3.options.unmount;
-      function h3() {
-        this.__u = 0, this.t = null, this.__b = null;
-      }
-      function v3(n3) {
-        var t4 = n3.__.__c;
-        return t4 && t4.__e && t4.__e(n3);
-      }
-      function d3(n3) {
-        var e4, r4, u4;
-        function o4(o5) {
-          if (e4 || (e4 = n3()).then(function(n4) {
-            r4 = n4.default || n4;
-          }, function(n4) {
-            u4 = n4;
-          }), u4)
-            throw u4;
-          if (!r4)
-            throw e4;
-          return t3.createElement(r4, o5);
-        }
-        return o4.displayName = "Lazy", o4.__f = true, o4;
-      }
-      function x3() {
-        this.u = null, this.o = null;
-      }
-      t3.options.unmount = function(n3) {
-        var t4 = n3.__c;
-        t4 && t4.__R && t4.__R(), t4 && n3.__h === true && (n3.type = null), p3 && p3(n3);
-      }, (h3.prototype = new t3.Component()).__c = function(n3, t4) {
-        var e4 = t4.__c, r4 = this;
-        r4.t == null && (r4.t = []), r4.t.push(e4);
-        var u4 = v3(r4.__v), o4 = false, i4 = function() {
-          o4 || (o4 = true, e4.__R = null, u4 ? u4(l4) : l4());
-        };
-        e4.__R = i4;
-        var l4 = function() {
-          if (!--r4.__u) {
-            if (r4.state.__e) {
-              var n4 = r4.state.__e;
-              r4.__v.__k[0] = function n5(t6, e5, r5) {
-                return t6 && (t6.__v = null, t6.__k = t6.__k && t6.__k.map(function(t7) {
-                  return n5(t7, e5, r5);
-                }), t6.__c && t6.__c.__P === e5 && (t6.__e && r5.insertBefore(t6.__e, t6.__d), t6.__c.__e = true, t6.__c.__P = r5)), t6;
-              }(n4, n4.__c.__P, n4.__c.__O);
-            }
-            var t5;
-            for (r4.setState({ __e: r4.__b = null }); t5 = r4.t.pop(); )
-              t5.forceUpdate();
-          }
-        }, c4 = t4.__h === true;
-        r4.__u++ || c4 || r4.setState({ __e: r4.__b = r4.__v.__k[0] }), n3.then(i4, i4);
-      }, h3.prototype.componentWillUnmount = function() {
-        this.t = [];
-      }, h3.prototype.render = function(n3, r4) {
-        if (this.__b) {
-          if (this.__v.__k) {
-            var u4 = document.createElement("div"), o4 = this.__v.__k[0].__c;
-            this.__v.__k[0] = function n4(t4, r5, u5) {
-              return t4 && (t4.__c && t4.__c.__H && (t4.__c.__H.__.forEach(function(n5) {
-                typeof n5.__c == "function" && n5.__c();
-              }), t4.__c.__H = null), (t4 = e3({}, t4)).__c != null && (t4.__c.__P === u5 && (t4.__c.__P = r5), t4.__c = null), t4.__k = t4.__k && t4.__k.map(function(t5) {
-                return n4(t5, r5, u5);
-              })), t4;
-            }(this.__b, u4, o4.__O = o4.__P);
-          }
-          this.__b = null;
-        }
-        var i4 = r4.__e && t3.createElement(t3.Fragment, null, n3.fallback);
-        return i4 && (i4.__h = null), [t3.createElement(t3.Fragment, null, r4.__e ? null : n3.children), i4];
-      };
-      var m3 = function(n3, t4, e4) {
-        if (++e4[1] === e4[0] && n3.o.delete(t4), n3.props.revealOrder && (n3.props.revealOrder[0] !== "t" || !n3.o.size))
-          for (e4 = n3.u; e4; ) {
-            for (; e4.length > 3; )
-              e4.pop()();
-            if (e4[1] < e4[0])
-              break;
-            n3.u = e4 = e4[2];
-          }
-      };
-      function y3(n3) {
-        return this.getChildContext = function() {
-          return n3.context;
-        }, n3.children;
-      }
-      function b3(n3) {
-        var e4 = this, r4 = n3.i;
-        e4.componentWillUnmount = function() {
-          t3.render(null, e4.l), e4.l = null, e4.i = null;
-        }, e4.i && e4.i !== r4 && e4.componentWillUnmount(), n3.__v ? (e4.l || (e4.i = r4, e4.l = { nodeType: 1, parentNode: r4, childNodes: [], appendChild: function(n4) {
-          this.childNodes.push(n4), e4.i.appendChild(n4);
-        }, insertBefore: function(n4, t4) {
-          this.childNodes.push(n4), e4.i.appendChild(n4);
-        }, removeChild: function(n4) {
-          this.childNodes.splice(this.childNodes.indexOf(n4) >>> 1, 1), e4.i.removeChild(n4);
-        } }), t3.render(t3.createElement(y3, { context: e4.context }, n3.__v), e4.l)) : e4.l && e4.componentWillUnmount();
-      }
-      function _3(n3, e4) {
-        return t3.createElement(b3, { __v: n3, i: e4 });
-      }
-      (x3.prototype = new t3.Component()).__e = function(n3) {
-        var t4 = this, e4 = v3(t4.__v), r4 = t4.o.get(n3);
-        return r4[0]++, function(u4) {
-          var o4 = function() {
-            t4.props.revealOrder ? (r4.push(u4), m3(t4, n3, r4)) : u4();
-          };
-          e4 ? e4(o4) : o4();
-        };
-      }, x3.prototype.render = function(n3) {
-        this.u = null, this.o = new Map();
-        var e4 = t3.toChildArray(n3.children);
-        n3.revealOrder && n3.revealOrder[0] === "b" && e4.reverse();
-        for (var r4 = e4.length; r4--; )
-          this.o.set(e4[r4], this.u = [1, 0, this.u]);
-        return n3.children;
-      }, x3.prototype.componentDidUpdate = x3.prototype.componentDidMount = function() {
-        var n3 = this;
-        this.o.forEach(function(t4, e4) {
-          m3(n3, e4, t4);
-        });
-      };
-      var S2 = typeof Symbol != "undefined" && Symbol.for && Symbol.for("react.element") || 60103;
-      var w3 = /^(?:accent|alignment|arabic|baseline|cap|clip(?!PathU)|color|fill|flood|font|glyph(?!R)|horiz|marker(?!H|W|U)|overline|paint|stop|strikethrough|stroke|text(?!L)|underline|unicode|units|v|vector|vert|word|writing|x(?!C))[A-Z]/;
-      var C2 = function(n3) {
-        return (typeof Symbol != "undefined" && typeof Symbol() == "symbol" ? /fil|che|rad/i : /fil|che|ra/i).test(n3);
-      };
-      function g3(n3, e4, r4) {
-        return e4.__k == null && (e4.textContent = ""), t3.render(n3, e4), typeof r4 == "function" && r4(), n3 ? n3.__c : null;
-      }
-      function E(n3, e4, r4) {
-        return t3.hydrate(n3, e4), typeof r4 == "function" && r4(), n3 ? n3.__c : null;
-      }
-      t3.Component.prototype.isReactComponent = {}, ["componentWillMount", "componentWillReceiveProps", "componentWillUpdate"].forEach(function(n3) {
-        Object.defineProperty(t3.Component.prototype, n3, { configurable: true, get: function() {
-          return this["UNSAFE_" + n3];
-        }, set: function(t4) {
-          Object.defineProperty(this, n3, { configurable: true, writable: true, value: t4 });
-        } });
-      });
-      var R = t3.options.event;
-      function N2() {
-      }
-      function O2() {
-        return this.cancelBubble;
-      }
-      function k3() {
-        return this.defaultPrevented;
-      }
-      t3.options.event = function(n3) {
-        return R && (n3 = R(n3)), n3.persist = N2, n3.isPropagationStopped = O2, n3.isDefaultPrevented = k3, n3.nativeEvent = n3;
-      };
-      var A3;
-      var L2 = { configurable: true, get: function() {
-        return this.class;
-      } };
-      var U = t3.options.vnode;
-      t3.options.vnode = function(n3) {
-        var e4 = n3.type, r4 = n3.props, u4 = r4;
-        if (typeof e4 == "string") {
-          for (var o4 in u4 = {}, r4) {
-            var i4 = r4[o4];
-            o4 === "value" && "defaultValue" in r4 && i4 == null || (o4 === "defaultValue" && "value" in r4 && r4.value == null ? o4 = "value" : o4 === "download" && i4 === true ? i4 = "" : /ondoubleclick/i.test(o4) ? o4 = "ondblclick" : /^onchange(textarea|input)/i.test(o4 + e4) && !C2(r4.type) ? o4 = "oninput" : /^on(Ani|Tra|Tou|BeforeInp)/.test(o4) ? o4 = o4.toLowerCase() : w3.test(o4) ? o4 = o4.replace(/[A-Z0-9]/, "-$&").toLowerCase() : i4 === null && (i4 = void 0), u4[o4] = i4);
-          }
-          e4 == "select" && u4.multiple && Array.isArray(u4.value) && (u4.value = t3.toChildArray(r4.children).forEach(function(n4) {
-            n4.props.selected = u4.value.indexOf(n4.props.value) != -1;
-          })), e4 == "select" && u4.defaultValue != null && (u4.value = t3.toChildArray(r4.children).forEach(function(n4) {
-            n4.props.selected = u4.multiple ? u4.defaultValue.indexOf(n4.props.value) != -1 : u4.defaultValue == n4.props.value;
-          })), n3.props = u4;
-        }
-        e4 && r4.class != r4.className && (L2.enumerable = "className" in r4, r4.className != null && (u4.class = r4.className), Object.defineProperty(u4, "className", L2)), n3.$$typeof = S2, U && U(n3);
-      };
-      var M2 = t3.options.__r;
-      t3.options.__r = function(n3) {
-        M2 && M2(n3), A3 = n3.__c;
-      };
-      var T3 = { ReactCurrentDispatcher: { current: { readContext: function(n3) {
-        return A3.__n[n3.__c].props.value;
-      } } } };
-      function j3(n3) {
-        return t3.createElement.bind(null, n3);
-      }
-      function D2(n3) {
-        return !!n3 && n3.$$typeof === S2;
-      }
-      function F2(n3) {
-        return D2(n3) ? t3.cloneElement.apply(null, arguments) : n3;
-      }
-      function I2(n3) {
-        return !!n3.__k && (t3.render(null, n3), true);
-      }
-      function W(n3) {
-        return n3 && (n3.base || n3.nodeType === 1 && n3) || null;
-      }
-      var P2 = function(n3, t4) {
-        return n3(t4);
-      };
-      var V = function(n3, t4) {
-        return n3(t4);
-      };
-      var z2 = t3.Fragment;
-      var B2 = { useState: n2.useState, useReducer: n2.useReducer, useEffect: n2.useEffect, useLayoutEffect: n2.useLayoutEffect, useRef: n2.useRef, useImperativeHandle: n2.useImperativeHandle, useMemo: n2.useMemo, useCallback: n2.useCallback, useContext: n2.useContext, useDebugValue: n2.useDebugValue, version: "17.0.2", Children: a3, render: g3, hydrate: E, unmountComponentAtNode: I2, createPortal: _3, createElement: t3.createElement, createContext: t3.createContext, createFactory: j3, cloneElement: F2, createRef: t3.createRef, Fragment: t3.Fragment, isValidElement: D2, findDOMNode: W, Component: t3.Component, PureComponent: u3, memo: o3, forwardRef: c3, flushSync: V, unstable_batchedUpdates: P2, StrictMode: z2, Suspense: h3, SuspenseList: x3, lazy: d3, __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: T3 };
-      Object.keys(n2).forEach(function(t4) {
-        exports[t4] = n2[t4];
-      }), exports.createElement = t3.createElement, exports.createContext = t3.createContext, exports.createRef = t3.createRef, exports.Fragment = t3.Fragment, exports.Component = t3.Component, exports.version = "17.0.2", exports.Children = a3, exports.render = g3, exports.hydrate = E, exports.unmountComponentAtNode = I2, exports.createPortal = _3, exports.createFactory = j3, exports.cloneElement = F2, exports.isValidElement = D2, exports.findDOMNode = W, exports.PureComponent = u3, exports.memo = o3, exports.forwardRef = c3, exports.flushSync = V, exports.unstable_batchedUpdates = P2, exports.StrictMode = z2, exports.Suspense = h3, exports.SuspenseList = x3, exports.lazy = d3, exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = T3, exports.default = B2;
     }
   });
 
@@ -21136,40 +21140,40 @@
           this.editor.destroy();
           this.editor = null;
         };
-        ReactAce2.prototype.onChange = function(event) {
+        ReactAce2.prototype.onChange = function(event2) {
           if (this.props.onChange && !this.silent) {
             var value = this.editor.getValue();
-            this.props.onChange(value, event);
+            this.props.onChange(value, event2);
           }
         };
-        ReactAce2.prototype.onSelectionChange = function(event) {
+        ReactAce2.prototype.onSelectionChange = function(event2) {
           if (this.props.onSelectionChange) {
             var value = this.editor.getSelection();
-            this.props.onSelectionChange(value, event);
+            this.props.onSelectionChange(value, event2);
           }
         };
-        ReactAce2.prototype.onCursorChange = function(event) {
+        ReactAce2.prototype.onCursorChange = function(event2) {
           if (this.props.onCursorChange) {
             var value = this.editor.getSelection();
-            this.props.onCursorChange(value, event);
+            this.props.onCursorChange(value, event2);
           }
         };
-        ReactAce2.prototype.onInput = function(event) {
+        ReactAce2.prototype.onInput = function(event2) {
           if (this.props.onInput) {
-            this.props.onInput(event);
+            this.props.onInput(event2);
           }
           if (this.props.placeholder) {
             this.updatePlaceholder();
           }
         };
-        ReactAce2.prototype.onFocus = function(event) {
+        ReactAce2.prototype.onFocus = function(event2) {
           if (this.props.onFocus) {
-            this.props.onFocus(event, this.editor);
+            this.props.onFocus(event2, this.editor);
           }
         };
-        ReactAce2.prototype.onBlur = function(event) {
+        ReactAce2.prototype.onBlur = function(event2) {
           if (this.props.onBlur) {
-            this.props.onBlur(event, this.editor);
+            this.props.onBlur(event2, this.editor);
           }
         };
         ReactAce2.prototype.onCopy = function(_a) {
@@ -21341,7 +21345,7 @@
         "use strict";
         var oop = require2("./lib/oop");
         var lang = require2("./lib/lang");
-        var EventEmitter = require2("./lib/event_emitter").EventEmitter;
+        var EventEmitter2 = require2("./lib/event_emitter").EventEmitter;
         var Editor = require2("./editor").Editor;
         var Renderer = require2("./virtual_renderer").VirtualRenderer;
         var EditSession = require2("./edit_session").EditSession;
@@ -21361,7 +21365,7 @@
           }.bind(this));
         };
         (function() {
-          oop.implement(this, EventEmitter);
+          oop.implement(this, EventEmitter2);
           this.$createEditor = function() {
             var el = document.createElement("div");
             el.className = this.$editorCSS;
@@ -22064,46 +22068,46 @@
           this.editor.destroy();
           this.editor = null;
         };
-        SplitComponent2.prototype.onChange = function(event) {
+        SplitComponent2.prototype.onChange = function(event2) {
           if (this.props.onChange && !this.silent) {
             var value_1 = [];
             this.editor.env.split.forEach(function(editor) {
               value_1.push(editor.getValue());
             });
-            this.props.onChange(value_1, event);
+            this.props.onChange(value_1, event2);
           }
         };
-        SplitComponent2.prototype.onSelectionChange = function(event) {
+        SplitComponent2.prototype.onSelectionChange = function(event2) {
           if (this.props.onSelectionChange) {
             var value_2 = [];
             this.editor.env.split.forEach(function(editor) {
               value_2.push(editor.getSelection());
             });
-            this.props.onSelectionChange(value_2, event);
+            this.props.onSelectionChange(value_2, event2);
           }
         };
-        SplitComponent2.prototype.onCursorChange = function(event) {
+        SplitComponent2.prototype.onCursorChange = function(event2) {
           if (this.props.onCursorChange) {
             var value_3 = [];
             this.editor.env.split.forEach(function(editor) {
               value_3.push(editor.getSelection());
             });
-            this.props.onCursorChange(value_3, event);
+            this.props.onCursorChange(value_3, event2);
           }
         };
-        SplitComponent2.prototype.onFocus = function(event) {
+        SplitComponent2.prototype.onFocus = function(event2) {
           if (this.props.onFocus) {
-            this.props.onFocus(event);
+            this.props.onFocus(event2);
           }
         };
-        SplitComponent2.prototype.onInput = function(event) {
+        SplitComponent2.prototype.onInput = function(event2) {
           if (this.props.onInput) {
-            this.props.onInput(event);
+            this.props.onInput(event2);
           }
         };
-        SplitComponent2.prototype.onBlur = function(event) {
+        SplitComponent2.prototype.onBlur = function(event2) {
           if (this.props.onBlur) {
-            this.props.onBlur(event);
+            this.props.onBlur(event2);
           }
         };
         SplitComponent2.prototype.onCopy = function(text) {
@@ -24214,16 +24218,418 @@
     }
   });
 
+  // node_modules/events/events.js
+  var require_events = __commonJS({
+    "node_modules/events/events.js"(exports, module) {
+      init_preact_shim();
+      "use strict";
+      var R = typeof Reflect === "object" ? Reflect : null;
+      var ReflectApply = R && typeof R.apply === "function" ? R.apply : function ReflectApply2(target, receiver, args) {
+        return Function.prototype.apply.call(target, receiver, args);
+      };
+      var ReflectOwnKeys;
+      if (R && typeof R.ownKeys === "function") {
+        ReflectOwnKeys = R.ownKeys;
+      } else if (Object.getOwnPropertySymbols) {
+        ReflectOwnKeys = function ReflectOwnKeys2(target) {
+          return Object.getOwnPropertyNames(target).concat(Object.getOwnPropertySymbols(target));
+        };
+      } else {
+        ReflectOwnKeys = function ReflectOwnKeys2(target) {
+          return Object.getOwnPropertyNames(target);
+        };
+      }
+      function ProcessEmitWarning(warning) {
+        if (console && console.warn)
+          console.warn(warning);
+      }
+      var NumberIsNaN = Number.isNaN || function NumberIsNaN2(value) {
+        return value !== value;
+      };
+      function EventEmitter2() {
+        EventEmitter2.init.call(this);
+      }
+      module.exports = EventEmitter2;
+      module.exports.once = once;
+      EventEmitter2.EventEmitter = EventEmitter2;
+      EventEmitter2.prototype._events = void 0;
+      EventEmitter2.prototype._eventsCount = 0;
+      EventEmitter2.prototype._maxListeners = void 0;
+      var defaultMaxListeners = 10;
+      function checkListener(listener) {
+        if (typeof listener !== "function") {
+          throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+        }
+      }
+      Object.defineProperty(EventEmitter2, "defaultMaxListeners", {
+        enumerable: true,
+        get: function() {
+          return defaultMaxListeners;
+        },
+        set: function(arg) {
+          if (typeof arg !== "number" || arg < 0 || NumberIsNaN(arg)) {
+            throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + arg + ".");
+          }
+          defaultMaxListeners = arg;
+        }
+      });
+      EventEmitter2.init = function() {
+        if (this._events === void 0 || this._events === Object.getPrototypeOf(this)._events) {
+          this._events = Object.create(null);
+          this._eventsCount = 0;
+        }
+        this._maxListeners = this._maxListeners || void 0;
+      };
+      EventEmitter2.prototype.setMaxListeners = function setMaxListeners(n2) {
+        if (typeof n2 !== "number" || n2 < 0 || NumberIsNaN(n2)) {
+          throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + n2 + ".");
+        }
+        this._maxListeners = n2;
+        return this;
+      };
+      function _getMaxListeners(that) {
+        if (that._maxListeners === void 0)
+          return EventEmitter2.defaultMaxListeners;
+        return that._maxListeners;
+      }
+      EventEmitter2.prototype.getMaxListeners = function getMaxListeners() {
+        return _getMaxListeners(this);
+      };
+      EventEmitter2.prototype.emit = function emit(type) {
+        var args = [];
+        for (var i3 = 1; i3 < arguments.length; i3++)
+          args.push(arguments[i3]);
+        var doError = type === "error";
+        var events = this._events;
+        if (events !== void 0)
+          doError = doError && events.error === void 0;
+        else if (!doError)
+          return false;
+        if (doError) {
+          var er;
+          if (args.length > 0)
+            er = args[0];
+          if (er instanceof Error) {
+            throw er;
+          }
+          var err = new Error("Unhandled error." + (er ? " (" + er.message + ")" : ""));
+          err.context = er;
+          throw err;
+        }
+        var handler = events[type];
+        if (handler === void 0)
+          return false;
+        if (typeof handler === "function") {
+          ReflectApply(handler, this, args);
+        } else {
+          var len = handler.length;
+          var listeners = arrayClone(handler, len);
+          for (var i3 = 0; i3 < len; ++i3)
+            ReflectApply(listeners[i3], this, args);
+        }
+        return true;
+      };
+      function _addListener(target, type, listener, prepend) {
+        var m3;
+        var events;
+        var existing;
+        checkListener(listener);
+        events = target._events;
+        if (events === void 0) {
+          events = target._events = Object.create(null);
+          target._eventsCount = 0;
+        } else {
+          if (events.newListener !== void 0) {
+            target.emit("newListener", type, listener.listener ? listener.listener : listener);
+            events = target._events;
+          }
+          existing = events[type];
+        }
+        if (existing === void 0) {
+          existing = events[type] = listener;
+          ++target._eventsCount;
+        } else {
+          if (typeof existing === "function") {
+            existing = events[type] = prepend ? [listener, existing] : [existing, listener];
+          } else if (prepend) {
+            existing.unshift(listener);
+          } else {
+            existing.push(listener);
+          }
+          m3 = _getMaxListeners(target);
+          if (m3 > 0 && existing.length > m3 && !existing.warned) {
+            existing.warned = true;
+            var w3 = new Error("Possible EventEmitter memory leak detected. " + existing.length + " " + String(type) + " listeners added. Use emitter.setMaxListeners() to increase limit");
+            w3.name = "MaxListenersExceededWarning";
+            w3.emitter = target;
+            w3.type = type;
+            w3.count = existing.length;
+            ProcessEmitWarning(w3);
+          }
+        }
+        return target;
+      }
+      EventEmitter2.prototype.addListener = function addListener(type, listener) {
+        return _addListener(this, type, listener, false);
+      };
+      EventEmitter2.prototype.on = EventEmitter2.prototype.addListener;
+      EventEmitter2.prototype.prependListener = function prependListener(type, listener) {
+        return _addListener(this, type, listener, true);
+      };
+      function onceWrapper() {
+        if (!this.fired) {
+          this.target.removeListener(this.type, this.wrapFn);
+          this.fired = true;
+          if (arguments.length === 0)
+            return this.listener.call(this.target);
+          return this.listener.apply(this.target, arguments);
+        }
+      }
+      function _onceWrap(target, type, listener) {
+        var state = { fired: false, wrapFn: void 0, target, type, listener };
+        var wrapped = onceWrapper.bind(state);
+        wrapped.listener = listener;
+        state.wrapFn = wrapped;
+        return wrapped;
+      }
+      EventEmitter2.prototype.once = function once2(type, listener) {
+        checkListener(listener);
+        this.on(type, _onceWrap(this, type, listener));
+        return this;
+      };
+      EventEmitter2.prototype.prependOnceListener = function prependOnceListener(type, listener) {
+        checkListener(listener);
+        this.prependListener(type, _onceWrap(this, type, listener));
+        return this;
+      };
+      EventEmitter2.prototype.removeListener = function removeListener(type, listener) {
+        var list, events, position, i3, originalListener;
+        checkListener(listener);
+        events = this._events;
+        if (events === void 0)
+          return this;
+        list = events[type];
+        if (list === void 0)
+          return this;
+        if (list === listener || list.listener === listener) {
+          if (--this._eventsCount === 0)
+            this._events = Object.create(null);
+          else {
+            delete events[type];
+            if (events.removeListener)
+              this.emit("removeListener", type, list.listener || listener);
+          }
+        } else if (typeof list !== "function") {
+          position = -1;
+          for (i3 = list.length - 1; i3 >= 0; i3--) {
+            if (list[i3] === listener || list[i3].listener === listener) {
+              originalListener = list[i3].listener;
+              position = i3;
+              break;
+            }
+          }
+          if (position < 0)
+            return this;
+          if (position === 0)
+            list.shift();
+          else {
+            spliceOne(list, position);
+          }
+          if (list.length === 1)
+            events[type] = list[0];
+          if (events.removeListener !== void 0)
+            this.emit("removeListener", type, originalListener || listener);
+        }
+        return this;
+      };
+      EventEmitter2.prototype.off = EventEmitter2.prototype.removeListener;
+      EventEmitter2.prototype.removeAllListeners = function removeAllListeners(type) {
+        var listeners, events, i3;
+        events = this._events;
+        if (events === void 0)
+          return this;
+        if (events.removeListener === void 0) {
+          if (arguments.length === 0) {
+            this._events = Object.create(null);
+            this._eventsCount = 0;
+          } else if (events[type] !== void 0) {
+            if (--this._eventsCount === 0)
+              this._events = Object.create(null);
+            else
+              delete events[type];
+          }
+          return this;
+        }
+        if (arguments.length === 0) {
+          var keys = Object.keys(events);
+          var key;
+          for (i3 = 0; i3 < keys.length; ++i3) {
+            key = keys[i3];
+            if (key === "removeListener")
+              continue;
+            this.removeAllListeners(key);
+          }
+          this.removeAllListeners("removeListener");
+          this._events = Object.create(null);
+          this._eventsCount = 0;
+          return this;
+        }
+        listeners = events[type];
+        if (typeof listeners === "function") {
+          this.removeListener(type, listeners);
+        } else if (listeners !== void 0) {
+          for (i3 = listeners.length - 1; i3 >= 0; i3--) {
+            this.removeListener(type, listeners[i3]);
+          }
+        }
+        return this;
+      };
+      function _listeners(target, type, unwrap) {
+        var events = target._events;
+        if (events === void 0)
+          return [];
+        var evlistener = events[type];
+        if (evlistener === void 0)
+          return [];
+        if (typeof evlistener === "function")
+          return unwrap ? [evlistener.listener || evlistener] : [evlistener];
+        return unwrap ? unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
+      }
+      EventEmitter2.prototype.listeners = function listeners(type) {
+        return _listeners(this, type, true);
+      };
+      EventEmitter2.prototype.rawListeners = function rawListeners(type) {
+        return _listeners(this, type, false);
+      };
+      EventEmitter2.listenerCount = function(emitter, type) {
+        if (typeof emitter.listenerCount === "function") {
+          return emitter.listenerCount(type);
+        } else {
+          return listenerCount.call(emitter, type);
+        }
+      };
+      EventEmitter2.prototype.listenerCount = listenerCount;
+      function listenerCount(type) {
+        var events = this._events;
+        if (events !== void 0) {
+          var evlistener = events[type];
+          if (typeof evlistener === "function") {
+            return 1;
+          } else if (evlistener !== void 0) {
+            return evlistener.length;
+          }
+        }
+        return 0;
+      }
+      EventEmitter2.prototype.eventNames = function eventNames() {
+        return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
+      };
+      function arrayClone(arr, n2) {
+        var copy = new Array(n2);
+        for (var i3 = 0; i3 < n2; ++i3)
+          copy[i3] = arr[i3];
+        return copy;
+      }
+      function spliceOne(list, index) {
+        for (; index + 1 < list.length; index++)
+          list[index] = list[index + 1];
+        list.pop();
+      }
+      function unwrapListeners(arr) {
+        var ret = new Array(arr.length);
+        for (var i3 = 0; i3 < ret.length; ++i3) {
+          ret[i3] = arr[i3].listener || arr[i3];
+        }
+        return ret;
+      }
+      function once(emitter, name) {
+        return new Promise(function(resolve, reject) {
+          function errorListener(err) {
+            emitter.removeListener(name, resolver);
+            reject(err);
+          }
+          function resolver() {
+            if (typeof emitter.removeListener === "function") {
+              emitter.removeListener("error", errorListener);
+            }
+            resolve([].slice.call(arguments));
+          }
+          ;
+          eventTargetAgnosticAddListener(emitter, name, resolver, { once: true });
+          if (name !== "error") {
+            addErrorHandlerIfEventEmitter(emitter, errorListener, { once: true });
+          }
+        });
+      }
+      function addErrorHandlerIfEventEmitter(emitter, handler, flags) {
+        if (typeof emitter.on === "function") {
+          eventTargetAgnosticAddListener(emitter, "error", handler, flags);
+        }
+      }
+      function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
+        if (typeof emitter.on === "function") {
+          if (flags.once) {
+            emitter.once(name, listener);
+          } else {
+            emitter.on(name, listener);
+          }
+        } else if (typeof emitter.addEventListener === "function") {
+          emitter.addEventListener(name, function wrapListener(arg) {
+            if (flags.once) {
+              emitter.removeEventListener(name, wrapListener);
+            }
+            listener(arg);
+          });
+        } else {
+          throw new TypeError('The "emitter" argument must be of type EventEmitter. Received type ' + typeof emitter);
+        }
+      }
+    }
+  });
+
   // src/ide/advide.jsx
   init_preact_shim();
 
   // src/ide/AdvideApp.jsx
   init_preact_shim();
+
+  // src/utils/react-util.js
+  init_preact_shim();
+  var import_react = __toModule(require_compat());
+  function useForceUpdate() {
+    const [_3, forceUpdate] = (0, import_react.useReducer)((x3) => x3 + 1, 0);
+    return forceUpdate;
+  }
+  function useFactory(factory) {
+    let ref = (0, import_react.useRef)();
+    if (!ref.current) {
+      ref.current = factory();
+    }
+    return ref.current;
+  }
+  function useEventUpdate(target, event2) {
+    let forceUpdate = useForceUpdate();
+    (0, import_react.useLayoutEffect)(() => {
+      let updater = forceUpdate;
+      target.on(event2, updater);
+      return () => {
+        target.off(event2, updater);
+      };
+    }, [target, event2]);
+  }
+  function useModel(cls, config) {
+    let model = useFactory(() => new cls(config));
+    useEventUpdate(model, "change");
+    return model;
+  }
+
+  // src/ide/AdvideView.jsx
+  init_preact_shim();
   var import_react_ace = __toModule(require_lib());
 
   // node_modules/react-split/dist/react-split.es.js
   init_preact_shim();
-  var import_react = __toModule(require_compat());
+  var import_react2 = __toModule(require_compat());
   var import_prop_types = __toModule(require_prop_types());
 
   // node_modules/split.js/dist/split.es.js
@@ -24771,12 +25177,12 @@
       var children = ref.children;
       var rest$1 = objectWithoutProperties(ref, ["sizes", "minSize", "maxSize", "expandToMin", "gutterSize", "gutterAlign", "snapOffset", "dragInterval", "direction", "cursor", "gutter", "elementStyle", "gutterStyle", "onDrag", "onDragStart", "onDragEnd", "collapsed", "children"]);
       var rest = rest$1;
-      return import_react.default.createElement("div", Object.assign({}, { ref: function(parent) {
+      return import_react2.default.createElement("div", Object.assign({}, { ref: function(parent) {
         this$1.parent = parent;
       } }, rest), children);
     };
     return SplitWrapper2;
-  }(import_react.default.Component);
+  }(import_react2.default.Component);
   SplitWrapper.propTypes = {
     sizes: import_prop_types.default.arrayOf(import_prop_types.default.number),
     minSize: import_prop_types.default.oneOfType([
@@ -24825,17 +25231,15 @@
   };
   var react_split_es_default = SplitWrapper;
 
-  // src/ide/AdvideApp.jsx
-  var import_react2 = __toModule(require_compat());
+  // src/ide/AdvideView.jsx
+  var import_react3 = __toModule(require_compat());
   var import_mode_yaml = __toModule(require_mode_yaml());
   var import_theme_vibrant_ink = __toModule(require_theme_vibrant_ink());
-  function AdvideApp(props) {
-    let iframeRef = (0, import_react2.useRef)();
-    window.sessionStorage.setItem("advsource", "");
-    function onChange(newValue) {
-      window.sessionStorage.setItem("advsource", newValue);
-      iframeRef.current.contentWindow.postMessage("refresh");
-    }
+  function AdvideView(props) {
+    let iframeRef = (0, import_react3.useRef)();
+    (0, import_react3.useLayoutEffect)(() => {
+      props.model.setGameFrame(iframeRef.current);
+    });
     return /* @__PURE__ */ v(react_split_es_default, {
       class: "advide-split",
       sizes: [67, 33]
@@ -24844,11 +25248,12 @@
     }, /* @__PURE__ */ v(import_react_ace.default, {
       mode: "yaml",
       theme: "vibrant_ink",
-      onChange,
+      onChange: props.model.dispatcher("setSource"),
       name: "UNIQUE_ID_OF_DIV",
       width: "100%",
       height: "100%",
-      editorProps: { $blockScrolling: true }
+      editorProps: { $blockScrolling: true },
+      value: props.model.getSource()
     })), /* @__PURE__ */ v("div", {
       style: { width: "100%" }
     }, /* @__PURE__ */ v("iframe", {
@@ -24858,10 +25263,54 @@
     })));
   }
 
+  // src/ide/AdvideModel.mjs
+  init_preact_shim();
+  var import_events = __toModule(require_events());
+  var AdvideModel = class extends import_events.default {
+    constructor() {
+      super();
+      __publicField(this, "setSource", (source) => {
+        this.source = source;
+        window.sessionStorage.setItem("advsource", this.source);
+        this.notifyGameFrame();
+      });
+      __publicField(this, "dispatcher", (fn, ...args) => {
+        return (...fnArgs) => {
+          let useArgs = [...args, ...fnArgs];
+          this[fn](...useArgs);
+          this.emit("change");
+        };
+      });
+      this.setSource("");
+      this.gameFrame = null;
+    }
+    getSource() {
+      return this.source;
+    }
+    setGameFrame(frame) {
+      if (frame != this.gameFrame) {
+        this.gameFrame = frame;
+        this.notifyGameFrame();
+      }
+    }
+    notifyGameFrame() {
+      if (this.gameFrame)
+        this.gameFrame.contentWindow.postMessage("refresh");
+    }
+  };
+
+  // src/ide/AdvideApp.jsx
+  function AdvideApp(props) {
+    let model = useModel(AdvideModel, props);
+    return /* @__PURE__ */ v(AdvideView, {
+      model
+    });
+  }
+
   // src/ide/advide.jsx
-  var import_react3 = __toModule(require_compat());
+  var import_react4 = __toModule(require_compat());
   for (let el of document.getElementsByClassName("advide-container"))
-    (0, import_react3.render)(/* @__PURE__ */ v(AdvideApp, __spreadValues({}, el.dataset)), el);
+    (0, import_react4.render)(/* @__PURE__ */ v(AdvideApp, __spreadValues({}, el.dataset)), el);
 })();
 /*
 object-assign

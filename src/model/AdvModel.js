@@ -83,12 +83,12 @@ export default class AdvModel extends EventDispatcher {
 			this.story=null;
 		}
 
+		//console.log("loading source: "+this.storySource);
+
 		this.story=new Story(this.storySource);
-		console.log("applying history");
 		if (!this.story.getError())
 			await this.storyHistory.apply(this.story);
 
-		console.log("history applied");
 		this.story.on("change",()=>{
 			this.emit("change");
 		});

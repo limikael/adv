@@ -28,8 +28,6 @@ export default function AdvGame(props) {
 	if (model.getError())
 		error=model.getError()
 
-	console.log("render...");
-
 	return (
 		<ContentScaler width="200" height="300">
 			<div class="adv-main">

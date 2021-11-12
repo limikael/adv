@@ -8593,10 +8593,8 @@ ${cbNode.commentBefore}` : cb;
         this.story = null;
       }
       this.story = new Story(this.storySource);
-      console.log("applying history");
       if (!this.story.getError())
         await this.storyHistory.apply(this.story);
-      console.log("history applied");
       this.story.on("change", () => {
         this.emit("change");
       });
@@ -8632,7 +8630,6 @@ ${cbNode.commentBefore}` : cb;
     });
     if (model.getError())
       error = model.getError();
-    console.log("render...");
     return /* @__PURE__ */ v(ContentScaler, {
       width: "200",
       height: "300"
