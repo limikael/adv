@@ -32,20 +32,14 @@ class AdvPlugin extends Singleton {
 			$resUrl."/advgame.js",
 			array(),$this->data["Version"],true);
 
+		wp_enqueue_style("advgame-style",
+			$resUrl."/advgame.css",
+			array(),$this->data["Version"]);
+
 		if (is_admin()) {
 			wp_enqueue_script("advadmin",
 				$resUrl."/advadmin.bundle.js",
 				array("jquery"),$this->data["Version"],true);
 		}
-
-		if (!is_admin()) {
-			wp_enqueue_style("advgame-style",
-				$resUrl."/advgame.css",
-				array(),$this->data["Version"]);
-		}
-
-		wp_enqueue_style("adventure-style",
-			$resUrl."/adventure.css",
-			array(),$this->data["Version"]);
 	}
 }

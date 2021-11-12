@@ -6,8 +6,6 @@ import "ace-builds/src-noconflict/mode-yaml";
 import "ace-builds/src-noconflict/theme-vibrant_ink";
 import "ace-builds/src-noconflict/ext-searchbox";
 
-//import "./AdvideApp.css";
-
 export default function AdvadminApp(props) {
 	let model=useModel(AdvadminModel,props);
 

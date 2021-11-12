@@ -5,6 +5,7 @@ export default class AdvadminModel extends EventEmitter {
 		super();
 
 		this.hiddenField=document.getElementById(props.advField);
+		this.setSource(this.getSource());
 	}
 
 	getSource() {
@@ -13,6 +14,7 @@ export default class AdvadminModel extends EventEmitter {
 
 	setSource(source) {
 		this.hiddenField.value=source;
+		window.localStorage.setItem("adventure-preview",source);
 	}
 
 	dispatcher=(fn, ...args)=>{
