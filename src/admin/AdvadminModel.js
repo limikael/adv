@@ -4,15 +4,15 @@ export default class AdvadminModel extends EventEmitter {
 	constructor(props) {
 		super();
 
-		this.source=props.advSource;
+		this.hiddenField=document.getElementById(props.advField);
 	}
 
 	getSource() {
-		return this.source;
+		return this.hiddenField.value;
 	}
 
 	setSource(source) {
-		this.source=source;
+		this.hiddenField.value=source;
 	}
 
 	dispatcher=(fn, ...args)=>{

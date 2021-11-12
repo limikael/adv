@@ -24991,13 +24991,13 @@
           this.emit("change");
         };
       });
-      this.source = props.advSource;
+      this.hiddenField = document.getElementById(props.advField);
     }
     getSource() {
-      return this.source;
+      return this.hiddenField.value;
     }
     setSource(source) {
-      this.source = source;
+      this.hiddenField.value = source;
     }
   };
 
