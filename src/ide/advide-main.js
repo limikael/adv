@@ -14,6 +14,8 @@ app.whenReady().then(()=>{
 	let appProxy=createIpcAppProxy(win, "advide");
 	win.loadFile("res/advide.html");
 
+	win.setTitle("Advide - Untitled");
+
 	let fileFilters=[{
 		name: "Advide Stories",
 		extensions: ["yaml"]
@@ -64,22 +66,7 @@ app.whenReady().then(()=>{
 		},{
 			role: "quit"
 		}]
-	},/*{
-		label: "Edit",
-		submenu: [{
-			label: "Find...",
-			accelerator: "Ctrl+F",
-			click: async ()=>{
-				let searchString=await prompt({
-					title: "Find...",
-					label: "Find: ",
-					type: "input"
-				},win);
-
-				appProxy.find(searchString);
-			}
-		}]
-	},*/{
+	},{
 		label: "Debug",
 		submenu: [{
 			label: "Open DevTools",
