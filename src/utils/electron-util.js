@@ -1,18 +1,5 @@
 const {ipcRenderer, ipcMain}=require("electron");
-
-function createMethodPromise() {
-	let resolve,reject;
-
-	let p=new Promise((argResolve,argReject)=>{
-		resolve=argResolve;
-		reject=argReject;
-	});
-
-	p.resolve=resolve;
-	p.reject=reject;
-
-	return p;
-}
+const {createMethodPromise}=require("../utils/promise-util.js");
 
 function createIpcRendererReceiver(channel, obj) {
 	ipcRenderer.on(channel,async (ev, message)=>{
@@ -24,7 +11,27 @@ function createIpcRendererReceiver(channel, obj) {
 	});
 }
 
-function createIpcAppProxy(win, channel) {
+function createIpcRendererProxy(channel) {
+	return new Proxy({},{
+		get: (target, prop, receiver)=>{
+			return async (...args)=>{
+				return await ipcRenderer.invoke(channel,{
+					call: prop,
+					args: args
+				});
+			};
+		}
+	});
+}
+
+
+function createIpcMainReceiver(channel, obj) {
+	ipcMain.handle(channel,async (ev, data)=>{
+		return await obj[data.call](...data.args);
+	});
+}
+
+function createIpcMainProxy(channel, win) {
 	let id=0;
 	let promises={};
 
@@ -54,6 +61,8 @@ function createIpcAppProxy(win, channel) {
 }
 
 module.exports={
+	createIpcRendererProxy,
 	createIpcRendererReceiver,
-	createIpcAppProxy
+	createIpcMainProxy,
+	createIpcMainReceiver
 };

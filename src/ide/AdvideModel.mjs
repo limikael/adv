@@ -1,29 +1,36 @@
 import EventEmitter from "events";
-import {createIpcRendererReceiver} from "../utils/electron-util.js";
+import {createIpcRendererReceiver, createIpcRendererProxy} from "../utils/electron-util.js";
 
 export default class AdvideModel extends EventEmitter {
 	constructor() {
 		super();
 
+		this.ipcReceiver=createIpcRendererReceiver("advide",this);
+		this.proxy=createIpcRendererProxy("advide");
+
 		this.setSource("");
 		this.gameFrame=null;
-
-		this.ipcReceiver=createIpcRendererReceiver("advide",this);
+		this.clearSourceChange();
 	}
 
 	find(searchString) {
 		console.log("finding: "+searchString);
 	}
 
-	loadSource(fileName) {
-		this.setSource(fs.loadFileSync(fileName));
+	clearSourceChange=()=>{
+		this.sourceChange=false;
 	}
 
-	setSource=(source)=>{
+	setSource=async (source)=>{
 		this.source=source;
 		window.sessionStorage.setItem("advsource",this.source);
 		this.notifyGameFrame();
 		this.emit("change");
+
+		if (!this.sourceChange && this.source) {
+			this.sourceChange=true;
+			await this.proxy.notifySourceChange();
+		}
 	}
 
 	getSource() {

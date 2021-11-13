@@ -24944,11 +24944,15 @@
     }
   });
 
-  // src/utils/electron-util.js
-  var require_electron_util = __commonJS({
-    "src/utils/electron-util.js"(exports, module) {
+  // src/utils/promise-util.js
+  var require_promise_util = __commonJS({
+    "src/utils/promise-util.js"(exports, module) {
       init_preact_shim();
-      var { ipcRenderer, ipcMain } = __require("electron");
+      function delay(ms) {
+        return new Promise((resolve, reject) => {
+          setTimeout(resolve, ms);
+        });
+      }
       function createMethodPromise() {
         let resolve, reject;
         let p3 = new Promise((argResolve, argReject) => {
@@ -24959,6 +24963,64 @@
         p3.reject = reject;
         return p3;
       }
+      function maybeAsync(fn) {
+        let resolved, resolvedVal;
+        let rejected, rejectedVal;
+        let promise;
+        function resolve(v3) {
+          resolved = true;
+          resolvedVal = v3;
+        }
+        function reject(v3) {
+          rejected = true;
+          rejectedVal = v3;
+        }
+        promise = fn(resolve, reject);
+        if (resolved)
+          return resolvedVal;
+        if (rejected)
+          throw rejectedVal;
+        return new Promise((resolve2, reject2) => {
+          promise.then(() => {
+            if (resolved)
+              resolve2(resolvedVal);
+            if (rejected)
+              reject2(rejectedVal);
+            else
+              reject2(Error("Function did not resolve or reject"));
+          }).catch((e3) => {
+            reject2(e3);
+          });
+        });
+      }
+      function isPromise(p3) {
+        if (p3 instanceof Promise)
+          return true;
+        if (p3 instanceof Object && p3.hasOwnProperty("then"))
+          return true;
+        return false;
+      }
+      function waitForEvent(o3, ev) {
+        return new Promise((resolve, reject) => {
+          o3.once(ev, resolve);
+        });
+      }
+      module.exports = {
+        delay,
+        createMethodPromise,
+        maybeAsync,
+        isPromise,
+        waitForEvent
+      };
+    }
+  });
+
+  // src/utils/electron-util.js
+  var require_electron_util = __commonJS({
+    "src/utils/electron-util.js"(exports, module) {
+      init_preact_shim();
+      var { ipcRenderer, ipcMain } = __require("electron");
+      var { createMethodPromise } = require_promise_util();
       function createIpcRendererReceiver2(channel, obj) {
         ipcRenderer.on(channel, async (ev, message) => {
           let res = await obj[message.call](...message.args);
@@ -24968,7 +25030,24 @@
           });
         });
       }
-      function createIpcAppProxy(win, channel) {
+      function createIpcRendererProxy2(channel) {
+        return new Proxy({}, {
+          get: (target, prop, receiver) => {
+            return async (...args) => {
+              return await ipcRenderer.invoke(channel, {
+                call: prop,
+                args
+              });
+            };
+          }
+        });
+      }
+      function createIpcMainReceiver(channel, obj) {
+        ipcMain.handle(channel, async (ev, data) => {
+          return await obj[data.call](...data.args);
+        });
+      }
+      function createIpcMainProxy(channel, win) {
         let id = 0;
         let promises = {};
         ipcMain.on(channel, (ev, message) => {
@@ -24993,8 +25072,10 @@
         });
       }
       module.exports = {
+        createIpcRendererProxy: createIpcRendererProxy2,
         createIpcRendererReceiver: createIpcRendererReceiver2,
-        createIpcAppProxy
+        createIpcMainProxy,
+        createIpcMainReceiver
       };
     }
   });
@@ -25683,11 +25764,18 @@
   var AdvideModel = class extends import_events.default {
     constructor() {
       super();
-      __publicField(this, "setSource", (source) => {
+      __publicField(this, "clearSourceChange", () => {
+        this.sourceChange = false;
+      });
+      __publicField(this, "setSource", async (source) => {
         this.source = source;
         window.sessionStorage.setItem("advsource", this.source);
         this.notifyGameFrame();
         this.emit("change");
+        if (!this.sourceChange && this.source) {
+          this.sourceChange = true;
+          await this.proxy.notifySourceChange();
+        }
       });
       __publicField(this, "dispatcher", (fn, ...args) => {
         return (...fnArgs) => {
@@ -25696,15 +25784,14 @@
           this.emit("change");
         };
       });
+      this.ipcReceiver = (0, import_electron_util.createIpcRendererReceiver)("advide", this);
+      this.proxy = (0, import_electron_util.createIpcRendererProxy)("advide");
       this.setSource("");
       this.gameFrame = null;
-      this.ipcReceiver = (0, import_electron_util.createIpcRendererReceiver)("advide", this);
+      this.clearSourceChange();
     }
     find(searchString) {
       console.log("finding: " + searchString);
-    }
-    loadSource(fileName) {
-      this.setSource(fs.loadFileSync(fileName));
     }
     getSource() {
       return this.source;
