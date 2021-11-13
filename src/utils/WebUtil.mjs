@@ -50,3 +50,35 @@ export function linkify(text, processor) {
 
 	return [...linkify(m[1],processor),processor(m[2]),...linkify(m[3],processor)];
 }
+
+export async function selectAndLoadFile() {
+	return new Promise((resolve, reject)=>{
+		let input=document.createElement("input");
+		input.type="file";
+		input.style.display="none";
+		document.body.appendChild(input);
+
+		function done(result) {
+			document.body.removeChild(input);
+			resolve(result);
+		}
+
+		function windowFocus() {
+			done(undefined);
+		}
+
+		input.addEventListener("change",()=>{
+			window.removeEventListener("focus",windowFocus);
+
+			let reader=new FileReader();
+			reader.onload=()=>{
+				done(reader.result);
+			}
+			reader.readAsText(input.files[0]);
+		},{once: true});
+
+		window.addEventListener("focus",windowFocus,{once: true});
+
+		input.click();
+	});
+}
