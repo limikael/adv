@@ -35,6 +35,12 @@ export default function AdvedMenuView(props) {
 										Open Story...
 									</a>
 								</li>
+								<li>
+									<a class="dropdown-item" href="#"
+											onclick={props.model.dispatcher("saveStoryAs")}>
+										Save As...
+									</a>
+								</li>
 							</ul>
 						</li>
 					</ul>

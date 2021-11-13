@@ -72,7 +72,10 @@ export async function selectAndLoadFile() {
 
 			let reader=new FileReader();
 			reader.onload=()=>{
-				done(reader.result);
+				done({
+					name: input.files[0].name,
+					value: reader.result
+				});
 			}
 			reader.readAsText(input.files[0]);
 		},{once: true});

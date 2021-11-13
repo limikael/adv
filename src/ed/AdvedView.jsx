@@ -9,16 +9,10 @@ import "ace-builds/src-noconflict/ext-searchbox";
 
 export default function AdvedView(props) {
 	let iframeRef=useRef();
-	let fileInputRef=useRef();
 
 	useLayoutEffect(()=>{
 		props.model.setGameFrame(iframeRef.current);
 	});
-
-	async function onButtonClick() {
-		let f=await selectAndLoadFile();
-		console.log("f: "+f);
-	}
 
 	return (
 		<div class="adved-view">
