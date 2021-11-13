@@ -1,5 +1,4 @@
 const {app, BrowserWindow, Menu, dialog, ipcMain}=require("electron");
-const prompt=require("electron-prompt");
 const AdvideMain=require("./AdvideMain.js");
 
 app.whenReady().then(()=>{
