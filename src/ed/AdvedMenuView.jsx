@@ -1,6 +1,7 @@
 export default function AdvedMenuView(props) {
 	return (
-		<nav class="navbar navbar-expand navbar-light bg-light">
+		<nav class="navbar navbar-expand navbar-light bg-light"
+				style={{height: "2.5rem"}}>
 			<div class="container-fluid">
 				<a class="navbar-brand" href="#">Advide</a>
 				<button class="navbar-toggler" 
@@ -22,7 +23,8 @@ export default function AdvedMenuView(props) {
 									aria-expanded="false">
 								File
 							</a>
-							<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<ul class="dropdown-menu" aria-labelledby="navbarDropdown"
+									style={{top: "2rem"}}>
 								<li>
 									<a class="dropdown-item" href="#"
 											onclick={props.model.dispatcher("newStory")}>
