@@ -11,7 +11,7 @@
     "dev": "esbuild src/advgame.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017 --servedir=res",
     "dev:ide": "esbuild src/ide/advide.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advide.bundle.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017 --servedir=res",
     "test": "jasmine",
-    "start": "npm run build && electron .",
+    "start": "npm run build && npm run dev:ide",
     "postinstall": "link-module-alias"
   },
   "author": "",
