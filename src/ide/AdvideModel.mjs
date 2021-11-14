@@ -1,6 +1,10 @@
 import EventEmitter from "events";
 import DocFile from "../utils/DocFile.mjs";
 
+import BasicExample from "../../res/spec/basic-example.yaml";
+import MorningStory from "../../res/spec/morning-story.yaml";
+import ChoiceExample from "../../res/spec/choice.yaml";
+
 export default class AdvideModel extends EventEmitter {
 	constructor() {
 		super();
@@ -10,16 +14,35 @@ export default class AdvideModel extends EventEmitter {
 		this.docFile.blobOptions={type: "application/x-yaml;charset=utf-8"};
 		this.docFile.defaultFileName="Untitled.yaml";
 
-		this.setSource("");
+		this.exampleStories={
+			"basic-example.yaml": BasicExample,
+			"choice.yaml": ChoiceExample,
+			"morning-story.yaml": MorningStory
+		}
+
+		//this.setSource("");
 		//this.setSource(window.sessionStorage.getItem("advsource"));
 
-		this.changed=false;
-		this.updateTitle();
+		//this.changed=false;
+		//this.updateTitle();
+
+		this.loadExample("basic-example.yaml");
 
 		window.onbeforeunload=()=>{
 			if (this.changed)
 				return true;
 		}
+	}
+
+	loadExample=async (fn)=>{
+		if (!await this.checkClear())
+			return;
+
+		this.setSource(this.exampleStories[fn]);
+		this.docFile.clear();
+		this.changed=false;
+		this.updateTitle();
+		this.emit("change");
 	}
 
 	updateTitle() {

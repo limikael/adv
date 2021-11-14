@@ -1,0 +1,47 @@
+#
+# In this example game, you are an office worker and your task is to unlock
+# the door to the printer room, so you can print your documents.
+#
+
+- name: Example Game
+
+- verbs:
+  - goto
+  - pickup
+  - lookat
+  - use
+
+- state: door unlocked
+
+- location: office
+  description:
+  - You are in the office of Basic Example Incorporated.
+  - There is a door leading to the [printer room].
+
+- location: printer room
+  description:
+  - This is the mighty printer room in the office.
+  - There is a [printer] here.
+  enter:
+  - if-not-state: door unlocked
+    then-fail: The door is locked.
+
+- thing: key
+  location: office
+  description: There is a [key] to the printer room hanging next to the door.
+  lookat: It is an ordinary key.
+  use:
+  - if-have: key
+    then:
+    - set: door unlocked
+    - You unlock the door.
+    else-fail: You can't use the key unless you have it.
+
+- thing: printer
+  lookat: It is a printer.
+  pickup-fail: It is not the kind of thing one picks up.
+  use-message: You print some documents, as the good office worker you are.
+
+- objectives:
+  - did-use: key
+  - did-use: printer

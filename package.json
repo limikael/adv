@@ -6,10 +6,10 @@
   "scripts": {
     "build:game": "esbuild src/advgame.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017",
     "build:admin": "esbuild src/admin/advadmin.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advadmin.bundle.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017 --minify",
-    "build:ide": "esbuild src/ide/advide.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advide.bundle.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017",
+    "build:ide": "esbuild src/ide/advide.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advide.bundle.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --loader:.yaml=text --target=es2017 --minify",
     "build": "npm run build:game && npm run build:ide && npm run build:admin",
     "dev": "esbuild src/advgame.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advgame.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017 --servedir=res",
-    "dev:ide": "esbuild src/ide/advide.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advide.bundle.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --target=es2017 --servedir=res",
+    "dev:ide": "esbuild src/ide/advide.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=res/advide.bundle.js --inject:src/utils/preact-shim.js --loader:.png=dataurl --loader:.svg=dataurl --loader:.yaml=text --target=es2017 --servedir=res",
     "test": "jasmine",
     "start": "http-server res",
     "postinstall": "link-module-alias"
