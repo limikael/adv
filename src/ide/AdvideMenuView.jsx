@@ -1,4 +1,17 @@
 export default function AdvideMenuView(props) {
+	let saveMenuItem;
+
+	if (props.model.supportsFileSystemAccess()) {
+		saveMenuItem=(
+			<li>
+				<a class="dropdown-item" href="#"
+						onclick={props.model.dispatcher("saveStory")}>
+					Save
+				</a>
+			</li>
+		)
+	}
+
 	return (
 		<nav class="navbar navbar-expand navbar-light bg-light"
 				style={{height: "2.5rem"}}>
@@ -37,6 +50,7 @@ export default function AdvideMenuView(props) {
 										Open Story...
 									</a>
 								</li>
+								{saveMenuItem}
 								<li>
 									<a class="dropdown-item" href="#"
 											onclick={props.model.dispatcher("saveStoryAs")}>

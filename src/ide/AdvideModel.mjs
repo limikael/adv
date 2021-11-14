@@ -1,16 +1,18 @@
 import EventEmitter from "events";
-import {selectAndLoadFile} from "../utils/WebUtil.mjs";
-import {saveAs} from "file-saver";
+import DocFile from "../utils/DocFile.mjs";
 
 export default class AdvideModel extends EventEmitter {
 	constructor() {
 		super();
 
-		this.setSource("");
-//		this.setSource(window.sessionStorage.getItem("advsource"));
-
 		this.gameFrame=null;
-		this.fileName=null;
+		this.docFile=new DocFile();
+		this.docFile.blobOptions={type: "application/x-yaml;charset=utf-8"};
+		this.docFile.defaultFileName="Untitled.yaml";
+
+		this.setSource("");
+		//this.setSource(window.sessionStorage.getItem("advsource"));
+
 		this.changed=false;
 		this.updateTitle();
 
@@ -21,25 +23,37 @@ export default class AdvideModel extends EventEmitter {
 	}
 
 	updateTitle() {
-		let useName="Untitled";
-		if (this.fileName)
-			useName=this.fileName;
+		if (this.docFile.supportsFileSystemAccess()) {
+			let t=this.docFile.getFileName();
 
-		if (this.changed)
-			useName+=" *";
+			if (this.changed)
+				document.title=t+" * - Advide";
 
-		document.title=useName+" - Advide";
+			else
+				document.title=t+" - Advide";
+		}
+
+		else {
+			if (this.changed)
+				document.title="Advide *";
+
+			else
+				document.title="Advide";
+		}
 	}
 
 	async saveStoryAs() {
-		let useName="Untitled.yaml";
-		if (this.fileName)
-			useName=this.fileName;
+		if (await this.docFile.saveAs(this.source)) {
+			this.changed=false;
+			this.updateTitle();
+		}
+	}
 
-		let blob=new Blob([this.getSource()], {type: "application/x-yaml;charset=utf-8"});
-		let v=saveAs(blob,useName);
-		this.changed=false;
-		this.updateTitle();
+	async saveStory() {
+		if (await this.docFile.save(this.source)) {
+			this.changed=false;
+			this.updateTitle();
+		}
 	}
 
 	checkClear() {
@@ -53,7 +67,7 @@ export default class AdvideModel extends EventEmitter {
 		if (!this.checkClear())
 			return;
 
-		this.fileName=null;
+		this.docFile.clear();
 		this.setSource("");
 		this.changed=false;
 		this.updateTitle();
@@ -63,11 +77,9 @@ export default class AdvideModel extends EventEmitter {
 		if (!this.checkClear())
 			return;
 
-		let file=await selectAndLoadFile();
-
-		if (file) {
-			this.fileName=file.name;
-			this.setSource(file.value);
+		let newSource=await this.docFile.open();
+		if (newSource!==undefined) {
+			this.setSource(newSource);
 			this.changed=false;
 			this.updateTitle();
 		}
@@ -100,6 +112,10 @@ export default class AdvideModel extends EventEmitter {
 	notifyGameFrame() {
 		if (this.gameFrame)
 			this.gameFrame.contentWindow.postMessage("refresh");
+	}
+
+	supportsFileSystemAccess() {
+		return this.docFile.supportsFileSystemAccess();
 	}
 
 	dispatcher=(fn, ...args)=>{
