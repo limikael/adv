@@ -1,6 +1,6 @@
 {
   "name": "advide",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "",
   "main": "src/ide/advide-main.js",
   "scripts": {

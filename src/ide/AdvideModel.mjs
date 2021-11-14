@@ -20,12 +20,6 @@ export default class AdvideModel extends EventEmitter {
 			"morning-story.yaml": MorningStory
 		}
 
-		//this.setSource("");
-		//this.setSource(window.sessionStorage.getItem("advsource"));
-
-		//this.changed=false;
-		//this.updateTitle();
-
 		this.loadExample("basic-example.yaml");
 
 		window.onbeforeunload=()=>{
@@ -38,7 +32,7 @@ export default class AdvideModel extends EventEmitter {
 		if (!await this.checkClear())
 			return;
 
-		this.setSource(this.exampleStories[fn]);
+		this.setSource(this.exampleStories[fn],true);
 		this.docFile.clear();
 		this.changed=false;
 		this.updateTitle();
@@ -91,7 +85,7 @@ export default class AdvideModel extends EventEmitter {
 			return;
 
 		this.docFile.clear();
-		this.setSource("");
+		this.setSource("",true);
 		this.changed=false;
 		this.updateTitle();
 	}
@@ -102,16 +96,16 @@ export default class AdvideModel extends EventEmitter {
 
 		let newSource=await this.docFile.open();
 		if (newSource!==undefined) {
-			this.setSource(newSource);
+			this.setSource(newSource,true);
 			this.changed=false;
 			this.updateTitle();
 		}
 	}
 
-	setSource=async (source)=>{
+	setSource=async (source, restart)=>{
 		this.source=source;
 		window.sessionStorage.setItem("advsource",this.source);
-		this.notifyGameFrame();
+		this.notifyGameFrame(restart===true);
 
 		if (!this.changed) {
 			this.changed=true;
@@ -132,9 +126,14 @@ export default class AdvideModel extends EventEmitter {
 		}
 	}
 
-	notifyGameFrame() {
-		if (this.gameFrame)
-			this.gameFrame.contentWindow.postMessage("refresh");
+	notifyGameFrame(restart) {
+		if (this.gameFrame) {
+			if (restart)
+				this.gameFrame.contentWindow.postMessage("restart");
+
+			else
+				this.gameFrame.contentWindow.postMessage("refresh");
+		}
 	}
 
 	supportsFileSystemAccess() {

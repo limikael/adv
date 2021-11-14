@@ -8655,12 +8655,12 @@ ${cbNode.commentBefore}` : cb;
     useWindowEventListener("message", (ev) => {
       switch (ev.data) {
         case "refresh":
-          try {
-            model.refresh();
-            resetError();
-          } catch (e3) {
-            console.log("can't refresh,,");
-          }
+          model.refresh();
+          resetError();
+          break;
+        case "restart":
+          model.restart();
+          resetError();
           break;
       }
     });

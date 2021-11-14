@@ -13,14 +13,13 @@ export default function AdvGame(props) {
 	useWindowEventListener("message",(ev)=>{
 		switch (ev.data) {
 			case "refresh":
-				try {
-					model.refresh();
-					resetError();
-				}
+				model.refresh();
+				resetError();
+				break;
 
-				catch (e) {
-					console.log("can't refresh,,");
-				}
+			case "restart":
+				model.restart();
+				resetError();
 				break;
 		}
 	});
