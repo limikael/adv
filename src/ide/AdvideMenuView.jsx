@@ -1,4 +1,4 @@
-export default function AdvedMenuView(props) {
+export default function AdvideMenuView(props) {
 	return (
 		<nav class="navbar navbar-expand navbar-light bg-light"
 				style={{height: "2.5rem"}}>

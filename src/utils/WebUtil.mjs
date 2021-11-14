@@ -57,17 +57,30 @@ export async function selectAndLoadFile() {
 		input.type="file";
 		input.style.display="none";
 		document.body.appendChild(input);
+		let resolved;
 
 		function done(result) {
+			resolved=true;
 			document.body.removeChild(input);
 			resolve(result);
 		}
 
 		function windowFocus() {
-			done(undefined);
+			setTimeout(()=>{
+				console.log("window focus...");
+
+				if (!resolved)
+					done(undefined);
+			},250);
 		}
 
 		input.addEventListener("change",()=>{
+			if (resolved)
+				return;
+
+			//console.log("file input change...");
+			resolved=true;
+
 			window.removeEventListener("focus",windowFocus);
 
 			let reader=new FileReader();

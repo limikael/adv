@@ -1,3 +1,4 @@
+import "./advide.css";
 import AdvideApp from "./AdvideApp.jsx";
 import {render} from "react";
 

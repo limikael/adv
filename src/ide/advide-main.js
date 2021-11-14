@@ -1,36 +1,15 @@
-const {app, BrowserWindow, Menu, dialog, ipcMain}=require("electron");
-const AdvideMain=require("./AdvideMain.js");
+const {app, BrowserWindow}=require("electron");
 
 app.whenReady().then(()=>{
-	let main=new AdvideMain(app);
+	let win=new BrowserWindow({
+		webPreferences: {
+			nodeIntegration: true,
+			contextIsolation: false,
+		}
+	});
 
-	let menu=Menu.buildFromTemplate([{
-		label: "File",
-		submenu: [{
-			label: "New Story",
-			click: main.newStory
-		},{
-			label: "Open Story...",
-			click: main.openStory
-		},{
-			label: "Save",
-			accelerator: "Ctrl+S",
-			click: main.saveStory
-		},{
-			label: "Save As...",
-			click: main.saveStoryAs
-		},{
-			type: 'separator'
-		},{
-			role: "quit"
-		}]
-	},{
-		label: "Debug",
-		submenu: [{
-			label: "Open DevTools",
-			click: main.openDevTools
-		}]
-	}])
+	win.loadFile("res/advide.html");
+	win.setMenu(null);
 
 	Menu.setApplicationMenu(menu);
 });

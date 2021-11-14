@@ -1,36 +1,89 @@
 import EventEmitter from "events";
-import {createIpcRendererReceiver, createIpcRendererProxy} from "../utils/electron-util.js";
+import {selectAndLoadFile} from "../utils/WebUtil.mjs";
+import {saveAs} from "file-saver";
 
 export default class AdvideModel extends EventEmitter {
 	constructor() {
 		super();
 
-		this.ipcReceiver=createIpcRendererReceiver("advide",this);
-		this.proxy=createIpcRendererProxy("advide");
-
 		this.setSource("");
+//		this.setSource(window.sessionStorage.getItem("advsource"));
+
 		this.gameFrame=null;
-		this.clearSourceChange();
+		this.fileName=null;
+		this.changed=false;
+		this.updateTitle();
+
+		window.onbeforeunload=()=>{
+			if (this.changed)
+				return true;
+		}
 	}
 
-	find(searchString) {
-		console.log("finding: "+searchString);
+	updateTitle() {
+		let useName="Untitled";
+		if (this.fileName)
+			useName=this.fileName;
+
+		if (this.changed)
+			useName+=" *";
+
+		document.title=useName+" - Advide";
 	}
 
-	clearSourceChange=()=>{
-		this.sourceChange=false;
+	async saveStoryAs() {
+		let useName="Untitled.yaml";
+		if (this.fileName)
+			useName=this.fileName;
+
+		let blob=new Blob([this.getSource()], {type: "application/x-yaml;charset=utf-8"});
+		let v=saveAs(blob,useName);
+		this.changed=false;
+		this.updateTitle();
+	}
+
+	checkClear() {
+		if (!this.changed)
+			return true;
+
+		return confirm("Current story has unsaved changes.\n\nDiscard changes?");
+	}
+
+	newStory() {
+		if (!this.checkClear())
+			return;
+
+		this.fileName=null;
+		this.setSource("");
+		this.changed=false;
+		this.updateTitle();
+	}
+
+	async openStory() {
+		if (!this.checkClear())
+			return;
+
+		let file=await selectAndLoadFile();
+
+		if (file) {
+			this.fileName=file.name;
+			this.setSource(file.value);
+			this.changed=false;
+			this.updateTitle();
+		}
 	}
 
 	setSource=async (source)=>{
 		this.source=source;
 		window.sessionStorage.setItem("advsource",this.source);
 		this.notifyGameFrame();
-		this.emit("change");
 
-		if (!this.sourceChange && this.source) {
-			this.sourceChange=true;
-			await this.proxy.notifySourceChange();
+		if (!this.changed) {
+			this.changed=true;
+			this.updateTitle();
 		}
+
+		this.emit("change");
 	}
 
 	getSource() {
@@ -51,6 +104,9 @@ export default class AdvideModel extends EventEmitter {
 
 	dispatcher=(fn, ...args)=>{
 		return (...fnArgs)=>{
+			if (fnArgs[0] instanceof Event)
+				fnArgs[0].preventDefault();
+
 			let useArgs=[...args,...fnArgs];
 			this[fn](...useArgs);
 			this.emit("change");
