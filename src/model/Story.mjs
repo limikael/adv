@@ -88,6 +88,11 @@ export default class Story extends EventDispatcher {
 				this.getObjectById(stateId,"state").setValue(false);
 			},
 
+			toggle: (stateId)=>{
+				let current=this.getObjectById(stateId,"state").getValue();
+				this.getObjectById(stateId,"state").setValue(!current);
+			},
+
 			state: (stateId)=>{
 				return this.getObjectById(stateId,"state").getValue();
 			},
@@ -101,7 +106,7 @@ export default class Story extends EventDispatcher {
 			},
 
 			applied: (o)=>{
-				let thing=this.getObjectById(o.thing,"thing");
+				let thing=this.getObjectById(o.thing,["location","thing"]);
 				return thing.appliedVerbs.includes(o.verb)
 			},
 
@@ -256,12 +261,7 @@ export default class Story extends EventDispatcher {
 		this.currentLocationId=startId;
 		this.currentMessage=null;
 
-		let p=this.yaMachine.evalMaybeAsync(this.getCurrentLocation().enter);
-
-		if (isPromise(p))
-			p.catch((e)=>{
-				this.setError(e);
-			});
+		this.execute("goto",this.currentLocationId);
 	}
 
 	getStartLocation() {
@@ -310,13 +310,6 @@ export default class Story extends EventDispatcher {
 			this.setError(e);
 			this.emit("change");
 		}
-
-		/*if (this.dead || this.getCompletePercentage()==100) {
-			throw new Error("completion not yet implemented");
-
-			await this.message("Thanks for playing!");
-			this.emit("change");
-		}*/
 
 		this.numAsyncRunning--;
 		this.emit("change");

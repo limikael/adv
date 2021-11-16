@@ -30,7 +30,9 @@ export default class StoryObject {
 					lookat: "Nothing interesting about it",
 					name: spec.thing,
 					exists: true,
-					goto: {fail: "Can't do that"}
+					goto: {fail: "Can't do that"},
+					open: {fail: "Doesn't make sense"},
+					close: {fail: "Doesn't make sense"}
 				});
 
 				this.appliedVerbs=[];
@@ -45,6 +47,8 @@ export default class StoryObject {
 					leave: true,
 					header: null
 				});
+
+				this.appliedVerbs=[];
 				break;
 
 			case "state":
@@ -97,9 +101,12 @@ export default class StoryObject {
 		}
 	}
 
-	assertType(type) {
-		if (this.type!=type)
-			throw new Error(this.id+" is a "+this.type+", not a "+type);
+	assertType(types) {
+		if (!Array.isArray(types))
+			types=[types];
+
+		if (!types.includes(this.type))
+			throw new Error(this.id+" is a "+this.type+", not a "+types);
 	}
 
 	getName() {

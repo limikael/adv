@@ -11,6 +11,13 @@ describe("linkify",()=>{
 
 //		console.log(linkify("hello [test] world [and] such",processor));
 
-//		expect(linkify("hello [test] world [and] such",processor)).toEqual(["hello","**key: test**","world"]);
+		expect(linkify("hello [test] world [and] such",processor)).toEqual(
+			["hello ","**key: test**"," world ","**key: and**"," such"]);
+
+		expect(linkify("hello [test] world [and] such",processor)).toEqual(
+			["hello ","**key: test**"," world ","**key: and**"," such"]);
+
+		expect(linkify("hello @world wassup",processor)).toEqual(["hello ","**key: world**"," wassup"]);
+		expect(linkify("hello @world",processor)).toEqual(["hello ","**key: world**",""]);
 	});
 })

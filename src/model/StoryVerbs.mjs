@@ -48,8 +48,9 @@ class GotoVerb extends StoryVerb {
 	async execute(object) {
 		let current=this.story.getCurrentLocation();
 
-		if (!await this.evalAndCheck(current.leave))
-			return;
+		if (current.id!=object.id)
+			if (!await this.evalAndCheck(current.leave))
+				return;
 
 		if (object.type=="thing") {
 			await this.story.evalAsyncClause(object.goto);
@@ -58,6 +59,9 @@ class GotoVerb extends StoryVerb {
 		else {
 			if (!await this.evalAndCheck(object.enter))
 				return;
+
+			if (!object.appliedVerbs.includes(this.id))
+				object.appliedVerbs.push(this.id);
 
 			this.story.currentLocationId=object.id;
 		}
@@ -80,6 +84,9 @@ class PickupVerb extends StoryVerb {
 		if (!await this.evalAndCheck(object.pickup))
 			return;
 
+		if (!object.appliedVerbs.includes(this.id))
+			object.appliedVerbs.push(this.id);
+
 		object.location="inventory";
 	}
 }
@@ -99,6 +106,9 @@ class DropVerb extends StoryVerb {
 
 		if (!await this.evalAndCheck(object.drop))
 			return;
+
+		if (!object.appliedVerbs.includes(this.id))
+			object.appliedVerbs.push(this.id);
 
 		object.location=this.story.currentLocationId;
 	}
@@ -128,10 +138,27 @@ class TalktoVerb extends SimpleClauseVerb {
 	}
 }
 
+class OpenVerb extends SimpleClauseVerb {
+	constructor() {
+		super();
+		this.id="open";
+		this.label="OPEN";
+	}
+}
+
+class CloseVerb extends SimpleClauseVerb {
+	constructor() {
+		super();
+		this.id="close";
+		this.label="CLOSE";
+	}
+}
+
 export function createVerbs() {
 	let classes=[
 		GotoVerb, LookatVerb, UseVerb,
-		PickupVerb, DropVerb, TalktoVerb
+		PickupVerb, DropVerb, TalktoVerb,
+		OpenVerb, CloseVerb
 	];
 
 	let verbs=[];

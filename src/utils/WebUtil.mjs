@@ -46,6 +46,9 @@ export function linkify(text, processor) {
 		m=text.match(/(^.*)\*([^\*]*)\*(.*$)/);
 
 	if (!m)
+		m=text.match(/(^.*)@([A-Za-z0-9_]+)(.*$)/);
+
+	if (!m)
 		return [text];
 
 	return [...linkify(m[1],processor),processor(m[2]),...linkify(m[3],processor)];

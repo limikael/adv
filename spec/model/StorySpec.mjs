@@ -1,4 +1,5 @@
 import Story from "../../src/model/Story.mjs";
+import StoryObject from "../../src/model/StoryObject.mjs";
 import fs from "fs";
 import {URL} from 'url';
 import {delay} from "../../src/utils/promise-util.js";
@@ -6,7 +7,7 @@ import yaml from "yaml";
 import {lineNumberByCharIndex} from "../../src/utils/string-util.mjs";
 
 describe("story",()=>{
-	it("handles parse errors",()=>{
+	/*it("handles parse errors",()=>{
 		let story=new Story("test: hello\ntest: hello2");
 		expect(story.getError().name).toEqual("YAMLSemanticError")
 	});
@@ -21,6 +22,13 @@ describe("story",()=>{
 		expect(story.getMessage()).toEqual(null);
 
 		expect(story.getVerbs().length).toEqual(5);
+
+		expect(()=>{
+			story.getObjectById("test","thing");
+		}).toThrowError("test is a location, not a thing");
+
+		expect(story.getObjectById("test")).toBeInstanceOf(StoryObject);
+		expect(story.getObjectById("test",["thing","location"])).toBeInstanceOf(StoryObject);
 	});
 
 	it("can handle errors",async ()=>{
@@ -30,7 +38,7 @@ describe("story",()=>{
 
 		let story=new Story(source);
 		expect(story.getError().toString()).toContain("Unknown property");
-	});
+	});*/
 
 	it("can handle script errors",async ()=>{
 		let source=yaml.stringify([
@@ -38,6 +46,7 @@ describe("story",()=>{
 		]);
 
 		let story=new Story(source);
+		await delay(100);
 		let e=story.getError();
 		expect(e.lineNumber).toEqual(2);
 	});

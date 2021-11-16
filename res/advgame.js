@@ -7210,6 +7210,8 @@ ${cbNode.commentBefore}` : cb;
     if (!m3)
       m3 = text.match(/(^.*)\*([^\*]*)\*(.*$)/);
     if (!m3)
+      m3 = text.match(/(^.*)@([A-Za-z0-9_]+)(.*$)/);
+    if (!m3)
       return [text];
     return [...linkify(m3[1], processor), processor(m3[2]), ...linkify(m3[3], processor)];
   }
@@ -7541,7 +7543,9 @@ ${cbNode.commentBefore}` : cb;
             lookat: "Nothing interesting about it",
             name: spec.thing,
             exists: true,
-            goto: { fail: "Can't do that" }
+            goto: { fail: "Can't do that" },
+            open: { fail: "Doesn't make sense" },
+            close: { fail: "Doesn't make sense" }
           });
           this.appliedVerbs = [];
           break;
@@ -7554,6 +7558,7 @@ ${cbNode.commentBefore}` : cb;
             leave: true,
             header: null
           });
+          this.appliedVerbs = [];
           break;
         case "state":
           this.value = spec.value;
@@ -7594,9 +7599,11 @@ ${cbNode.commentBefore}` : cb;
           this.things[i4].setStory(story);
       }
     }
-    assertType(type) {
-      if (this.type != type)
-        throw new Error(this.id + " is a " + this.type + ", not a " + type);
+    assertType(types) {
+      if (!Array.isArray(types))
+        types = [types];
+      if (!types.includes(this.type))
+        throw new Error(this.id + " is a " + this.type + ", not a " + types);
     }
     getName() {
       return this.story.yaMachine.evalSync(this.name);
@@ -8023,13 +8030,17 @@ ${cbNode.commentBefore}` : cb;
     }
     async execute(object) {
       let current = this.story.getCurrentLocation();
-      if (!await this.evalAndCheck(current.leave))
-        return;
+      if (current.id != object.id) {
+        if (!await this.evalAndCheck(current.leave))
+          return;
+      }
       if (object.type == "thing") {
         await this.story.evalAsyncClause(object.goto);
       } else {
         if (!await this.evalAndCheck(object.enter))
           return;
+        if (!object.appliedVerbs.includes(this.id))
+          object.appliedVerbs.push(this.id);
         this.story.currentLocationId = object.id;
       }
     }
@@ -8047,6 +8058,8 @@ ${cbNode.commentBefore}` : cb;
       }
       if (!await this.evalAndCheck(object.pickup))
         return;
+      if (!object.appliedVerbs.includes(this.id))
+        object.appliedVerbs.push(this.id);
       object.location = "inventory";
     }
   };
@@ -8063,6 +8076,8 @@ ${cbNode.commentBefore}` : cb;
       }
       if (!await this.evalAndCheck(object.drop))
         return;
+      if (!object.appliedVerbs.includes(this.id))
+        object.appliedVerbs.push(this.id);
       object.location = this.story.currentLocationId;
     }
   };
@@ -8087,6 +8102,20 @@ ${cbNode.commentBefore}` : cb;
       this.label = "TALK TO";
     }
   };
+  var OpenVerb = class extends SimpleClauseVerb {
+    constructor() {
+      super();
+      this.id = "open";
+      this.label = "OPEN";
+    }
+  };
+  var CloseVerb = class extends SimpleClauseVerb {
+    constructor() {
+      super();
+      this.id = "close";
+      this.label = "CLOSE";
+    }
+  };
   function createVerbs() {
     let classes = [
       GotoVerb,
@@ -8094,7 +8123,9 @@ ${cbNode.commentBefore}` : cb;
       UseVerb,
       PickupVerb,
       DropVerb,
-      TalktoVerb
+      TalktoVerb,
+      OpenVerb,
+      CloseVerb
     ];
     let verbs = [];
     for (let cls of classes) {
@@ -8178,6 +8209,10 @@ ${cbNode.commentBefore}` : cb;
         reset: (stateId) => {
           this.getObjectById(stateId, "state").setValue(false);
         },
+        toggle: (stateId) => {
+          let current = this.getObjectById(stateId, "state").getValue();
+          this.getObjectById(stateId, "state").setValue(!current);
+        },
         state: (stateId) => {
           return this.getObjectById(stateId, "state").getValue();
         },
@@ -8188,7 +8223,7 @@ ${cbNode.commentBefore}` : cb;
           return new StoryException(message);
         },
         applied: (o4) => {
-          let thing = this.getObjectById(o4.thing, "thing");
+          let thing = this.getObjectById(o4.thing, ["location", "thing"]);
           return thing.appliedVerbs.includes(o4.verb);
         },
         _alternative: (o4) => {
@@ -8307,11 +8342,7 @@ ${cbNode.commentBefore}` : cb;
       }
       this.currentLocationId = startId;
       this.currentMessage = null;
-      let p4 = this.yaMachine.evalMaybeAsync(this.getCurrentLocation().enter);
-      if ((0, import_promise_util2.isPromise)(p4))
-        p4.catch((e3) => {
-          this.setError(e3);
-        });
+      this.execute("goto", this.currentLocationId);
     }
     getStartLocation() {
       for (let object of this.objects)
